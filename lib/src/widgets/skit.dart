@@ -192,9 +192,17 @@ class SKit {
   /// - [size] - Optional size value (SKSize enum, double, Widget, or Color)
   /// - [child] - Optional child widget
   /// - [color] - Optional background color
+  /// - [borderColor] - Optional border color
+  /// - [borderWidth] - Optional border width (thickness)
   ///
-  /// Returns a [SKContainer] widget with scaled border radius.
-  static SKContainer rounded([dynamic size, Widget? child, Color? color]) {
+  /// Returns a [SKContainer] widget with scaled border radius and optional border.
+  static SKContainer rounded([
+    dynamic size,
+    Widget? child,
+    Color? color,
+    Color? borderColor,
+    double? borderWidth,
+  ]) {
     double allValue;
     if (size != null && size is! Widget && size is! Color) {
       allValue = _getSizeValue(size, radiusSizes);
@@ -204,7 +212,13 @@ class SKit {
     } else {
       allValue = defaultRadiusValue;
     }
-    return roundedContainerSize(all: allValue, color: color, child: child);
+    return roundedContainerSize(
+      all: allValue,
+      color: color,
+      borderColor: borderColor,
+      borderWidth: borderWidth,
+      child: child,
+    );
   }
 
   /// Creates a scaled container with border radius using size enum or numeric values.
@@ -215,11 +229,13 @@ class SKit {
   /// - [all] - Border radius applied to all corners
   /// - [topLeft], [topRight], [bottomLeft], [bottomRight] - Individual corner radius
   /// - [color] - Optional background color
+  /// - [borderColor] - Optional border color
+  /// - [borderWidth] - Optional border width (thickness)
   /// - [child] - Optional child widget
   /// - [padding] - Optional padding
   /// - [margin] - Optional margin
   ///
-  /// Returns a [SKContainer] widget with scaled border radius.
+  /// Returns a [SKContainer] widget with scaled border radius and optional border.
   static SKContainer roundedContainerSize({
     dynamic all,
     dynamic topLeft,
@@ -227,6 +243,8 @@ class SKit {
     dynamic bottomLeft,
     dynamic bottomRight,
     Color? color,
+    Color? borderColor,
+    double? borderWidth,
     Widget? child,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
@@ -239,6 +257,8 @@ class SKit {
       bottomLeft: bottomLeft != null ? _getSizeValue(bottomLeft, values) : null,
       bottomRight: bottomRight != null ? _getSizeValue(bottomRight, values) : null,
       color: color,
+      borderColor: borderColor,
+      borderWidth: borderWidth,
       child: child,
       padding: padding,
       margin: margin,
@@ -470,17 +490,19 @@ class SKit {
     );
   }
 
-  /// Creates a scaled container with border radius using numeric values.
+  /// Creates a scaled container with border radius and optional border using numeric values.
   ///
   /// Parameters:
   /// - [all] - Border radius applied to all corners
   /// - [topLeft], [topRight], [bottomLeft], [bottomRight] - Individual corner radius
   /// - [color] - Optional background color
+  /// - [borderColor] - Optional border color
+  /// - [borderWidth] - Optional border width (thickness), will be scaled automatically
   /// - [child] - Optional child widget
   /// - [padding] - Optional padding
   /// - [margin] - Optional margin
   ///
-  /// Returns a [SKContainer] widget with scaled border radius.
+  /// Returns a [SKContainer] widget with scaled border radius and optional border.
   static SKContainer roundedContainer({
     double? all,
     double? topLeft,
@@ -488,6 +510,8 @@ class SKit {
     double? bottomLeft,
     double? bottomRight,
     Color? color,
+    Color? borderColor,
+    double? borderWidth,
     Widget? child,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
@@ -500,8 +524,19 @@ class SKit {
       bottomRight: bottomRight,
     );
 
+    final scaledBorderWidth = borderWidth != null ? _f.createWidth(borderWidth) : null;
+
     return SKContainer(
-      decoration: BoxDecoration(color: color, borderRadius: borderRadius),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: borderRadius,
+        border: borderColor != null || scaledBorderWidth != null
+            ? Border.all(
+                color: borderColor ?? Colors.transparent,
+                width: scaledBorderWidth ?? 1.0,
+              )
+            : null,
+      ),
       padding: padding,
       margin: margin,
       child: child,

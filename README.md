@@ -32,17 +32,37 @@ flutter pub get
 
 ## Quick Start
 
-### 1. Wrap Your App
+### 1. Configure Size Values (Optional but Recommended)
+
+Set up your size configurations at app startup. This is where you define what values `SKSize.md`, `SKSize.lg`, etc. represent for padding, margin, radius, and spacing:
+
+```dart
+void main() {
+  // Configure size values before runApp
+  setPaddingSizes(SizeValues.custom(xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48));
+  setMarginSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
+  setRadiusSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
+  setSpacingSizes(SizeValues.custom(xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24));
+  
+  // Set default values for methods without parameters
+  setDefaultPadding(16);
+  setDefaultMargin(8);
+  setDefaultRadius(12);
+  setDefaultSpacing(8);
+
+  runApp(const MyApp());
+}
+```
+
+**Note:** If you don't configure sizes, default values will be used (xs=2, sm=4, md=8, lg=12, xl=16, xxl=24).
+
+### 2. Wrap Your App
 
 Wrap your `MaterialApp` with `ScaleKitBuilder` at the top level:
 
 ```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_scale_kit/flutter_scale_kit.dart';
-
-void main() {
-  runApp(const MyApp());
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -62,7 +82,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-### 2. Use Extension Methods
+### 3. Use Extension Methods
 
 Use extension methods for quick scaling:
 
@@ -81,7 +101,7 @@ Container(
 )
 ```
 
-### 3. Use SKit Helper Methods
+### 4. Use SKit Helper Methods
 
 Use `SKit` helper methods for convenient widget creation:
 
@@ -90,11 +110,15 @@ SKit.padding(
   all: 16,
   child: SKit.roundedContainer(
     all: 12,
-    color: Colors.blue,
+    color: Colors.blue.shade50,
+    borderColor: Colors.blue,
+    borderWidth: 2,
     child: Text('Hello'),
   ),
 )
 ```
+
+**Note:** Most containers need both `borderRadius` and `border`. Use `borderColor` and `borderWidth` parameters to add borders to your rounded containers. The `borderWidth` is automatically scaled based on screen size.
 
 ## Usage
 
@@ -136,9 +160,19 @@ SKit.paddingSize(all: SKSize.md, child: widget)
 SKit.margin(12, child: widget)
 SKit.marginSize(all: SKSize.md, child: widget)
 
-// Rounded container
-SKit.roundedContainer(all: 12, color: Colors.blue)
-SKit.roundedContainerSize(all: SKSize.md, color: Colors.blue)
+// Rounded container with border
+SKit.roundedContainer(
+  all: 12,
+  color: Colors.blue.shade50,
+  borderColor: Colors.blue,
+  borderWidth: 2,
+)
+SKit.roundedContainerSize(
+  all: SKSize.md,
+  color: Colors.blue.shade50,
+  borderColor: Colors.blue,
+  borderWidth: 2,
+)
 
 // Spacing
 SKit.hSpace(8)           // Horizontal spacing
@@ -150,28 +184,97 @@ SKit.text('Hello', textSize: SKTextSize.s16)
 SKit.text('Hello', fontSize: 16)
 ```
 
-### Size System
+### Size System Configuration
 
-Use predefined size enums for consistent design:
+**Important:** Configure your size values at the start of your app (typically in `main()` or app initialization) before using size enums. This ensures consistent sizing throughout your application.
+
+#### Where to Configure
+
+Set up your size configurations in your app's initialization:
 
 ```dart
-// Set custom sizes
-setPaddingSizes(SizeValues.custom(xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48));
-setRadiusSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
+void main() {
+  // Configure sizes at app startup (before runApp)
+  setPaddingSizes(SizeValues.custom(xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48));
+  setMarginSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
+  setRadiusSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
+  setSpacingSizes(SizeValues.custom(xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24));
+  setTextSizes(TextSizeValues.custom(s14: 15, s16: 17, s18: 20, s24: 26));
 
-// Use size enums
+  // Set default values for methods without parameters
+  setDefaultPadding(16);
+  setDefaultMargin(8);
+  setDefaultRadius(12);
+  setDefaultSpacing(8);
+  setDefaultTextSize(14);
+
+  runApp(const MyApp());
+}
+```
+
+#### Using Size Enums
+
+After configuration, use size enums throughout your app:
+
+```dart
+// Padding with size enum
 SKit.paddingSize(all: SKSize.md, child: widget)
+SKit.paddingSize(horizontal: SKSize.lg, vertical: SKSize.sm, child: widget)
+
+// Margin with size enum
+SKit.marginSize(all: SKSize.md, child: widget)
+
+// Radius with size enum
 SKit.roundedContainerSize(all: SKSize.lg, color: Colors.blue)
 
-// Set default values
-setDefaultPadding(16);
-setDefaultMargin(8);
-setDefaultRadius(12);
+// Spacing with size enum
+SKit.hSpaceSize(SKSize.md)  // Horizontal spacing
+SKit.vSpaceSize(SKSize.sm)  // Vertical spacing
+```
 
-// Use without parameters
-SKit.pad()              // Uses default padding
-SKit.margin()           // Uses default margin
-SKit.rounded()          // Uses default radius
+#### Using Default Values
+
+When you've set default values, you can use methods without parameters:
+
+```dart
+SKit.pad()              // Uses default padding (16)
+SKit.margin()           // Uses default margin (8)
+SKit.rounded()         // Uses default radius (12)
+SKit.h()                // Uses default spacing (8)
+SKit.v()                // Uses default spacing (8)
+```
+
+#### Rounded Container with Border
+
+Most containers need both border radius and border. Use `borderColor` and `borderWidth` parameters:
+
+```dart
+// Container with radius and border
+SKit.roundedContainer(
+  all: 12,
+  color: Colors.blue.shade50,
+  borderColor: Colors.blue,
+  borderWidth: 2,  // Border thickness (automatically scaled)
+  child: Text('Content'),
+)
+
+// Using size enum
+SKit.roundedContainerSize(
+  all: SKSize.md,
+  color: Colors.blue.shade50,
+  borderColor: Colors.blue,
+  borderWidth: 2,
+  child: Text('Content'),
+)
+
+// Using default radius with border
+SKit.rounded(
+  null,
+  Text('Content'),
+  Colors.blue.shade50,
+  Colors.blue,  // borderColor
+  2,            // borderWidth
+)
 ```
 
 ### SKitTheme - Centralized Design System
