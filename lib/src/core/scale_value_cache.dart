@@ -8,7 +8,7 @@ import 'device_detector.dart';
 class ScaleValueCache {
   static ScaleValueCache? _instance;
   static ScaleValueCache get instance => _instance ??= ScaleValueCache._();
-  
+
   ScaleValueCache._();
 
   // Cache maps for different value types
@@ -22,6 +22,7 @@ class ScaleValueCache {
   final Map<CacheKey, EdgeInsets> _paddingCache = {};
   final Map<CacheKey, EdgeInsets> _marginCache = {};
   final Map<CacheKey, BorderRadius> _borderRadiusCache = {};
+  final Map<CacheKey, TextStyle> _textStyleCache = {};
 
   /// Get device ID string for cache key
   String _getDeviceId() {
@@ -31,7 +32,7 @@ class ScaleValueCache {
       manager.screenWidth,
       manager.screenHeight,
     );
-    
+
     return '${deviceType.name}_${manager.orientation.name}_${aspectCategory.name}';
   }
 
@@ -42,7 +43,7 @@ class ScaleValueCache {
       scaleType: ScaleType.width,
       deviceId: _getDeviceId(),
     );
-    
+
     return _widthCache.putIfAbsent(
       key,
       () => ScaleManager.instance.getWidth(value),
@@ -56,7 +57,7 @@ class ScaleValueCache {
       scaleType: ScaleType.height,
       deviceId: _getDeviceId(),
     );
-    
+
     return _heightCache.putIfAbsent(
       key,
       () => ScaleManager.instance.getHeight(value),
@@ -70,7 +71,7 @@ class ScaleValueCache {
       scaleType: ScaleType.fontSize,
       deviceId: _getDeviceId(),
     );
-    
+
     return _fontSizeCache.putIfAbsent(
       key,
       () => ScaleManager.instance.getFontSize(value),
@@ -84,7 +85,7 @@ class ScaleValueCache {
       scaleType: ScaleType.fontSizeWithFactor,
       deviceId: _getDeviceId(),
     );
-    
+
     return _fontSizeWithFactorCache.putIfAbsent(
       key,
       () => ScaleManager.instance.getFontSizeWithFactor(value),
@@ -98,7 +99,7 @@ class ScaleValueCache {
       scaleType: ScaleType.radius,
       deviceId: _getDeviceId(),
     );
-    
+
     return _radiusCache.putIfAbsent(
       key,
       () => ScaleManager.instance.getRadius(value),
@@ -112,7 +113,7 @@ class ScaleValueCache {
       scaleType: ScaleType.screenWidth,
       deviceId: _getDeviceId(),
     );
-    
+
     return _screenWidthCache.putIfAbsent(
       key,
       () => ScaleManager.instance.getScreenWidth(value),
@@ -126,7 +127,7 @@ class ScaleValueCache {
       scaleType: ScaleType.screenHeight,
       deviceId: _getDeviceId(),
     );
-    
+
     return _screenHeightCache.putIfAbsent(
       key,
       () => ScaleManager.instance.getScreenHeight(value),
@@ -144,7 +145,8 @@ class ScaleValueCache {
     double? right,
   }) {
     // Create a unique key based on padding parameters
-    final value = (all ?? 0) +
+    final value =
+        (all ?? 0) +
         (horizontal ?? 0) * 10 +
         (vertical ?? 0) * 100 +
         (top ?? 0) * 1000 +
@@ -158,18 +160,15 @@ class ScaleValueCache {
       deviceId: _getDeviceId(),
     );
 
-    return _paddingCache.putIfAbsent(
-      key,
-      () {
-        final manager = ScaleManager.instance;
-        return EdgeInsets.only(
-          top: (top ?? vertical ?? all ?? 0) * manager.scaleHeight,
-          bottom: (bottom ?? vertical ?? all ?? 0) * manager.scaleHeight,
-          left: (left ?? horizontal ?? all ?? 0) * manager.scaleWidth,
-          right: (right ?? horizontal ?? all ?? 0) * manager.scaleWidth,
-        );
-      },
-    );
+    return _paddingCache.putIfAbsent(key, () {
+      final manager = ScaleManager.instance;
+      return EdgeInsets.only(
+        top: (top ?? vertical ?? all ?? 0) * manager.scaleHeight,
+        bottom: (bottom ?? vertical ?? all ?? 0) * manager.scaleHeight,
+        left: (left ?? horizontal ?? all ?? 0) * manager.scaleWidth,
+        right: (right ?? horizontal ?? all ?? 0) * manager.scaleWidth,
+      );
+    });
   }
 
   /// Get cached margin or calculate and cache
@@ -202,7 +201,8 @@ class ScaleValueCache {
     double? bottomLeft,
     double? bottomRight,
   }) {
-    final value = (all ?? 0) +
+    final value =
+        (all ?? 0) +
         (topLeft ?? 0) * 10 +
         (topRight ?? 0) * 100 +
         (bottomLeft ?? 0) * 1000 +
@@ -214,19 +214,70 @@ class ScaleValueCache {
       deviceId: _getDeviceId(),
     );
 
-    return _borderRadiusCache.putIfAbsent(
-      key,
-      () {
-        final manager = ScaleManager.instance;
-        final radius = manager.scaleWidth;
-        return BorderRadius.only(
-          topLeft: Radius.circular((topLeft ?? all ?? 0) * radius),
-          topRight: Radius.circular((topRight ?? all ?? 0) * radius),
-          bottomLeft: Radius.circular((bottomLeft ?? all ?? 0) * radius),
-          bottomRight: Radius.circular((bottomRight ?? all ?? 0) * radius),
-        );
-      },
+    return _borderRadiusCache.putIfAbsent(key, () {
+      final manager = ScaleManager.instance;
+      final radius = manager.scaleWidth;
+      return BorderRadius.only(
+        topLeft: Radius.circular((topLeft ?? all ?? 0) * radius),
+        topRight: Radius.circular((topRight ?? all ?? 0) * radius),
+        bottomLeft: Radius.circular((bottomLeft ?? all ?? 0) * radius),
+        bottomRight: Radius.circular((bottomRight ?? all ?? 0) * radius),
+      );
+    });
+  }
+
+  /// Get cached TextStyle or calculate and cache
+  TextStyle getTextStyle({
+    required double fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    Color? color,
+    String? fontFamily,
+    double? letterSpacing,
+    double? height,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    // Create a unique key based on TextStyle parameters
+    final value =
+        fontSize +
+        (fontWeight?.index ?? 0) * 1000 +
+        (fontStyle?.index ?? 0) * 100 +
+        (color != null ? color.value.toDouble() : 0) * 0.001 +
+        (fontFamily?.hashCode ?? 0) * 0.000001 +
+        (letterSpacing ?? 0) * 100 +
+        (height ?? 0) * 10 +
+        (decoration.toString().hashCode) * 0.0000001 +
+        (decorationColor?.value.toDouble() ?? 0) * 0.000000001 +
+        (decorationStyle?.index ?? 0) * 0.0000000001 +
+        (decorationThickness ?? 0) * 1000;
+
+    final key = CacheKey(
+      value: value,
+      scaleType: ScaleType.fontSize,
+      deviceId: _getDeviceId(),
     );
+
+    return _textStyleCache.putIfAbsent(key, () {
+      final manager = ScaleManager.instance;
+      final scaledFontSize = manager.getFontSize(fontSize);
+
+      return TextStyle(
+        fontSize: scaledFontSize,
+        fontWeight: fontWeight,
+        fontStyle: fontStyle,
+        color: color,
+        fontFamily: fontFamily,
+        letterSpacing: letterSpacing,
+        height: height,
+        decoration: decoration,
+        decorationColor: decorationColor,
+        decorationStyle: decorationStyle,
+        decorationThickness: decorationThickness,
+      );
+    });
   }
 
   /// Clear all caches (called on size/orientation change)
@@ -241,6 +292,6 @@ class ScaleValueCache {
     _paddingCache.clear();
     _marginCache.clear();
     _borderRadiusCache.clear();
+    _textStyleCache.clear();
   }
 }
-

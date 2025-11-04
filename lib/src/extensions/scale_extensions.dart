@@ -3,25 +3,27 @@ import '../core/scale_value_factory.dart';
 /// Extension methods for easy scaling operations
 /// Similar to flutter_screenutil API
 extension ScaleExtension on num {
+  // Short alias for faster access - using getter to cache reference
+  static final ScaleValueFactory _f = ScaleValueFactory.instance;
+
   /// Scaled width
-  double get w => ScaleValueFactory.instance.createWidth(toDouble());
+  double get w => _f.createWidth(toDouble());
 
   /// Screen width percentage (e.g., 1.sw = full screen width)
-  double get sw => ScaleValueFactory.instance.createScreenWidth(toDouble());
+  double get sw => _f.createScreenWidth(toDouble());
 
   /// Screen height percentage (e.g., 1.sh = full screen height)
-  double get sh => ScaleValueFactory.instance.createScreenHeight(toDouble());
+  double get sh => _f.createScreenHeight(toDouble());
 
   /// Scaled radius/border radius
-  double get r => ScaleValueFactory.instance.createRadius(toDouble());
+  double get r => _f.createRadius(toDouble());
 
   /// Scaled font size
-  double get sp => ScaleValueFactory.instance.createFontSize(toDouble());
+  double get sp => _f.createFontSize(toDouble());
 
   /// Scaled height
-  double get h => ScaleValueFactory.instance.createHeight(toDouble());
+  double get h => _f.createHeight(toDouble());
 
   /// Font size with system text scale factor applied
-  double get spf => ScaleValueFactory.instance.createFontSizeWithFactor(toDouble());
+  double get spf => _f.createFontSizeWithFactor(toDouble());
 }
-

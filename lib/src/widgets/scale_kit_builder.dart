@@ -2,27 +2,60 @@ import 'package:flutter/material.dart';
 import '../core/scale_manager.dart';
 import '../core/scale_value_cache.dart';
 
-/// Wrapper widget that listens to MediaQuery changes
-/// Triggers cache clear and rebuild on size/orientation change
+/// Wrapper widget that initializes ScaleKit and manages responsive updates.
+///
+/// This widget should wrap your [MaterialApp] at the top level of your
+/// application. It listens to [MediaQuery] changes and automatically
+/// updates scale factors when screen size or orientation changes.
+///
+/// The widget uses a threshold-based approach to prevent unnecessary
+/// recalculations on minor layout adjustments while still responding
+/// to significant size changes (e.g., foldable device transitions).
+///
+/// Example usage:
+/// ```dart
+/// class MyApp extends StatelessWidget {
+///   @override
+///   Widget build(BuildContext context) {
+///     return ScaleKitBuilder(
+///       designWidth: 375,
+///       designHeight: 812,
+///       designType: DeviceType.mobile,
+///       child: MaterialApp(
+///         home: HomePage(),
+///       ),
+///     );
+///   }
+/// }
+/// ```
 class ScaleKitBuilder extends StatefulWidget {
-  /// Child widget
+  /// The child widget to wrap.
   final Widget child;
 
-  /// Design width (in logical pixels)
+  /// Design width in logical pixels.
   final double designWidth;
 
-  /// Design height (in logical pixels)
+  /// Design height in logical pixels.
   final double designHeight;
 
-  /// Design device type
+  /// Design device type.
   final DeviceType designType;
 
-  /// Minimum scale factor
+  /// Minimum scale factor (optional).
   final double? minScale;
 
-  /// Maximum scale factor
+  /// Maximum scale factor (optional).
   final double? maxScale;
 
+  /// Creates a [ScaleKitBuilder] widget.
+  ///
+  /// Parameters:
+  /// - [child] - The child widget (typically MaterialApp)
+  /// - [designWidth] - Design width in logical pixels
+  /// - [designHeight] - Design height in logical pixels
+  /// - [designType] - Design device type (default: mobile)
+  /// - [minScale] - Optional minimum scale factor
+  /// - [maxScale] - Optional maximum scale factor
   const ScaleKitBuilder({
     super.key,
     required this.child,
@@ -40,6 +73,9 @@ class ScaleKitBuilder extends StatefulWidget {
 class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
   Size? _previousSize;
   Orientation? _previousOrientation;
+  bool _isInitialized = false;
+
+  static const double _sizeChangeThreshold = 0.05;
 
   @override
   void initState() {
@@ -56,12 +92,19 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
   }
 
   void _initializeScaleManager() {
-    ScaleManager.instance.init(
-      context: context,
-      designWidth: widget.designWidth,
-      designHeight: widget.designHeight,
-      designType: widget.designType,
-    );
+    if (!_isInitialized) {
+      ScaleManager.instance.init(
+        context: context,
+        designWidth: widget.designWidth,
+        designHeight: widget.designHeight,
+        designType: widget.designType,
+      );
+      _isInitialized = true;
+
+      final mediaQuery = MediaQuery.of(context);
+      _previousSize = mediaQuery.size;
+      _previousOrientation = mediaQuery.orientation;
+    }
   }
 
   void _checkForChanges() {
@@ -69,53 +112,53 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     final currentSize = mediaQuery.size;
     final currentOrientation = mediaQuery.orientation;
 
-    // Check if size or orientation changed significantly
-    bool shouldRebuild = false;
-
-    if (_previousSize == null) {
-      // First build
-      _previousSize = currentSize;
-      _previousOrientation = currentOrientation;
+    if (!_isInitialized) {
       _initializeScaleManager();
       return;
     }
 
-    // Check for size change (>50% change indicates foldable device transition)
+    bool shouldUpdate = false;
+
+    if (_previousOrientation != null &&
+        currentOrientation != _previousOrientation) {
+      shouldUpdate = true;
+    }
+
     if (_previousSize != null) {
       final widthChange = (currentSize.width - _previousSize!.width).abs();
       final heightChange = (currentSize.height - _previousSize!.height).abs();
-      final significantChange = widthChange > _previousSize!.width * 0.5 ||
-          heightChange > _previousSize!.height * 0.5;
 
-      if (significantChange ||
-          currentSize != _previousSize ||
-          currentOrientation != _previousOrientation) {
-        shouldRebuild = true;
+      final widthChangePercent =
+          _previousSize!.width > 0 ? widthChange / _previousSize!.width : 0.0;
+      final heightChangePercent =
+          _previousSize!.height > 0
+              ? heightChange / _previousSize!.height
+              : 0.0;
+
+      final significantChange =
+          widthChangePercent > _sizeChangeThreshold ||
+          heightChangePercent > _sizeChangeThreshold ||
+          widthChangePercent > 0.5 ||
+          heightChangePercent > 0.5;
+
+      if (significantChange) {
+        shouldUpdate = true;
       }
     }
 
-    // Check for orientation change
-    if (_previousOrientation != null &&
-        currentOrientation != _previousOrientation) {
-      shouldRebuild = true;
-    }
+    if (shouldUpdate) {
+      _previousSize = currentSize;
+      _previousOrientation = currentOrientation;
 
-    if (shouldRebuild) {
       _onSizeOrOrientationChange();
     }
-
-    _previousSize = currentSize;
-    _previousOrientation = currentOrientation;
   }
 
   void _onSizeOrOrientationChange() {
-    // Update scale manager with new context
     ScaleManager.instance.updateFromContext(context);
 
-    // Clear cache to force recalculation
     ScaleValueCache.instance.clearCache();
 
-    // Trigger rebuild
     if (mounted) {
       setState(() {});
     }
@@ -123,10 +166,6 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    // Update scale manager on every build to ensure it's current
-    ScaleManager.instance.updateFromContext(context);
-
     return widget.child;
   }
 }
-

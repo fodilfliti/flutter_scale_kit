@@ -2,51 +2,88 @@ import 'package:flutter/material.dart';
 import 'aspect_ratio_adapter.dart';
 import 'device_detector.dart';
 
-/// Singleton manager for scale configuration
-/// Manages design dimensions, device type, and scale factors
+/// Singleton manager for scale configuration and responsive design calculations.
+///
+/// This class manages design dimensions, device type, and scale factors
+/// for responsive UI scaling. It provides helper properties similar to
+/// flutter_screenutil and methods for scaling values based on screen size.
+///
+/// The [ScaleManager] is automatically initialized by [ScaleKitBuilder]
+/// and should not be instantiated directly.
 class ScaleManager {
   static ScaleManager? _instance;
   static ScaleManager get instance => _instance ??= ScaleManager._();
 
   ScaleManager._();
 
-  // Design dimensions
   double _designWidth = 375.0;
   double _designHeight = 812.0;
 
-  // Current device properties
   double _screenWidth = 0;
   double _screenHeight = 0;
   double _devicePixelRatio = 1.0;
   double _textScaleFactor = 1.0;
   Orientation _orientation = Orientation.portrait;
 
-  // Scale factors
   double _scaleWidth = 1.0;
   double _scaleHeight = 1.0;
 
-  // Safe area properties
   double _topSafeHeight = 0;
   double _bottomSafeHeight = 0;
   double _statusBarHeight = 0;
 
-  // Getters for device properties
+  /// Device pixel density.
   double get pixelRatio => _devicePixelRatio;
+
+  /// Physical pixels per logical pixel.
   double get devicePixelRatio => _devicePixelRatio;
+
+  /// Current screen width in logical pixels.
   double get screenWidth => _screenWidth;
+
+  /// Current screen height in logical pixels.
   double get screenHeight => _screenHeight;
+
+  /// Bottom safe zone distance, suitable for buttons with full screen.
   double get bottomBarHeight => _bottomSafeHeight;
+
+  /// Status bar height, including notch if present.
   double get statusBarHeight => _statusBarHeight;
+
+  /// System font scaling factor.
   double get textScaleFactor => _textScaleFactor;
+
+  /// Ratio of actual width to UI design width.
   double get scaleWidth => _scaleWidth;
+
+  /// Ratio of actual height to UI design height.
   double get scaleHeight => _scaleHeight;
+
+  /// Current screen orientation.
   Orientation get orientation => _orientation;
+
+  /// Top safe area height.
   double get topSafeHeight => _topSafeHeight;
+
+  /// Bottom safe area height.
   double get bottomSafeHeight => _bottomSafeHeight;
+
+  /// Total safe area height (top + bottom).
   double get safeAreaHeight => _topSafeHeight + _bottomSafeHeight;
+
+  /// Safe area width (same as screen width).
   double get safeAreaWidth => _screenWidth;
 
-  /// Initialize ScaleManager with design dimensions
+  /// Initializes the scale manager with design dimensions.
+  ///
+  /// This method is called automatically by [ScaleKitBuilder] and should
+  /// not be called directly.
+  ///
+  /// Parameters:
+  /// - [context] - Build context for accessing MediaQuery
+  /// - [designWidth] - Design width in logical pixels
+  /// - [designHeight] - Design height in logical pixels
+  /// - [designType] - Design device type (default: mobile)
   void init({
     required BuildContext context,
     required double designWidth,
@@ -59,7 +96,6 @@ class ScaleManager {
     _updateFromContext(context);
   }
 
-  /// Update scale factors from MediaQuery context
   void _updateFromContext(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final size = mediaQuery.size;
@@ -70,30 +106,27 @@ class ScaleManager {
     _screenHeight = size.height;
     _devicePixelRatio = mediaQuery.devicePixelRatio;
     _textScaleFactor = mediaQuery.textScaler.scale(1.0);
-    _orientation =
-        size.width > size.height ? Orientation.landscape : Orientation.portrait;
 
-    // Safe area calculations
+    final newOrientation =
+        size.width > size.height ? Orientation.landscape : Orientation.portrait;
+    _orientation = newOrientation;
+
     _topSafeHeight = padding.top;
     _bottomSafeHeight = padding.bottom;
     _statusBarHeight = viewPadding.top;
 
-    // Calculate scale factors
     _calculateScaleFactors();
   }
 
-  /// Calculate scale factors based on design dimensions and device type
   void _calculateScaleFactors() {
     _scaleWidth = _screenWidth / _designWidth;
     _scaleHeight = _screenHeight / _designHeight;
 
-    // Apply min/max constraints based on device type
     final (minScale, maxScale) = _getScaleLimits();
     _scaleWidth = _scaleWidth.clamp(minScale, maxScale);
     _scaleHeight = _scaleHeight.clamp(minScale, maxScale);
   }
 
-  /// Get scale limits based on device type
   (double minScale, double maxScale) _getScaleLimits() {
     final deviceType = _detectDeviceType();
 
@@ -108,7 +141,6 @@ class ScaleManager {
     }
   }
 
-  /// Detect current device type based on screen width
   DeviceType _detectDeviceType() {
     if (_screenWidth < 600) {
       return DeviceType.mobile;
@@ -119,34 +151,66 @@ class ScaleManager {
     }
   }
 
-  /// Update from context (called on size/orientation change)
+  /// Updates scale factors from the current context.
+  ///
+  /// This method is called automatically by [ScaleKitBuilder] when screen
+  /// size or orientation changes. It should not be called directly.
+  ///
+  /// Parameters:
+  /// - [context] - Build context for accessing MediaQuery
   void updateFromContext(BuildContext context) {
     _updateFromContext(context);
   }
 
-  /// Get scaled width
+  /// Gets a scaled width value.
+  ///
+  /// Parameters:
+  /// - [width] - The width value to scale
+  ///
+  /// Returns the scaled width based on the current scale factor.
   double getWidth(double width) {
     return width * _scaleWidth;
   }
 
-  /// Get scaled height
+  /// Gets a scaled height value.
+  ///
+  /// Parameters:
+  /// - [height] - The height value to scale
+  ///
+  /// Returns the scaled height based on the current scale factor.
   double getHeight(double height) {
     return height * _scaleHeight;
   }
 
-  /// Get scaled font size
+  /// Gets a scaled font size value.
+  ///
+  /// Font size scaling uses a specialized algorithm that considers device
+  /// type, aspect ratio, and orientation. On mobile devices in landscape
+  /// mode, font sizes are increased by 20% for better readability.
+  ///
+  /// Parameters:
+  /// - [fontSize] - The font size value to scale
+  ///
+  /// Returns the scaled font size.
   double getFontSize(double fontSize) {
     final fontScale = _getFontScaleFactor();
     return fontSize * fontScale;
   }
 
-  /// Get font size with system text scale factor
+  /// Gets a scaled font size value with system text scale factor applied.
+  ///
+  /// This method includes the system's text scale factor (from accessibility
+  /// settings) in addition to the responsive scaling.
+  ///
+  /// Parameters:
+  /// - [fontSize] - The font size value to scale
+  ///
+  /// Returns the scaled font size with system factor applied.
   double getFontSizeWithFactor(double fontSize) {
     final fontScale = _getFontScaleFactor();
     return fontSize * fontScale * _textScaleFactor;
   }
 
-  /// Get font scale factor based on aspect ratio
   double _getFontScaleFactor() {
     final deviceType = _detectDeviceType();
     final aspectCategory = DeviceDetector.getAspectRatioCategory(
@@ -154,7 +218,14 @@ class ScaleManager {
       _screenHeight,
     );
 
-    final scaleFactor = _scaleWidth < _scaleHeight ? _scaleWidth : _scaleHeight;
+    double scaleFactor =
+        _scaleWidth < _scaleHeight ? _scaleWidth : _scaleHeight;
+
+    if (deviceType == DeviceType.mobile) {
+      if (_orientation == Orientation.landscape) {
+        scaleFactor = scaleFactor * 1.2;
+      }
+    }
 
     return AspectRatioAdapter.getFontScaleFactor(
       scaleFactor: scaleFactor,
@@ -163,26 +234,56 @@ class ScaleManager {
     );
   }
 
-  /// Get scaled radius
+  /// Gets a scaled radius value.
+  ///
+  /// Parameters:
+  /// - [radius] - The radius value to scale
+  ///
+  /// Returns the scaled radius based on the current scale factor.
   double getRadius(double radius) {
     return radius * _scaleWidth;
   }
 
-  /// Get screen width percentage
+  /// Gets a screen width percentage value.
+  ///
+  /// Parameters:
+  /// - [percentage] - The percentage of screen width (0.0 to 1.0)
+  ///
+  /// Returns the calculated screen width percentage.
   double getScreenWidth(double percentage) {
     return _screenWidth * percentage;
   }
 
-  /// Get screen height percentage
+  /// Gets a screen height percentage value.
+  ///
+  /// Parameters:
+  /// - [percentage] - The percentage of screen height (0.0 to 1.0)
+  ///
+  /// Returns the calculated screen height percentage.
   double getScreenHeight(double percentage) {
     return _screenHeight * percentage;
   }
 
-  /// Clear cache (called when size/orientation changes)
+  /// Clears the cache (called when size/orientation changes).
+  ///
+  /// This method is called automatically by [ScaleKitBuilder] and should
+  /// not be called directly.
   void clearCache() {
-    // Cache clearing will be handled by ScaleValueCache
+    // Cache clearing is handled by ScaleValueCache
   }
 }
 
-/// Device type enum
-enum DeviceType { mobile, tablet, desktop, web }
+/// Device type enumeration for responsive design.
+enum DeviceType {
+  /// Mobile device (phone).
+  mobile,
+
+  /// Tablet device.
+  tablet,
+
+  /// Desktop device.
+  desktop,
+
+  /// Web platform.
+  web,
+}
