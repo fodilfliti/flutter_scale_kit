@@ -43,7 +43,7 @@ void main() {
   setMarginSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
   setRadiusSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
   setSpacingSizes(SizeValues.custom(xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24));
-  
+
   // Set default values for methods without parameters
   setDefaultPadding(16);
   setDefaultMargin(8);
@@ -118,7 +118,7 @@ SKit.padding(
 )
 ```
 
-**Note:** Most containers need both `borderRadius` and `border`. Use `borderColor` and `borderWidth` parameters to add borders to your rounded containers. The `borderWidth` is automatically scaled based on screen size.
+**Note:** Most containers need both `borderRadius` and `border`. Use `borderColor` and `borderWidth` parameters to add borders to your rounded containers. You can also specify borders on individual sides (top, bottom, left, right) with different colors and widths. All border widths are automatically scaled based on screen size.
 
 ## Usage
 
@@ -160,13 +160,36 @@ SKit.paddingSize(all: SKSize.md, child: widget)
 SKit.margin(12, child: widget)
 SKit.marginSize(all: SKSize.md, child: widget)
 
-// Rounded container with border
+// Rounded container with border on all sides
 SKit.roundedContainer(
   all: 12,
   color: Colors.blue.shade50,
   borderColor: Colors.blue,
   borderWidth: 2,
 )
+
+// Rounded container with border on specific sides
+SKit.roundedContainer(
+  all: 12,
+  color: Colors.green.shade50,
+  borderTop: true,
+  borderBottom: true,
+  borderColor: Colors.green,
+  borderWidth: 2,
+)
+
+// Rounded container with different colors per side
+SKit.roundedContainer(
+  all: 12,
+  color: Colors.pink.shade50,
+  borderTop: true,
+  borderTopColor: Colors.red,
+  borderTopWidth: 3,
+  borderBottom: true,
+  borderBottomColor: Colors.blue,
+  borderBottomWidth: 2,
+)
+
 SKit.roundedContainerSize(
   all: SKSize.md,
   color: Colors.blue.shade50,
@@ -249,12 +272,39 @@ SKit.v()                // Uses default spacing (8)
 Most containers need both border radius and border. Use `borderColor` and `borderWidth` parameters:
 
 ```dart
-// Container with radius and border
+// Container with radius and border on all sides
 SKit.roundedContainer(
   all: 12,
   color: Colors.blue.shade50,
   borderColor: Colors.blue,
   borderWidth: 2,  // Border thickness (automatically scaled)
+  child: Text('Content'),
+)
+
+// Border on specific sides only
+SKit.roundedContainer(
+  all: 12,
+  color: Colors.green.shade50,
+  borderTop: true,      // Border on top
+  borderBottom: true,    // Border on bottom
+  borderColor: Colors.green,
+  borderWidth: 2,
+  child: Text('Content'),
+)
+
+// Different colors and widths for different sides
+SKit.roundedContainer(
+  all: 12,
+  color: Colors.pink.shade50,
+  borderTop: true,
+  borderTopColor: Colors.red,
+  borderTopWidth: 3,
+  borderBottom: true,
+  borderBottomColor: Colors.blue,
+  borderBottomWidth: 2,
+  borderLeft: true,
+  borderLeftColor: Colors.green,
+  borderLeftWidth: 1,
   child: Text('Content'),
 )
 
@@ -276,6 +326,13 @@ SKit.rounded(
   2,            // borderWidth
 )
 ```
+
+**Border Parameters:**
+- `borderColor` - Border color for all sides (if individual sides not specified)
+- `borderWidth` - Border width for all sides (automatically scaled)
+- `borderTop`, `borderBottom`, `borderLeft`, `borderRight` - Show border on specific sides (boolean)
+- `borderTopColor`, `borderBottomColor`, `borderLeftColor`, `borderRightColor` - Individual side colors
+- `borderTopWidth`, `borderBottomWidth`, `borderLeftWidth`, `borderRightWidth` - Individual side widths (automatically scaled)
 
 ### SKitTheme - Centralized Design System
 

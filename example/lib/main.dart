@@ -384,6 +384,80 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
             Text(
+              'Container with Border (All Sides):',
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.h),
+            SKit.roundedContainer(
+              all: 12,
+              color: Colors.blue.shade50,
+              borderColor: Colors.blue,
+              borderWidth: 2,
+              child: Padding(
+                padding: EdgeInsets.all(12.w),
+                child: Text(
+                  'Border on all sides',
+                  style: TextStyle(fontSize: 14.sp),
+                ),
+              ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              'Container with Border on Specific Sides:',
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.h),
+            SKit.roundedContainer(
+              all: 12,
+              color: Colors.green.shade50,
+              borderTop: true,
+              borderBottom: true,
+              borderColor: Colors.green,
+              borderWidth: 2,
+              child: Padding(
+                padding: EdgeInsets.all(12.w),
+                child: Text(
+                  'Border on top & bottom only',
+                  style: TextStyle(fontSize: 14.sp),
+                ),
+              ),
+            ),
+            SizedBox(height: 8.h),
+            SKit.roundedContainer(
+              all: 12,
+              color: Colors.orange.shade50,
+              borderLeft: true,
+              borderRight: true,
+              borderColor: Colors.orange,
+              borderWidth: 2,
+              child: Padding(
+                padding: EdgeInsets.all(12.w),
+                child: Text(
+                  'Border on left & right only',
+                  style: TextStyle(fontSize: 14.sp),
+                ),
+              ),
+            ),
+            SizedBox(height: 8.h),
+            SKit.roundedContainer(
+              all: 12,
+              color: Colors.pink.shade50,
+              borderTop: true,
+              borderTopColor: Colors.red,
+              borderTopWidth: 3,
+              borderBottom: true,
+              borderBottomColor: Colors.blue,
+              borderBottomWidth: 2,
+              child: Padding(
+                padding: EdgeInsets.all(12.w),
+                child: Text(
+                  'Different colors & widths',
+                  style: TextStyle(fontSize: 14.sp),
+                ),
+              ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
               'Spacing:',
               style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
             ),

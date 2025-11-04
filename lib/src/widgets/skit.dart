@@ -229,8 +229,11 @@ class SKit {
   /// - [all] - Border radius applied to all corners
   /// - [topLeft], [topRight], [bottomLeft], [bottomRight] - Individual corner radius
   /// - [color] - Optional background color
-  /// - [borderColor] - Optional border color
+  /// - [borderColor] - Optional border color (applied to all sides if individual sides not specified)
   /// - [borderWidth] - Optional border width (thickness)
+  /// - [borderTop], [borderBottom], [borderLeft], [borderRight] - Optional border on specific sides
+  /// - [borderTopColor], [borderBottomColor], [borderLeftColor], [borderRightColor] - Optional border colors for specific sides
+  /// - [borderTopWidth], [borderBottomWidth], [borderLeftWidth], [borderRightWidth] - Optional border widths for specific sides
   /// - [child] - Optional child widget
   /// - [padding] - Optional padding
   /// - [margin] - Optional margin
@@ -245,6 +248,18 @@ class SKit {
     Color? color,
     Color? borderColor,
     double? borderWidth,
+    bool? borderTop,
+    bool? borderBottom,
+    bool? borderLeft,
+    bool? borderRight,
+    Color? borderTopColor,
+    Color? borderBottomColor,
+    Color? borderLeftColor,
+    Color? borderRightColor,
+    double? borderTopWidth,
+    double? borderBottomWidth,
+    double? borderLeftWidth,
+    double? borderRightWidth,
     Widget? child,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
@@ -255,10 +270,23 @@ class SKit {
       topLeft: topLeft != null ? _getSizeValue(topLeft, values) : null,
       topRight: topRight != null ? _getSizeValue(topRight, values) : null,
       bottomLeft: bottomLeft != null ? _getSizeValue(bottomLeft, values) : null,
-      bottomRight: bottomRight != null ? _getSizeValue(bottomRight, values) : null,
+      bottomRight:
+          bottomRight != null ? _getSizeValue(bottomRight, values) : null,
       color: color,
       borderColor: borderColor,
       borderWidth: borderWidth,
+      borderTop: borderTop,
+      borderBottom: borderBottom,
+      borderLeft: borderLeft,
+      borderRight: borderRight,
+      borderTopColor: borderTopColor,
+      borderBottomColor: borderBottomColor,
+      borderLeftColor: borderLeftColor,
+      borderRightColor: borderRightColor,
+      borderTopWidth: borderTopWidth,
+      borderBottomWidth: borderBottomWidth,
+      borderLeftWidth: borderLeftWidth,
+      borderRightWidth: borderRightWidth,
       child: child,
       padding: padding,
       margin: margin,
@@ -272,7 +300,8 @@ class SKit {
   ///
   /// Returns a scaled radius value.
   static double radius([dynamic size]) {
-    final value = size != null ? _getSizeValue(size, radiusSizes) : defaultRadiusValue;
+    final value =
+        size != null ? _getSizeValue(size, radiusSizes) : defaultRadiusValue;
     return _radius(value);
   }
 
@@ -300,7 +329,8 @@ class SKit {
       topLeft: topLeft != null ? _getSizeValue(topLeft, values) : null,
       topRight: topRight != null ? _getSizeValue(topRight, values) : null,
       bottomLeft: bottomLeft != null ? _getSizeValue(bottomLeft, values) : null,
-      bottomRight: bottomRight != null ? _getSizeValue(bottomRight, values) : null,
+      bottomRight:
+          bottomRight != null ? _getSizeValue(bottomRight, values) : null,
     );
   }
 
@@ -311,7 +341,8 @@ class SKit {
   ///
   /// Returns a [SKSizedBox] widget with scaled horizontal spacing.
   static SKSizedBox h([dynamic size]) {
-    final value = size != null ? _getSizeValue(size, spacingSizes) : defaultSpacingValue;
+    final value =
+        size != null ? _getSizeValue(size, spacingSizes) : defaultSpacingValue;
     return hSpace(value);
   }
 
@@ -322,7 +353,8 @@ class SKit {
   ///
   /// Returns a [SKSizedBox] widget with scaled vertical spacing.
   static SKSizedBox v([dynamic size]) {
-    final value = size != null ? _getSizeValue(size, spacingSizes) : defaultSpacingValue;
+    final value =
+        size != null ? _getSizeValue(size, spacingSizes) : defaultSpacingValue;
     return vSpace(value);
   }
 
@@ -496,8 +528,11 @@ class SKit {
   /// - [all] - Border radius applied to all corners
   /// - [topLeft], [topRight], [bottomLeft], [bottomRight] - Individual corner radius
   /// - [color] - Optional background color
-  /// - [borderColor] - Optional border color
+  /// - [borderColor] - Optional border color (applied to all sides if individual sides not specified)
   /// - [borderWidth] - Optional border width (thickness), will be scaled automatically
+  /// - [borderTop], [borderBottom], [borderLeft], [borderRight] - Optional border on specific sides
+  /// - [borderTopColor], [borderBottomColor], [borderLeftColor], [borderRightColor] - Optional border colors for specific sides
+  /// - [borderTopWidth], [borderBottomWidth], [borderLeftWidth], [borderRightWidth] - Optional border widths for specific sides
   /// - [child] - Optional child widget
   /// - [padding] - Optional padding
   /// - [margin] - Optional margin
@@ -512,6 +547,18 @@ class SKit {
     Color? color,
     Color? borderColor,
     double? borderWidth,
+    bool? borderTop,
+    bool? borderBottom,
+    bool? borderLeft,
+    bool? borderRight,
+    Color? borderTopColor,
+    Color? borderBottomColor,
+    Color? borderLeftColor,
+    Color? borderRightColor,
+    double? borderTopWidth,
+    double? borderBottomWidth,
+    double? borderLeftWidth,
+    double? borderRightWidth,
     Widget? child,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
@@ -524,18 +571,71 @@ class SKit {
       bottomRight: bottomRight,
     );
 
-    final scaledBorderWidth = borderWidth != null ? _f.createWidth(borderWidth) : null;
+    final scaledBorderWidth =
+        borderWidth != null ? _f.createWidth(borderWidth) : null;
+
+    // Check if individual border sides are specified
+    final hasIndividualBorders = borderTop != null ||
+        borderBottom != null ||
+        borderLeft != null ||
+        borderRight != null ||
+        borderTopColor != null ||
+        borderBottomColor != null ||
+        borderLeftColor != null ||
+        borderRightColor != null ||
+        borderTopWidth != null ||
+        borderBottomWidth != null ||
+        borderLeftWidth != null ||
+        borderRightWidth != null;
+
+    Border? border;
+    if (hasIndividualBorders) {
+      // Use Border.only() for individual sides
+      final topWidth = borderTopWidth != null
+          ? _f.createWidth(borderTopWidth)
+          : (borderTop == true ? (scaledBorderWidth ?? 1.0) : 0.0);
+      final bottomWidth = borderBottomWidth != null
+          ? _f.createWidth(borderBottomWidth)
+          : (borderBottom == true ? (scaledBorderWidth ?? 1.0) : 0.0);
+      final leftWidth = borderLeftWidth != null
+          ? _f.createWidth(borderLeftWidth)
+          : (borderLeft == true ? (scaledBorderWidth ?? 1.0) : 0.0);
+      final rightWidth = borderRightWidth != null
+          ? _f.createWidth(borderRightWidth)
+          : (borderRight == true ? (scaledBorderWidth ?? 1.0) : 0.0);
+
+      final topColor = borderTopColor ?? borderColor ?? Colors.transparent;
+      final bottomColor = borderBottomColor ?? borderColor ?? Colors.transparent;
+      final leftColor = borderLeftColor ?? borderColor ?? Colors.transparent;
+      final rightColor = borderRightColor ?? borderColor ?? Colors.transparent;
+
+      border = Border(
+        top: (borderTop == true || borderTopWidth != null || borderTopColor != null) && topWidth > 0
+            ? BorderSide(color: topColor, width: topWidth)
+            : BorderSide.none,
+        bottom: (borderBottom == true || borderBottomWidth != null || borderBottomColor != null) && bottomWidth > 0
+            ? BorderSide(color: bottomColor, width: bottomWidth)
+            : BorderSide.none,
+        left: (borderLeft == true || borderLeftWidth != null || borderLeftColor != null) && leftWidth > 0
+            ? BorderSide(color: leftColor, width: leftWidth)
+            : BorderSide.none,
+        right: (borderRight == true || borderRightWidth != null || borderRightColor != null) && rightWidth > 0
+            ? BorderSide(color: rightColor, width: rightWidth)
+            : BorderSide.none,
+      );
+    } else if (borderColor != null || scaledBorderWidth != null) {
+      // Use Border.all() for all sides
+      border = Border.all(
+        color: borderColor ?? Colors.transparent,
+        width: scaledBorderWidth ?? 1.0,
+      );
+    }
 
     return SKContainer(
       decoration: BoxDecoration(
         color: color,
         borderRadius: borderRadius,
-        border: borderColor != null || scaledBorderWidth != null
-            ? Border.all(
-                color: borderColor ?? Colors.transparent,
-                width: scaledBorderWidth ?? 1.0,
-              )
-            : null,
+        border: border,
       ),
       padding: padding,
       margin: margin,
@@ -567,7 +667,8 @@ class SKit {
     BoxDecoration? decoration,
   }) {
     return SKContainer(
-      decoration: decoration ?? (color != null ? BoxDecoration(color: color) : null),
+      decoration:
+          decoration ?? (color != null ? BoxDecoration(color: color) : null),
       padding: padding,
       margin: margin,
       width: width,
@@ -800,7 +901,8 @@ class SKit {
   /// - [percentage] - The percentage of screen width (0.0 to 1.0)
   ///
   /// Returns the calculated screen width percentage.
-  static double screenWidth(double percentage) => _f.createScreenWidth(percentage);
+  static double screenWidth(double percentage) =>
+      _f.createScreenWidth(percentage);
 
   /// Creates a screen height percentage value.
   ///
@@ -808,7 +910,8 @@ class SKit {
   /// - [percentage] - The percentage of screen height (0.0 to 1.0)
   ///
   /// Returns the calculated screen height percentage.
-  static double screenHeight(double percentage) => _f.createScreenHeight(percentage);
+  static double screenHeight(double percentage) =>
+      _f.createScreenHeight(percentage);
 
   /// Creates [EdgeInsets] padding with scaled numeric values.
   ///
