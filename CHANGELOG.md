@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2025-11-05
+
+### Added
+- `SKResponsive` widget for device/orientation-aware builders with sensible fallbacks
+- `SKit.responsiveInt()` and `SKit.responsiveDouble()` for responsive integer/double resolution (e.g., Grid columns)
+- `SKit.columns()` alias for `responsiveInt()` for grid layouts
+- `DesktopAs` enum to control how desktop resolves (desktop/tablet/mobile) for CSS-like breakpoints
+- Device detection: desktop classified strictly by width ≥ 1200 (Android/iOS remain mobile/tablet by width)
+- Desktop can optionally mimic tablet/mobile values using `desktopAs` parameter
+- Example app section demonstrating responsive builder and columns usage
+- README updates: Responsive Builder & Columns section with DesktopAs examples and CSS-like behavior notes
+
+### Changed
+- Desktop behavior: treated as single form by default; can opt-in to tablet/mobile behavior via `desktopAs`
+- Android/iOS: devices classified only as mobile/tablet by width; desktop logic doesn't apply
+- README: added DesktopAs documentation and CSS-like grid examples
+
 ## [1.0.2] - 2025-11-05
 
 ### Added

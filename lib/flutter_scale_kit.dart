@@ -8,6 +8,7 @@ export 'src/core/scale_value_cache.dart';
 export 'src/core/device_detector.dart';
 export 'src/core/scaling_strategy.dart';
 export 'src/core/aspect_ratio_adapter.dart';
+export 'src/core/responsive_enums.dart';
 // Size system exports
 export 'src/core/size_enums.dart' show SKSize, SKTextSize;
 export 'src/core/size_values.dart' show SizeValues, TextSizeValues, SizeConfig;
@@ -40,6 +41,7 @@ export 'src/core/size_system.dart'
 // Widgets
 export 'src/widgets/scale_kit_builder.dart';
 export 'src/widgets/const_widgets.dart';
+export 'src/widgets/responsive_builder.dart';
 
 // Font configuration
 export 'src/core/font_config.dart';
