@@ -1,6 +1,13 @@
 # Flutter Scale Kit
 
+[![Pub Version](https://img.shields.io/pub/v/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit)
+[![Pub Likes](https://img.shields.io/pub/likes/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit)
+[![Pub Points](https://img.shields.io/pub/points/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit/score)
+[![Popularity](https://img.shields.io/pub/popularity/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit/score)
+
 A high-performance responsive design package for Flutter that helps you create adaptive UIs across different screen sizes with easy-to-use scaling utilities.
+
+> If this package helps you, please click “Like” on the pub.dev page — it improves discoverability and ranking.
 
 ## Screenshots
 
@@ -74,7 +81,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.0.1
+  flutter_scale_kit: ^1.0.3
 ```
 
 Then run:
@@ -564,6 +571,63 @@ if (context.isMobile) {
 ```
 
 ### ScaleManager Direct API
+
+### Responsive Builder & Columns
+
+Build different widgets per device/orientation with sensible fallbacks, and resolve responsive integers (e.g., Grid columns) quickly.
+
+```dart
+// Widget builder
+SKResponsive(
+  mobile: (_) => Text('Mobile portrait'),
+  mobileLandscape: (_) => Text('Mobile landscape'),
+  tablet: (_) => Text('Tablet portrait'),
+  tabletLandscape: (_) => Text('Tablet landscape'),
+  desktop: (_) => Text('Desktop'),
+)
+
+// Responsive integer with fallback rules (alias for columns)
+final cols = SKit.responsiveInt(
+  mobile: 2,            // required base
+  tablet: 4,            // optional (falls back to mobile if null)
+  desktop: 8,           // optional (falls back to tablet->mobile if null)
+  mobileLandscape: 4,   // optional override for mobile landscape
+  // tabletLandscape falls back to mobileLandscape, then tablet, then mobile
+);
+GridView.count(crossAxisCount: cols)
+```
+
+Fallback rules:
+
+- Device: desktop -> tablet -> mobile; tablet -> mobile.
+- Orientation: landscape -> device portrait; for tablet.landscape -> mobile.landscape -> mobile.portrait.
+
+Desktop behavior (CSS-like):
+
+- On Android/iOS, devices are classified only as mobile or tablet by width; desktop logic doesn’t apply.
+- On desktop (width ≥ 1200), desktop values are used by default. You can opt to reuse tablet/mobile values to mimic CSS breakpoints.
+- This lets you build grids like in CSS (e.g., 2/4/8 columns) while forcing desktop to act like tablet/mobile if that’s desired.
+
+Examples:
+
+```dart
+// Make desktop behave like tablet for layout decisions
+SKResponsive(
+  mobile: (_) => MobileView(),
+  tablet: (_) => TabletView(),
+  desktop: (_) => DesktopView(),
+  desktopAs: DesktopAs.tablet, // 👈 map desktop to tablet behavior
+)
+
+// Resolve an integer (e.g., Grid crossAxisCount) with desktop mapped to tablet
+final cols = SKit.responsiveInt(
+  mobile: 2,
+  tablet: 4,
+  desktop: 8,
+  desktopAs: DesktopAs.tablet, // 👈 desktop will use tablet values unless explicitly provided
+);
+GridView.count(crossAxisCount: cols)
+```
 
 Access scale values directly:
 
