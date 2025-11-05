@@ -544,6 +544,12 @@ FontConfig.instance.setLanguageFont(
 
 **Note:** If no font is configured, Flutter's default font (Roboto on Android, San Francisco on iOS) will be used. The font configuration is completely optional.
 
+## Package Size
+
+**Important:** When you add this package as a dependency using `flutter pub get`, you will **NOT** download the `example` folder. Pub.dev automatically excludes the example folder from the package distribution. The example folder is only available on the pub.dev website for documentation purposes.
+
+The package size is optimized and only includes the necessary library code (`lib/` folder).
+
 ## API Reference
 
 ### Extension Methods (on num)
@@ -595,6 +601,18 @@ FontConfig.instance.setLanguageFont(
 - `getRadius(double radius)` - Get scaled radius
 - `getScreenWidth(double percentage)` - Get screen width percentage
 - `getScreenHeight(double percentage)` - Get screen height percentage
+
+### FontConfig API
+
+- `FontConfig.instance` - Singleton instance for font configuration
+- `setLanguageFont(LanguageFontConfig)` - Configure font for specific language
+- `setLanguageGroupFont(LanguageGroupFontConfig)` - Configure font for language group
+- `setDefaultFont({googleFont?, customFontFamily?})` - Set default font
+- `setLanguagesFonts(List<LanguageFontConfig>)` - Configure multiple languages at once
+- `setLanguageGroupsFonts(List<LanguageGroupFontConfig>)` - Configure multiple language groups
+- `getTextStyle({languageCode?, baseTextStyle})` - Get TextStyle with configured font
+- `currentLanguageCode` - Get current language code
+- `clear()` - Clear all font configurations
 
 ## Performance
 
