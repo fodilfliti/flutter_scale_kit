@@ -575,7 +575,8 @@ class SKit {
         borderWidth != null ? _f.createWidth(borderWidth) : null;
 
     // Check if individual border sides are specified
-    final hasIndividualBorders = borderTop == true ||
+    final hasIndividualBorders =
+        borderTop == true ||
         borderBottom == true ||
         borderLeft == true ||
         borderRight == true ||
@@ -594,37 +595,53 @@ class SKit {
       final defaultWidth = scaledBorderWidth ?? 1.0;
       final defaultColor = borderColor ?? Colors.black;
 
-      final topWidth = borderTopWidth != null
-          ? _f.createWidth(borderTopWidth)
-          : (borderTop == true ? defaultWidth : 0.0);
-      final bottomWidth = borderBottomWidth != null
-          ? _f.createWidth(borderBottomWidth)
-          : (borderBottom == true ? defaultWidth : 0.0);
-      final leftWidth = borderLeftWidth != null
-          ? _f.createWidth(borderLeftWidth)
-          : (borderLeft == true ? defaultWidth : 0.0);
-      final rightWidth = borderRightWidth != null
-          ? _f.createWidth(borderRightWidth)
-          : (borderRight == true ? defaultWidth : 0.0);
+      final topWidth =
+          borderTopWidth != null
+              ? _f.createWidth(borderTopWidth)
+              : (borderTop == true ? defaultWidth : 0.0);
+      final bottomWidth =
+          borderBottomWidth != null
+              ? _f.createWidth(borderBottomWidth)
+              : (borderBottom == true ? defaultWidth : 0.0);
+      final leftWidth =
+          borderLeftWidth != null
+              ? _f.createWidth(borderLeftWidth)
+              : (borderLeft == true ? defaultWidth : 0.0);
+      final rightWidth =
+          borderRightWidth != null
+              ? _f.createWidth(borderRightWidth)
+              : (borderRight == true ? defaultWidth : 0.0);
 
-      final topColor = borderTopColor ?? (borderTop == true ? defaultColor : Colors.transparent);
-      final bottomColor = borderBottomColor ?? (borderBottom == true ? defaultColor : Colors.transparent);
-      final leftColor = borderLeftColor ?? (borderLeft == true ? defaultColor : Colors.transparent);
-      final rightColor = borderRightColor ?? (borderRight == true ? defaultColor : Colors.transparent);
+      final topColor =
+          borderTopColor ??
+          (borderTop == true ? defaultColor : Colors.transparent);
+      final bottomColor =
+          borderBottomColor ??
+          (borderBottom == true ? defaultColor : Colors.transparent);
+      final leftColor =
+          borderLeftColor ??
+          (borderLeft == true ? defaultColor : Colors.transparent);
+      final rightColor =
+          borderRightColor ??
+          (borderRight == true ? defaultColor : Colors.transparent);
 
       border = Border(
-        top: topWidth > 0
-            ? BorderSide(color: topColor, width: topWidth)
-            : BorderSide.none,
-        bottom: bottomWidth > 0
-            ? BorderSide(color: bottomColor, width: bottomWidth)
-            : BorderSide.none,
-        left: leftWidth > 0
-            ? BorderSide(color: leftColor, width: leftWidth)
-            : BorderSide.none,
-        right: rightWidth > 0
-            ? BorderSide(color: rightColor, width: rightWidth)
-            : BorderSide.none,
+        top:
+            topWidth > 0
+                ? BorderSide(color: topColor, width: topWidth)
+                : BorderSide.none,
+        bottom:
+            bottomWidth > 0
+                ? BorderSide(color: bottomColor, width: bottomWidth)
+                : BorderSide.none,
+        left:
+            leftWidth > 0
+                ? BorderSide(color: leftColor, width: leftWidth)
+                : BorderSide.none,
+        right:
+            rightWidth > 0
+                ? BorderSide(color: rightColor, width: rightWidth)
+                : BorderSide.none,
       );
     } else if (borderColor != null || scaledBorderWidth != null) {
       // Use Border.all() for all sides

@@ -328,6 +328,7 @@ SKit.rounded(
 ```
 
 **Border Parameters:**
+
 - `borderColor` - Border color for all sides (if individual sides not specified)
 - `borderWidth` - Border width for all sides (automatically scaled)
 - `borderTop`, `borderBottom`, `borderLeft`, `borderRight` - Show border on specific sides (boolean)
