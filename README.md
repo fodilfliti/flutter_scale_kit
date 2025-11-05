@@ -8,11 +8,11 @@ A high-performance responsive design package for Flutter that helps you create a
   <tr>
     <td align="center" width="40%">
       <strong>Mobile</strong><br/>
-      <img src="screenshots/mobile.png" alt="Flutter Scale Kit - Mobile" style="height:420px; width:100%; object-fit:contain;"/>
+      <img src="screenshots/mobile.png" alt="Flutter Scale Kit - Mobile" style="height:420px; width:100%; object-fit:cover; display:block;"/>
     </td>
     <td align="center" width="60%">
       <strong>Tablet</strong><br/>
-      <img src="screenshots/table.png" alt="Flutter Scale Kit - Tablet" style="height:420px; width:100%; object-fit:contain;"/>
+      <img src="screenshots/table.png" alt="Flutter Scale Kit - Tablet" style="height:420px; width:100%; object-fit:cover; display:block;"/>
     </td>
   </tr>
 </table>
@@ -27,21 +27,21 @@ A high-performance responsive design package for Flutter that helps you create a
   <tr>
     <td align="center" width="50%">
       <strong>Autoscale: Enabled</strong><br/>
-      <img src="screenshots/autoscale_enable.png" alt="Autoscale Enabled" style="height:420px; width:100%; object-fit:contain;"/>
+      <img src="screenshots/autoscale_enable.png" alt="Autoscale Enabled" style="height:420px; width:100%; object-fit:cover; display:block;"/>
     </td>
     <td align="center" width="50%">
       <strong>Autoscale: Disabled</strong><br/>
-      <img src="screenshots/auto_scale_disable.png" alt="Autoscale Disabled" style="height:420px; width:100%; object-fit:contain;"/>
+      <img src="screenshots/auto_scale_disable.png" alt="Autoscale Disabled" style="height:420px; width:100%; object-fit:cover; display:block;"/>
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
       <strong>Package Enabled (Scaling On)</strong><br/>
-      <img src="screenshots/package_enable_true.png" alt="Package Enabled" style="height:420px; width:100%; object-fit:contain;"/>
+      <img src="screenshots/package_enable_true.png" alt="Package Enabled" style="height:420px; width:100%; object-fit:cover; display:block;"/>
     </td>
     <td align="center" width="50%">
       <strong>Package Disabled (Raw Flutter)</strong><br/>
-      <img src="screenshots/package_enable_false.png" alt="Package Disabled" style="height:420px; width:100%; object-fit:contain;"/>
+      <img src="screenshots/package_enable_false.png" alt="Package Disabled" style="height:420px; width:100%; object-fit:cover; display:block;"/>
     </td>
   </tr>
   <tr>
