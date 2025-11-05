@@ -4,13 +4,18 @@ A high-performance responsive design package for Flutter that helps you create a
 
 ## Screenshots
 
-### Mobile
-
-![Flutter Scale Kit - Mobile](screenshots/mobile.png)
-
-### Tablet
-
-![Flutter Scale Kit - Tablet](screenshots/table.png)
+<table>
+  <tr>
+    <td align="center">
+      <strong>Mobile</strong><br/>
+      <img src="screenshots/mobile.png" alt="Flutter Scale Kit - Mobile" width="300"/>
+    </td>
+    <td align="center">
+      <strong>Tablet</strong><br/>
+      <img src="screenshots/table.png" alt="Flutter Scale Kit - Tablet" width="300"/>
+    </td>
+  </tr>
+</table>
 
 ### Desktop
 
