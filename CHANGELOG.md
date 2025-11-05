@@ -17,12 +17,17 @@ All notable changes to this project will be documented in this file.
 - Language group font configuration
 - Safe Localizations access with fallback to default language
 - Default font fallback (uses Flutter's default font if no configuration provided)
+- `FontConfig` class for managing fonts per language
+- `LanguageFontConfig` and `LanguageGroupFontConfig` for font configuration
+- `TextStyle` extensions for automatic font application
+- Screenshots for mobile, tablet, and desktop devices
 
 ### Changed
 - FontConfig now uses singleton pattern with `FontConfig.instance`
 - All TextStyle creation methods automatically apply FontConfig
 - ThemeData integration now includes automatic font configuration
 - Improved error handling for missing Localizations context
+- Updated README with side-by-side mobile and tablet screenshots
 
 ## [1.0.0] - 2024-01-XX
 
