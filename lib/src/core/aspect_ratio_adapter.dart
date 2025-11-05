@@ -4,7 +4,12 @@ import 'scale_manager.dart';
 
 /// Aspect ratio adapter for handling different device aspect ratios
 /// Provides smart scaling based on device characteristics
+///
+/// This class contains only static methods and has no public constructor.
 class AspectRatioAdapter {
+  /// Private constructor to prevent instantiation
+  AspectRatioAdapter._();
+
   /// Get appropriate scale factor based on aspect ratio
   static double getScaleFactor({
     required double screenWidth,
@@ -121,15 +126,11 @@ class AspectRatioAdapter {
   }
 
   /// Detect significant size change (for foldable transitions)
-  static bool hasSignificantSizeChange(
-    Size previousSize,
-    Size currentSize,
-  ) {
+  static bool hasSignificantSizeChange(Size previousSize, Size currentSize) {
     final widthChange = (currentSize.width - previousSize.width).abs();
     final heightChange = (currentSize.height - previousSize.height).abs();
-    
+
     return widthChange > previousSize.width * 0.5 ||
         heightChange > previousSize.height * 0.5;
   }
 }
-

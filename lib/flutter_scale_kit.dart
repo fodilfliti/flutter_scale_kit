@@ -1,4 +1,4 @@
-/// Flutter Scale Kit - High-performance responsive design package
+// Flutter Scale Kit - High-performance responsive design package
 // Core exports
 export 'src/core/scale_manager.dart';
 export 'src/core/scale_value_factory.dart' show ScaleValueFactory, skFactory;
