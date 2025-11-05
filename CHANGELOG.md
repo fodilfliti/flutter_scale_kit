@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2025-11-05
+
+### Added
+- Orientation-specific autoscale flags: `autoScaleLandscape` (default true), `autoScalePortrait` (default false)
+- Portrait font/size boosts per device type (mobile/tablet/desktop)
+- Global enable/disable scaling with runtime toggle via `enabled` and `enabledListenable`
+- Example app settings sheet to live-test autoscale and boosts, with Save/Cancel and Reset to defaults
+- Device detection updated: Android/iOS (including emulators) are mobile/tablet by width; desktop only for desktop OS; web distinct
+- README updates: Orientation Autoscale, Runtime Toggle sections; added screenshots and guidance
+
+### Fixed
+- MaterialLocalizations error when opening settings (uses proper in-app context)
+- Overflow in demo card: text now wraps/scales to avoid RenderFlex overflows
+
+### Changed
+- Example made more professional and explanatory for all package parts
+
 ## [1.0.1] - 2025-01-XX
 
 ### Fixed

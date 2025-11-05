@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_scale_kit/flutter_scale_kit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'
+    as su
+    show ScreenUtil, ScreenUtilInit;
 
 void main() {
   // Configure FontConfig for different languages (optional)
@@ -29,15 +32,60 @@ void main() {
 
 /// Main app widget - ScaleKitBuilder wraps MaterialApp at the top level
 /// This allows ScaleKit to be available throughout the entire app
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final ValueNotifier<bool> _enabled = ValueNotifier<bool>(true);
+  bool _autoScale = true;
+  bool _autoScaleLandscape = true;
+  bool _autoScalePortrait = false;
+  int _builderVersion = 0;
+
+  double _mobileLandscapeFontBoost = 1.2;
+  double _mobileLandscapeSizeBoost = 1.2;
+  double _tabletLandscapeFontBoost = 1.2;
+  double _tabletLandscapeSizeBoost = 1.2;
+  double _desktopLandscapeFontBoost = 1.0;
+  double _desktopLandscapeSizeBoost = 1.0;
+
+  double _mobilePortraitFontBoost = 1.0;
+  double _mobilePortraitSizeBoost = 1.0;
+  double _tabletPortraitFontBoost = 1.0;
+  double _tabletPortraitSizeBoost = 1.0;
+  double _desktopPortraitFontBoost = 1.0;
+  double _desktopPortraitSizeBoost = 1.0;
 
   @override
   Widget build(BuildContext context) {
     return ScaleKitBuilder(
+      key: ValueKey(_builderVersion),
       designWidth: 375,
       designHeight: 812,
       designType: DeviceType.mobile,
+      // Autoscale options
+      autoScale: _autoScale,
+      autoScaleLandscape: _autoScaleLandscape,
+      autoScalePortrait: _autoScalePortrait,
+      enabledListenable: _enabled,
+      enabled: _enabled.value,
+      // Default boosts: 1.2 for mobile/tablet in landscape, 1.0 desktop
+      mobileLandscapeFontBoost: _mobileLandscapeFontBoost,
+      mobileLandscapeSizeBoost: _mobileLandscapeSizeBoost,
+      tabletLandscapeFontBoost: _tabletLandscapeFontBoost,
+      tabletLandscapeSizeBoost: _tabletLandscapeSizeBoost,
+      desktopLandscapeFontBoost: _desktopLandscapeFontBoost,
+      desktopLandscapeSizeBoost: _desktopLandscapeSizeBoost,
+      mobilePortraitFontBoost: _mobilePortraitFontBoost,
+      mobilePortraitSizeBoost: _mobilePortraitSizeBoost,
+      tabletPortraitFontBoost: _tabletPortraitFontBoost,
+      tabletPortraitSizeBoost: _tabletPortraitSizeBoost,
+      desktopPortraitFontBoost: _desktopPortraitFontBoost,
+      desktopPortraitSizeBoost: _desktopPortraitSizeBoost,
       child: MaterialApp(
         title: 'Flutter Scale Kit - Complete Examples',
         debugShowCheckedModeBanner: false,
@@ -49,15 +97,278 @@ class MyApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        home: const HomePage(),
+        home: HomePage(enabled: _enabled, openSettings: _openSettings),
       ),
+    );
+  }
+
+  void _openSettings(BuildContext hostContext) {
+    showModalBottomSheet(
+      context: hostContext,
+      isScrollControlled: true,
+      builder: (ctx) {
+        // Stage values locally; apply only when user taps Save
+        bool tempEnabled = _enabled.value;
+        bool tempAutoScale = _autoScale;
+        bool tempAutoScaleLandscape = _autoScaleLandscape;
+        bool tempAutoScalePortrait = _autoScalePortrait;
+
+        double tempMobileLandscapeFontBoost = _mobileLandscapeFontBoost;
+        double tempMobileLandscapeSizeBoost = _mobileLandscapeSizeBoost;
+        double tempTabletLandscapeFontBoost = _tabletLandscapeFontBoost;
+        double tempTabletLandscapeSizeBoost = _tabletLandscapeSizeBoost;
+        double tempDesktopLandscapeFontBoost = _desktopLandscapeFontBoost;
+        double tempDesktopLandscapeSizeBoost = _desktopLandscapeSizeBoost;
+
+        double tempMobilePortraitFontBoost = _mobilePortraitFontBoost;
+        double tempMobilePortraitSizeBoost = _mobilePortraitSizeBoost;
+        double tempTabletPortraitFontBoost = _tabletPortraitFontBoost;
+        double tempTabletPortraitSizeBoost = _tabletPortraitSizeBoost;
+        double tempDesktopPortraitFontBoost = _desktopPortraitFontBoost;
+        double tempDesktopPortraitSizeBoost = _desktopPortraitSizeBoost;
+
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            Widget slider(
+              String label,
+              double value,
+              ValueChanged<double> onChanged, {
+              double min = 0.8,
+              double max = 1.5,
+            }) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('$label: ${value.toStringAsFixed(2)}'),
+                  Slider(
+                    min: min,
+                    max: max,
+                    divisions: ((max - min) * 100).toInt(),
+                    value: value,
+                    onChanged: (v) {
+                      setModalState(() => onChanged(v));
+                    },
+                  ),
+                ],
+              );
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(ctx).viewInsets.bottom,
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Scale Kit Settings',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(ctx),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      SwitchListTile(
+                        title: const Text('Enabled'),
+                        value: tempEnabled,
+                        onChanged: (v) {
+                          setModalState(() => tempEnabled = v);
+                        },
+                      ),
+                      SwitchListTile(
+                        title: const Text('autoScale'),
+                        value: tempAutoScale,
+                        onChanged: (v) {
+                          setModalState(() => tempAutoScale = v);
+                        },
+                      ),
+                      SwitchListTile(
+                        title: const Text('autoScaleLandscape'),
+                        value: tempAutoScaleLandscape,
+                        onChanged: (v) {
+                          setModalState(() => tempAutoScaleLandscape = v);
+                        },
+                      ),
+                      SwitchListTile(
+                        title: const Text('autoScalePortrait'),
+                        value: tempAutoScalePortrait,
+                        onChanged: (v) {
+                          setModalState(() => tempAutoScalePortrait = v);
+                        },
+                      ),
+                      const Divider(),
+                      const Text('Landscape Boosts (Mobile/Tablet/Desktop)'),
+                      slider(
+                        'Mobile Font',
+                        tempMobileLandscapeFontBoost,
+                        (v) => tempMobileLandscapeFontBoost = v,
+                      ),
+                      slider(
+                        'Mobile Size',
+                        tempMobileLandscapeSizeBoost,
+                        (v) => tempMobileLandscapeSizeBoost = v,
+                      ),
+                      slider(
+                        'Tablet Font',
+                        tempTabletLandscapeFontBoost,
+                        (v) => tempTabletLandscapeFontBoost = v,
+                      ),
+                      slider(
+                        'Tablet Size',
+                        tempTabletLandscapeSizeBoost,
+                        (v) => tempTabletLandscapeSizeBoost = v,
+                      ),
+                      slider(
+                        'Desktop Font',
+                        tempDesktopLandscapeFontBoost,
+                        (v) => tempDesktopLandscapeFontBoost = v,
+                      ),
+                      slider(
+                        'Desktop Size',
+                        tempDesktopLandscapeSizeBoost,
+                        (v) => tempDesktopLandscapeSizeBoost = v,
+                      ),
+                      const Divider(),
+                      const Text('Portrait Boosts (Mobile/Tablet/Desktop)'),
+                      slider(
+                        'Mobile Font',
+                        tempMobilePortraitFontBoost,
+                        (v) => tempMobilePortraitFontBoost = v,
+                      ),
+                      slider(
+                        'Mobile Size',
+                        tempMobilePortraitSizeBoost,
+                        (v) => tempMobilePortraitSizeBoost = v,
+                      ),
+                      slider(
+                        'Tablet Font',
+                        tempTabletPortraitFontBoost,
+                        (v) => tempTabletPortraitFontBoost = v,
+                      ),
+                      slider(
+                        'Tablet Size',
+                        tempTabletPortraitSizeBoost,
+                        (v) => tempTabletPortraitSizeBoost = v,
+                      ),
+                      slider(
+                        'Desktop Font',
+                        tempDesktopPortraitFontBoost,
+                        (v) => tempDesktopPortraitFontBoost = v,
+                      ),
+                      slider(
+                        'Desktop Size',
+                        tempDesktopPortraitSizeBoost,
+                        (v) => tempDesktopPortraitSizeBoost = v,
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          OutlinedButton(
+                            onPressed: () {
+                              setModalState(() {
+                                // Reset staged values to defaults
+                                tempEnabled = true;
+                                tempAutoScale = true;
+                                tempAutoScaleLandscape = true;
+                                tempAutoScalePortrait = false;
+
+                                tempMobileLandscapeFontBoost = 1.2;
+                                tempMobileLandscapeSizeBoost = 1.2;
+                                tempTabletLandscapeFontBoost = 1.2;
+                                tempTabletLandscapeSizeBoost = 1.2;
+                                tempDesktopLandscapeFontBoost = 1.0;
+                                tempDesktopLandscapeSizeBoost = 1.0;
+
+                                tempMobilePortraitFontBoost = 1.0;
+                                tempMobilePortraitSizeBoost = 1.0;
+                                tempTabletPortraitFontBoost = 1.0;
+                                tempTabletPortraitSizeBoost = 1.0;
+                                tempDesktopPortraitFontBoost = 1.0;
+                                tempDesktopPortraitSizeBoost = 1.0;
+                              });
+                            },
+                            child: const Text('Reset to defaults'),
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            child: const Text('Cancel'),
+                          ),
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _autoScale = tempAutoScale;
+                                _autoScaleLandscape = tempAutoScaleLandscape;
+                                _autoScalePortrait = tempAutoScalePortrait;
+                                _mobileLandscapeFontBoost =
+                                    tempMobileLandscapeFontBoost;
+                                _mobileLandscapeSizeBoost =
+                                    tempMobileLandscapeSizeBoost;
+                                _tabletLandscapeFontBoost =
+                                    tempTabletLandscapeFontBoost;
+                                _tabletLandscapeSizeBoost =
+                                    tempTabletLandscapeSizeBoost;
+                                _desktopLandscapeFontBoost =
+                                    tempDesktopLandscapeFontBoost;
+                                _desktopLandscapeSizeBoost =
+                                    tempDesktopLandscapeSizeBoost;
+                                _mobilePortraitFontBoost =
+                                    tempMobilePortraitFontBoost;
+                                _mobilePortraitSizeBoost =
+                                    tempMobilePortraitSizeBoost;
+                                _tabletPortraitFontBoost =
+                                    tempTabletPortraitFontBoost;
+                                _tabletPortraitSizeBoost =
+                                    tempTabletPortraitSizeBoost;
+                                _desktopPortraitFontBoost =
+                                    tempDesktopPortraitFontBoost;
+                                _desktopPortraitSizeBoost =
+                                    tempDesktopPortraitSizeBoost;
+                                _builderVersion++;
+                              });
+                              if (_enabled.value != tempEnabled) {
+                                _enabled.value = tempEnabled;
+                              }
+                              Navigator.pop(ctx);
+                            },
+                            child: const Text('Save'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
 
 /// Main example page with comprehensive demonstrations
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final ValueNotifier<bool> enabled;
+  final void Function(BuildContext) openSettings;
+  const HomePage({
+    super.key,
+    required this.enabled,
+    required this.openSettings,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +377,27 @@ class HomePage extends StatelessWidget {
         title: const Text('Flutter Scale Kit Examples'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         elevation: 0,
+        actions: [
+          Row(
+            children: [
+              const Text('Enabled'),
+              ValueListenableBuilder<bool>(
+                valueListenable: enabled,
+                builder:
+                    (_, value, __) => Switch(
+                      value: value,
+                      onChanged: (v) => enabled.value = v,
+                    ),
+              ),
+              SizedBox(width: 8.w),
+              IconButton(
+                tooltip: 'Configure Scale Kit',
+                icon: const Icon(Icons.tune),
+                onPressed: () => openSettings(context),
+              ),
+            ],
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.w),
@@ -79,6 +411,17 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
             _buildQuickStartExample(),
+            SizedBox(height: 24.h),
+
+            // Autoscale Orientation Info
+            _buildSectionTitle(
+              '🧭 Autoscale Orientation',
+              'Landscape on by default, Portrait off',
+            ),
+            SizedBox(height: 12.h),
+            _buildAutoscaleOrientationInfo(),
+            SizedBox(height: 24.h),
+            _buildEnableToggleInfo(),
             SizedBox(height: 24.h),
 
             // Extension Methods
@@ -162,10 +505,56 @@ class HomePage extends StatelessWidget {
             _buildDeviceInfoExample(context),
             SizedBox(height: 24.h),
 
+            // Live Scaling Debug
+            _buildSectionTitle(
+              '🔍 Live Scaling Debug',
+              'Watch values change on resize/orientation',
+            ),
+            SizedBox(height: 12.h),
+            _buildLiveScalingDebug(),
+            SizedBox(height: 24.h),
+
             // Performance Tips
             _buildSectionTitle('💡 Performance Tips', 'Best practices'),
             SizedBox(height: 12.h),
             _buildPerformanceTipsExample(),
+            SizedBox(height: 24.h),
+
+            // Heavy Pages (Stress Test)
+            _buildSectionTitle(
+              '🧪 Performance Stress Test',
+              'Compare flutter_screenutil vs Scale Kit',
+            ),
+            SizedBox(height: 12.h),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const HeavyScreenUtilPage(),
+                        ),
+                      );
+                    },
+                    child: const Text('Open flutter_screenutil Heavy Page'),
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const HeavyScaleKitPage(),
+                        ),
+                      );
+                    },
+                    child: const Text('Open Scale Kit Heavy Page'),
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: 24.h),
           ],
         ),
@@ -195,6 +584,83 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  // ============================================================================
+  // AUTOSCALE ORIENTATION INFO
+  // ============================================================================
+  Widget _buildAutoscaleOrientationInfo() {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Orientation-Specific Autoscale',
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'By default: autoScaleLandscape=true, autoScalePortrait=false. This keeps portrait UI stable while allowing readability boosts in landscape.',
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade700),
+            ),
+            SizedBox(height: 12.h),
+            Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(6.r),
+              ),
+              child: Text(
+                'ScaleKitBuilder(\n'
+                '  designWidth: 375, designHeight: 812,\n'
+                '  autoScaleLandscape: true,\n'
+                '  autoScalePortrait: false,\n'
+                ')',
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontFamily: 'monospace',
+                  color: Colors.grey.shade800,
+                ),
+              ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              'Compared to flutter_screenutil: when resizing desktop windows, its cards often scale disproportionately. Scale Kit keeps practical sizes due to clamped scales and orientation-aware boosts.',
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade700),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================================
+  // ENABLE TOGGLE INFO
+  // ============================================================================
+  Widget _buildEnableToggleInfo() {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Enable/Disable Scaling',
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'Use the switch in the AppBar to toggle Scale Kit on/off and visually compare against Flutter\'s raw sizes.',
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade700),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1312,26 +1778,33 @@ class HomePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(scale.getRadius(12)),
                   ),
                   padding: EdgeInsets.all(16.r),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'ScaleManager.instance',
-                        style: TextStyle(
-                          fontSize: scale.getFontSize(14),
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'ScaleManager.instance',
+                          style: TextStyle(
+                            fontSize: scale.getFontSize(14),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                          softWrap: true,
                         ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        'getWidth(200) × getHeight(100)',
-                        style: TextStyle(
-                          fontSize: scale.getFontSize(12),
-                          color: Colors.white70,
+                        SizedBox(height: 8.h),
+                        Text(
+                          'getWidth(200) × getHeight(100)',
+                          style: TextStyle(
+                            fontSize: scale.getFontSize(12),
+                            color: Colors.white70,
+                          ),
+                          textAlign: TextAlign.center,
+                          softWrap: true,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },
@@ -1457,6 +1930,63 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Widget _buildLiveScalingDebug() {
+    final scale = ScaleManager.instance;
+    const baseFont = 12.0;
+    const baseW = 100.0;
+    const baseH = 40.0;
+    final scaledFont = scale.getFontSize(baseFont);
+    final scaledW = scale.getWidth(baseW);
+    final scaledH = scale.getHeight(baseH);
+
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Base vs Scaled (resize window or rotate device):',
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.h),
+            _debugRow('Font 12 ->', scaledFont),
+            _debugRow('Width 100 ->', scaledW),
+            _debugRow('Height 40 ->', scaledH),
+            SizedBox(height: 12.h),
+            Text(
+              'pixelRatio=${scale.devicePixelRatio.toStringAsFixed(2)}, '
+              'orientation=${scale.orientation.name}, '
+              'scaleW=${scale.scaleWidth.toStringAsFixed(3)}, '
+              'scaleH=${scale.scaleHeight.toStringAsFixed(3)}',
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade700),
+            ),
+            SizedBox(height: 8.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _debugRow(String label, double value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6.h),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 130.w,
+            child: Text(label, style: TextStyle(fontSize: 12.sp)),
+          ),
+          Text(
+            value.toStringAsFixed(2),
+            style: TextStyle(fontSize: 12.sp, color: Colors.deepPurple),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: EdgeInsets.only(bottom: 6.h),
@@ -1554,13 +2084,227 @@ class HomePage extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: Colors.blue.shade900,
           ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: 4.h),
         Text(
           description,
           style: TextStyle(fontSize: 12.sp, color: Colors.blue.shade700),
+          softWrap: true,
+          overflow: TextOverflow.visible,
         ),
       ],
+    );
+  }
+}
+
+// ============================================================================
+// HEAVY flutter_screenutil PAGE
+// ============================================================================
+class HeavyScreenUtilPage extends StatelessWidget {
+  const HeavyScreenUtilPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return su.ScreenUtilInit(
+      designSize: const Size(375, 812),
+      builder:
+          (_, __) => Scaffold(
+            appBar: AppBar(title: const Text('flutter_screenutil Heavy Page')),
+            body: ListView.builder(
+              padding: EdgeInsets.all(su.ScreenUtil().setWidth(12)),
+              itemCount: 600,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: su.ScreenUtil().setHeight(12),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(su.ScreenUtil().setWidth(12)),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(
+                        su.ScreenUtil().radius(10),
+                      ),
+                      border: Border.all(
+                        color: Colors.grey.shade300,
+                        width: su.ScreenUtil().setWidth(1),
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: su.ScreenUtil().setWidth(56),
+                          height: su.ScreenUtil().setWidth(56),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(
+                              su.ScreenUtil().radius(8),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: su.ScreenUtil().setWidth(12)),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Item #$index - Title',
+                                style: TextStyle(
+                                  fontSize: su.ScreenUtil().setSp(16),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: su.ScreenUtil().setHeight(6)),
+                              Text(
+                                'Subtitle lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+                                'Phasellus efficitur, neque a interdum congue, justo arcu.',
+                                style: TextStyle(
+                                  fontSize: su.ScreenUtil().setSp(12),
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                              SizedBox(height: su.ScreenUtil().setHeight(8)),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.star,
+                                    size: su.ScreenUtil().setSp(14),
+                                    color: Colors.orange,
+                                  ),
+                                  SizedBox(width: su.ScreenUtil().setWidth(6)),
+                                  Text(
+                                    '4.${index % 10}',
+                                    style: TextStyle(
+                                      fontSize: su.ScreenUtil().setSp(12),
+                                    ),
+                                  ),
+                                  SizedBox(width: su.ScreenUtil().setWidth(12)),
+                                  Icon(
+                                    Icons.timer,
+                                    size: su.ScreenUtil().setSp(14),
+                                    color: Colors.blueGrey,
+                                  ),
+                                  SizedBox(width: su.ScreenUtil().setWidth(6)),
+                                  Text(
+                                    '${(index % 50) + 1}m',
+                                    style: TextStyle(
+                                      fontSize: su.ScreenUtil().setSp(12),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+    );
+  }
+}
+
+// ============================================================================
+// HEAVY COMPUTED PAGE (SKitTheme.compute; fewer per-item calculations)
+// ============================================================================
+class HeavyScaleKitPage extends StatelessWidget {
+  const HeavyScaleKitPage({super.key});
+
+  static const _theme = SKitTheme(
+    textSm: 12,
+    textMd: 14,
+    textLg: 16,
+    paddingSm: 8,
+    paddingMd: 12,
+    spacingSm: 6,
+    spacingMd: 12,
+    radiusSm: 8,
+    radiusMd: 10,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final v = _theme.compute();
+    return Scaffold(
+      appBar: AppBar(title: const Text('Scale Kit Heavy Page')),
+      body: ListView.builder(
+        padding: v.paddingHorizontal,
+        itemCount: 600,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: v.spacingMd ?? 12),
+            child: SKContainer(
+              padding: v.paddingMd,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: v.borderRadiusMd,
+                border: Border.all(color: Colors.grey.shade300, width: 1.w),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: v.widthSm ?? 56.w,
+                    height: v.heightSm ?? 56.w,
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: v.borderRadiusSm,
+                    ),
+                  ),
+                  SizedBox(width: v.spacingMd ?? 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Item #$index - Title',
+                          style: v.textLg?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: v.spacingSm ?? 6),
+                        Text(
+                          'Subtitle lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+                          'Phasellus efficitur, neque a interdum congue, justo arcu.',
+                          style: v.textSm?.copyWith(
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        SizedBox(height: v.spacingMd ?? 12),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star,
+                              size: (v.textSm?.fontSize ?? 12),
+                              color: Colors.orange,
+                            ),
+                            SizedBox(width: v.spacingSm ?? 6),
+                            Text('4.${index % 10}', style: v.textSm),
+                            SizedBox(width: v.spacingMd ?? 12),
+                            Icon(
+                              Icons.timer,
+                              size: (v.textSm?.fontSize ?? 12),
+                              color: Colors.blueGrey,
+                            ),
+                            SizedBox(width: v.spacingSm ?? 6),
+                            Text('${(index % 50) + 1}m', style: v.textSm),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

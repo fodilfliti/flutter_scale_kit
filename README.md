@@ -8,18 +8,33 @@ A high-performance responsive design package for Flutter that helps you create a
   <tr>
     <td align="center">
       <strong>Mobile</strong><br/>
-      <img src="screenshots/mobile.png" alt="Flutter Scale Kit - Mobile" width="300"/>
+      <img src="screenshots/mobile.png" alt="Flutter Scale Kit - Mobile" width="300" style="max-height:420px; object-fit:contain;"/>
     </td>
     <td align="center">
       <strong>Tablet</strong><br/>
-      <img src="screenshots/table.png" alt="Flutter Scale Kit - Tablet" width="300"/>
+      <img src="screenshots/table.png" alt="Flutter Scale Kit - Tablet" width="300" style="max-height:420px; object-fit:contain;"/>
     </td>
   </tr>
 </table>
 
 ### Desktop
 
-![Flutter Scale Kit - Desktop](screenshots/desctop.png)
+<img src="screenshots/desctop.png" alt="Flutter Scale Kit - Desktop" style="max-height:420px; object-fit:contain;"/>
+
+### Autoscale and Enable/Disable Examples
+
+<table>
+  <tr>
+    <td align="center">
+      <strong>Autoscale Settings</strong><br/>
+      <img src="screenshots/autoscale.png" alt="Autoscale Settings" style="max-height:420px; object-fit:contain;"/>
+    </td>
+    <td align="center">
+      <strong>Enabled vs Disabled</strong><br/>
+      <img src="screenshots/enabled_disabled.png" alt="Enable Disable" style="max-height:420px; object-fit:contain;"/>
+    </td>
+  </tr>
+</table>
 
 ## Features
 
@@ -34,6 +49,8 @@ A high-performance responsive design package for Flutter that helps you create a
 - 🔄 **Smart Caching**: Flyweight pattern with automatic cache invalidation on size/orientation change
 - 🎨 **ThemeData Integration**: Use responsive scaling in Flutter's theme system
 - 🔤 **Font Configuration**: Automatic font selection per language with Google Fonts support
+ - 🧭 **Orientation Autoscale**: Enable different autoscale behavior for landscape vs portrait
+ - 🔁 **Runtime Toggle**: Enable/disable scaling globally to compare with raw Flutter sizes
 
 ## Installation
 
@@ -340,7 +357,7 @@ SKit.roundedContainerSize(
 // Using default radius with border
 SKit.rounded(
   null,
-  Text('Content'),
+  const Text('Content'),
   Colors.blue.shade50,
   Colors.blue,  // borderColor
   2,            // borderWidth
@@ -402,10 +419,12 @@ SKPadding(
 The compute pattern lets you pre-scale all your design tokens once per build and reuse them across your widget tree. This minimizes repeated calculations, enables more const-friendly widgets, and improves frame-time stability.
 
 When to use compute:
+
 - Use `SKitTheme.compute()` in a widget's build method (or builder) when you need many scaled values together (text styles, paddings, margins, radii, spacing, sizes).
 - Prefer it for list/grid items and complex screens to avoid recalculating the same values per child.
 
 Benefits:
+
 - All values are scaled together with one factory access.
 - Fewer object allocations and repeated calculations.
 - Cleaner code: one place defines your tokens, one object provides them.
@@ -501,6 +520,7 @@ return SKPadding(
 ```
 
 Tips:
+
 - Compute close to where values are used to respect current device metrics and orientation.
 - Recompute automatically when `MediaQuery` or locale changes (ScaleKitBuilder handles this); do not store across frames.
 - Pair with `FontConfig`: precomputed `TextStyle`s automatically apply the selected font per language.
@@ -516,7 +536,7 @@ Container(
   decoration: BoxDecoration(
     borderRadius: context.scaleBorderRadius(all: 12),
   ),
-  child: Text('Content'),
+  child: const Text('Content'),
 )
 
 // Device detection
@@ -585,6 +605,57 @@ ScaleKitBuilder(
   ),
 )
 ```
+
+### Orientation Autoscale (Landscape vs Portrait)
+
+Scale Kit lets you control autoscale behavior per orientation. Defaults are tuned for comfort: landscape boosts are enabled, portrait boosts are disabled.
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  // Orientation-specific flags
+  autoScaleLandscape: true,  // default
+  autoScalePortrait: false,  // default
+  // Optional landscape boosts
+  mobileLandscapeFontBoost: 1.2,
+  mobileLandscapeSizeBoost: 1.2,
+)
+```
+
+Notes:
+
+- Landscape: readability boosts (e.g., +20% fonts on mobile) can apply.
+- Portrait: stable sizes by default; set `autoScalePortrait: true` if you want portrait boosts.
+- Size boosts only apply in landscape by default; portrait preserves your design intent.
+
+#### Comparison with flutter_screenutil
+### Enable/Disable Scaling (Runtime Toggle)
+
+You can turn scaling off entirely to compare against raw Flutter sizes.
+
+```dart
+final enabled = ValueNotifier<bool>(true);
+
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  enabledListenable: enabled, // runtime toggle
+  enabled: enabled.value,      // initial
+  child: MaterialApp(...),
+);
+
+// Toggle anywhere
+enabled.value = false; // disables scaling (values returned unmodified)
+```
+
+Notes:
+- When disabled, `.w/.h/.sp` and ScaleManager methods return the input value (no scaling).
+- Re-enable to restore responsive scaling.
+
+Tip: Use the example app’s settings (tune icon) to live-test autoscale flags and boosts, then Save to apply. You can Reset to defaults from the sheet.
+
+When resizing windows (desktop/web) or changing device sizes, `flutter_screenutil` often scales cards and paddings more aggressively, which can make components look oversized. Scale Kit clamps scale factors and applies orientation-aware boosts, keeping practical sizes and better visual balance during resizes and rotations.
 
 ### Font Configuration (Automatic Font Selection)
 

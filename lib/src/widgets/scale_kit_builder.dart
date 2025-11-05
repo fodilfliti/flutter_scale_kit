@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../core/scale_manager.dart';
 import '../core/scale_value_cache.dart';
 import '../core/font_config.dart';
@@ -48,6 +49,41 @@ class ScaleKitBuilder extends StatefulWidget {
   /// Maximum scale factor (optional).
   final double? maxScale;
 
+  /// Landscape font boost factors per device type (optional).
+  final double? mobileLandscapeFontBoost;
+  final double? tabletLandscapeFontBoost;
+  final double? desktopLandscapeFontBoost;
+
+  /// Landscape size boost factors per device type (optional).
+  final double? mobileLandscapeSizeBoost;
+  final double? tabletLandscapeSizeBoost;
+  final double? desktopLandscapeSizeBoost;
+
+  /// Portrait font boost factors per device type (optional).
+  final double? mobilePortraitFontBoost;
+  final double? tabletPortraitFontBoost;
+  final double? desktopPortraitFontBoost;
+
+  /// Portrait size boost factors per device type (optional).
+  final double? mobilePortraitSizeBoost;
+  final double? tabletPortraitSizeBoost;
+  final double? desktopPortraitSizeBoost;
+
+  /// Enable/disable autoscale boosts (default: true).
+  final bool autoScale;
+
+  /// Enable autoscale in landscape orientation (default: true).
+  final bool autoScaleLandscape;
+
+  /// Enable autoscale in portrait orientation (default: false).
+  final bool autoScalePortrait;
+
+  /// Globally enable/disable scaling (default: true).
+  final bool enabled;
+
+  /// Optional listenable to toggle scaling at runtime.
+  final ValueListenable<bool>? enabledListenable;
+
   /// Creates a [ScaleKitBuilder] widget.
   ///
   /// Parameters:
@@ -65,6 +101,23 @@ class ScaleKitBuilder extends StatefulWidget {
     this.designType = DeviceType.mobile,
     this.minScale,
     this.maxScale,
+    this.mobileLandscapeFontBoost,
+    this.tabletLandscapeFontBoost,
+    this.desktopLandscapeFontBoost,
+    this.mobileLandscapeSizeBoost,
+    this.tabletLandscapeSizeBoost,
+    this.desktopLandscapeSizeBoost,
+    this.mobilePortraitFontBoost,
+    this.tabletPortraitFontBoost,
+    this.desktopPortraitFontBoost,
+    this.mobilePortraitSizeBoost,
+    this.tabletPortraitSizeBoost,
+    this.desktopPortraitSizeBoost,
+    this.autoScale = true,
+    this.autoScaleLandscape = true,
+    this.autoScalePortrait = false,
+    this.enabled = true,
+    this.enabledListenable,
   });
 
   @override
@@ -76,6 +129,8 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
   Orientation? _previousOrientation;
   Locale? _previousLocale;
   bool _isInitialized = false;
+  VoidCallback? _enabledListener;
+  int _rebuildTick = 0;
 
   static const double _sizeChangeThreshold = 0.05;
 
@@ -93,6 +148,74 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     _checkForChanges();
   }
 
+  @override
+  void didUpdateWidget(covariant ScaleKitBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_isInitialized) return;
+
+    bool reapply = false;
+
+    if (oldWidget.autoScale != widget.autoScale) {
+      ScaleManager.instance.setAutoScale(widget.autoScale);
+      reapply = true;
+    }
+
+    if (oldWidget.enabled != widget.enabled) {
+      ScaleManager.instance.setEnabled(widget.enabled);
+      reapply = true;
+    }
+
+    if (oldWidget.autoScaleLandscape != widget.autoScaleLandscape ||
+        oldWidget.autoScalePortrait != widget.autoScalePortrait) {
+      ScaleManager.instance.setAutoScaleOrientation(
+        landscape: widget.autoScaleLandscape,
+        portrait: widget.autoScalePortrait,
+      );
+      reapply = true;
+    }
+
+    if (oldWidget.mobileLandscapeFontBoost != widget.mobileLandscapeFontBoost ||
+        oldWidget.tabletLandscapeFontBoost != widget.tabletLandscapeFontBoost ||
+        oldWidget.desktopLandscapeFontBoost !=
+            widget.desktopLandscapeFontBoost ||
+        oldWidget.mobileLandscapeSizeBoost != widget.mobileLandscapeSizeBoost ||
+        oldWidget.tabletLandscapeSizeBoost != widget.tabletLandscapeSizeBoost ||
+        oldWidget.desktopLandscapeSizeBoost !=
+            widget.desktopLandscapeSizeBoost ||
+        oldWidget.mobilePortraitFontBoost != widget.mobilePortraitFontBoost ||
+        oldWidget.tabletPortraitFontBoost != widget.tabletPortraitFontBoost ||
+        oldWidget.desktopPortraitFontBoost != widget.desktopPortraitFontBoost ||
+        oldWidget.mobilePortraitSizeBoost != widget.mobilePortraitSizeBoost ||
+        oldWidget.tabletPortraitSizeBoost != widget.tabletPortraitSizeBoost ||
+        oldWidget.desktopPortraitSizeBoost != widget.desktopPortraitSizeBoost) {
+      ScaleManager.instance.setBoosts(
+        mobileLandscapeFontBoost: widget.mobileLandscapeFontBoost,
+        tabletLandscapeFontBoost: widget.tabletLandscapeFontBoost,
+        desktopLandscapeFontBoost: widget.desktopLandscapeFontBoost,
+        mobileLandscapeSizeBoost: widget.mobileLandscapeSizeBoost,
+        tabletLandscapeSizeBoost: widget.tabletLandscapeSizeBoost,
+        desktopLandscapeSizeBoost: widget.desktopLandscapeSizeBoost,
+        mobilePortraitFontBoost: widget.mobilePortraitFontBoost,
+        tabletPortraitFontBoost: widget.tabletPortraitFontBoost,
+        desktopPortraitFontBoost: widget.desktopPortraitFontBoost,
+        mobilePortraitSizeBoost: widget.mobilePortraitSizeBoost,
+        tabletPortraitSizeBoost: widget.tabletPortraitSizeBoost,
+        desktopPortraitSizeBoost: widget.desktopPortraitSizeBoost,
+      );
+      reapply = true;
+    }
+
+    if (reapply) {
+      // Recalculate scale and clear caches
+      _onSizeOrOrientationChange();
+    }
+
+    if (oldWidget.enabledListenable != widget.enabledListenable) {
+      _detachEnabledListenable();
+      _attachEnabledListenable();
+    }
+  }
+
   void _initializeScaleManager() {
     if (!_isInitialized) {
       ScaleManager.instance.init(
@@ -101,7 +224,29 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
         designHeight: widget.designHeight,
         designType: widget.designType,
       );
+      ScaleManager.instance.setAutoScale(widget.autoScale);
+      ScaleManager.instance.setEnabled(widget.enabled);
+      ScaleManager.instance.setAutoScaleOrientation(
+        landscape: widget.autoScaleLandscape,
+        portrait: widget.autoScalePortrait,
+      );
+      ScaleManager.instance.setBoosts(
+        mobileLandscapeFontBoost: widget.mobileLandscapeFontBoost,
+        tabletLandscapeFontBoost: widget.tabletLandscapeFontBoost,
+        desktopLandscapeFontBoost: widget.desktopLandscapeFontBoost,
+        mobileLandscapeSizeBoost: widget.mobileLandscapeSizeBoost,
+        tabletLandscapeSizeBoost: widget.tabletLandscapeSizeBoost,
+        desktopLandscapeSizeBoost: widget.desktopLandscapeSizeBoost,
+        mobilePortraitFontBoost: widget.mobilePortraitFontBoost,
+        tabletPortraitFontBoost: widget.tabletPortraitFontBoost,
+        desktopPortraitFontBoost: widget.desktopPortraitFontBoost,
+        mobilePortraitSizeBoost: widget.mobilePortraitSizeBoost,
+        tabletPortraitSizeBoost: widget.tabletPortraitSizeBoost,
+        desktopPortraitSizeBoost: widget.desktopPortraitSizeBoost,
+      );
       _isInitialized = true;
+
+      _attachEnabledListenable();
 
       final mediaQuery = MediaQuery.of(context);
       _previousSize = mediaQuery.size;
@@ -118,6 +263,29 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
         FontConfig.instance.setLanguage('en');
       }
     }
+  }
+
+  void _attachEnabledListenable() {
+    if (widget.enabledListenable != null) {
+      _enabledListener = () {
+        ScaleManager.instance.setEnabled(widget.enabledListenable!.value);
+        _onSizeOrOrientationChange();
+      };
+      widget.enabledListenable!.addListener(_enabledListener!);
+    }
+  }
+
+  void _detachEnabledListenable() {
+    if (widget.enabledListenable != null && _enabledListener != null) {
+      widget.enabledListenable!.removeListener(_enabledListener!);
+      _enabledListener = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    _detachEnabledListenable();
+    super.dispose();
   }
 
   void _checkForChanges() {
@@ -199,12 +367,14 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     }
 
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _rebuildTick++;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    return KeyedSubtree(key: ValueKey(_rebuildTick), child: widget.child);
   }
 }

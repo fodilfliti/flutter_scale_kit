@@ -16,7 +16,7 @@ import 'scale_value_cache.dart';
 class ScaleValueFactory {
   static ScaleValueFactory? _instance;
   static ScaleValueFactory get instance => _instance ??= ScaleValueFactory._();
-
+  
   ScaleValueFactory._();
 
   final _cache = ScaleValueCache.instance;

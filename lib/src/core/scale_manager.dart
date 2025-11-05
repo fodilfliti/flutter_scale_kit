@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'aspect_ratio_adapter.dart';
+import 'package:flutter/foundation.dart';
 import 'device_detector.dart';
 
 /// Singleton manager for scale configuration and responsive design calculations.
@@ -27,6 +28,29 @@ class ScaleManager {
 
   double _scaleWidth = 1.0;
   double _scaleHeight = 1.0;
+
+  // Configurable orientation boosts per device type
+  double _mobileLandscapeFontBoost = 1.2;
+  double _mobileLandscapeSizeBoost = 1.2;
+  double _tabletLandscapeFontBoost = 1.2;
+  double _tabletLandscapeSizeBoost = 1.2;
+  double _desktopLandscapeFontBoost = 1.0;
+  double _desktopLandscapeSizeBoost = 1.0;
+  // Portrait boosts (default 1.0 - no change unless user sets)
+  double _mobilePortraitFontBoost = 1.0;
+  double _mobilePortraitSizeBoost = 1.0;
+  double _tabletPortraitFontBoost = 1.0;
+  double _tabletPortraitSizeBoost = 1.0;
+  double _desktopPortraitFontBoost = 1.0;
+  double _desktopPortraitSizeBoost = 1.0;
+
+  // Controls whether auto-scale boosts are applied
+  bool _autoScale = true;
+  // Orientation-specific autoscale toggles
+  bool _autoScaleLandscape = true;
+  bool _autoScalePortrait = false;
+  // Global enable/disable scaling
+  bool _enabled = true;
 
   double _topSafeHeight = 0;
   double _bottomSafeHeight = 0;
@@ -96,6 +120,77 @@ class ScaleManager {
     _updateFromContext(context);
   }
 
+  /// Configure orientation boost multipliers per device type.
+  /// If not called, defaults are: mobile/tablet 1.2 (landscape), desktop 1.0.
+  void setBoosts({
+    double? mobileLandscapeFontBoost,
+    double? mobileLandscapeSizeBoost,
+    double? tabletLandscapeFontBoost,
+    double? tabletLandscapeSizeBoost,
+    double? desktopLandscapeFontBoost,
+    double? desktopLandscapeSizeBoost,
+    double? mobilePortraitFontBoost,
+    double? mobilePortraitSizeBoost,
+    double? tabletPortraitFontBoost,
+    double? tabletPortraitSizeBoost,
+    double? desktopPortraitFontBoost,
+    double? desktopPortraitSizeBoost,
+  }) {
+    if (mobileLandscapeFontBoost != null) {
+      _mobileLandscapeFontBoost = mobileLandscapeFontBoost;
+    }
+    if (mobileLandscapeSizeBoost != null) {
+      _mobileLandscapeSizeBoost = mobileLandscapeSizeBoost;
+    }
+    if (tabletLandscapeFontBoost != null) {
+      _tabletLandscapeFontBoost = tabletLandscapeFontBoost;
+    }
+    if (tabletLandscapeSizeBoost != null) {
+      _tabletLandscapeSizeBoost = tabletLandscapeSizeBoost;
+    }
+    if (desktopLandscapeFontBoost != null) {
+      _desktopLandscapeFontBoost = desktopLandscapeFontBoost;
+    }
+    if (desktopLandscapeSizeBoost != null) {
+      _desktopLandscapeSizeBoost = desktopLandscapeSizeBoost;
+    }
+    if (mobilePortraitFontBoost != null) {
+      _mobilePortraitFontBoost = mobilePortraitFontBoost;
+    }
+    if (mobilePortraitSizeBoost != null) {
+      _mobilePortraitSizeBoost = mobilePortraitSizeBoost;
+    }
+    if (tabletPortraitFontBoost != null) {
+      _tabletPortraitFontBoost = tabletPortraitFontBoost;
+    }
+    if (tabletPortraitSizeBoost != null) {
+      _tabletPortraitSizeBoost = tabletPortraitSizeBoost;
+    }
+    if (desktopPortraitFontBoost != null) {
+      _desktopPortraitFontBoost = desktopPortraitFontBoost;
+    }
+    if (desktopPortraitSizeBoost != null) {
+      _desktopPortraitSizeBoost = desktopPortraitSizeBoost;
+    }
+  }
+
+  /// Enable/disable autoscale boosts. When false, legacy calculations are used.
+  void setAutoScale(bool enabled) {
+    _autoScale = enabled;
+  }
+
+  /// Configure autoscale per orientation.
+  /// Defaults: landscape=true, portrait=false
+  void setAutoScaleOrientation({bool? landscape, bool? portrait}) {
+    if (landscape != null) _autoScaleLandscape = landscape;
+    if (portrait != null) _autoScalePortrait = portrait;
+  }
+
+  /// Enable/disable all scaling. When false, values are returned unmodified.
+  void setEnabled(bool enabled) {
+    _enabled = enabled;
+  }
+
   void _updateFromContext(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final size = mediaQuery.size;
@@ -142,13 +237,23 @@ class ScaleManager {
   }
 
   DeviceType _detectDeviceType() {
-    if (_screenWidth < 600) {
-      return DeviceType.mobile;
-    } else if (_screenWidth < 1200) {
-      return DeviceType.tablet;
-    } else {
-      return DeviceType.desktop;
+    // On Android/iOS (including emulators), classify as mobile/tablet by width only
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS)) {
+      if (_screenWidth < 600) {
+        return DeviceType.mobile;
+      }
+      return DeviceType.tablet; // treat large phones/tablets as tablet
     }
+
+    // Web treated distinctly
+    if (kIsWeb) {
+      return DeviceType.web;
+    }
+
+    // All other platforms (Windows, macOS, Linux) -> desktop
+    return DeviceType.desktop;
   }
 
   /// Updates scale factors from the current context.
@@ -169,7 +274,12 @@ class ScaleManager {
   ///
   /// Returns the scaled width based on the current scale factor.
   double getWidth(double width) {
-    return width * _scaleWidth;
+    if (!_enabled) return width;
+    final sizeBoost =
+        (_autoScale && _shouldApplySizeBoostForOrientation())
+            ? _getSizeBoost()
+            : 1.0;
+    return width * _scaleWidth * sizeBoost;
   }
 
   /// Gets a scaled height value.
@@ -179,7 +289,12 @@ class ScaleManager {
   ///
   /// Returns the scaled height based on the current scale factor.
   double getHeight(double height) {
-    return height * _scaleHeight;
+    if (!_enabled) return height;
+    final sizeBoost =
+        (_autoScale && _shouldApplySizeBoostForOrientation())
+            ? _getSizeBoost()
+            : 1.0;
+    return height * _scaleHeight * sizeBoost;
   }
 
   /// Gets a scaled font size value.
@@ -193,6 +308,7 @@ class ScaleManager {
   ///
   /// Returns the scaled font size.
   double getFontSize(double fontSize) {
+    if (!_enabled) return fontSize;
     final fontScale = _getFontScaleFactor();
     return fontSize * fontScale;
   }
@@ -207,6 +323,7 @@ class ScaleManager {
   ///
   /// Returns the scaled font size with system factor applied.
   double getFontSizeWithFactor(double fontSize) {
+    if (!_enabled) return fontSize;
     final fontScale = _getFontScaleFactor();
     return fontSize * fontScale * _textScaleFactor;
   }
@@ -221,9 +338,42 @@ class ScaleManager {
     double scaleFactor =
         _scaleWidth < _scaleHeight ? _scaleWidth : _scaleHeight;
 
-    if (deviceType == DeviceType.mobile) {
-      if (_orientation == Orientation.landscape) {
-        scaleFactor = scaleFactor * 1.2;
+    if (_orientation == Orientation.landscape) {
+      if (_autoScale && _autoScaleLandscape) {
+        // New configurable behavior
+        switch (deviceType) {
+          case DeviceType.mobile:
+            scaleFactor = scaleFactor * _mobileLandscapeFontBoost;
+            break;
+          case DeviceType.tablet:
+            scaleFactor = scaleFactor * _tabletLandscapeFontBoost;
+            break;
+          case DeviceType.desktop:
+          case DeviceType.web:
+            scaleFactor = scaleFactor * _desktopLandscapeFontBoost;
+            break;
+        }
+      } else if (!_autoScale) {
+        // Legacy behavior: only mobile gets 1.2x in landscape
+        if (deviceType == DeviceType.mobile) {
+          scaleFactor = scaleFactor * 1.2;
+        }
+      }
+    } else {
+      // Portrait
+      if (_autoScale && _autoScalePortrait) {
+        switch (deviceType) {
+          case DeviceType.mobile:
+            scaleFactor = scaleFactor * _mobilePortraitFontBoost;
+            break;
+          case DeviceType.tablet:
+            scaleFactor = scaleFactor * _tabletPortraitFontBoost;
+            break;
+          case DeviceType.desktop:
+          case DeviceType.web:
+            scaleFactor = scaleFactor * _desktopPortraitFontBoost;
+            break;
+        }
       }
     }
 
@@ -232,6 +382,36 @@ class ScaleManager {
       aspectCategory: aspectCategory,
       deviceType: deviceType,
     );
+  }
+
+  double _getSizeBoost() {
+    final deviceType = _detectDeviceType();
+    if (_orientation == Orientation.landscape) {
+      switch (deviceType) {
+        case DeviceType.mobile:
+          return _mobileLandscapeSizeBoost;
+        case DeviceType.tablet:
+          return _tabletLandscapeSizeBoost;
+        case DeviceType.desktop:
+        case DeviceType.web:
+          return _desktopLandscapeSizeBoost;
+      }
+    } else {
+      switch (deviceType) {
+        case DeviceType.mobile:
+          return _mobilePortraitSizeBoost;
+        case DeviceType.tablet:
+          return _tabletPortraitSizeBoost;
+        case DeviceType.desktop:
+        case DeviceType.web:
+          return _desktopPortraitSizeBoost;
+      }
+    }
+  }
+
+  bool _shouldApplySizeBoostForOrientation() {
+    if (_orientation == Orientation.landscape) return _autoScaleLandscape;
+    return _autoScalePortrait;
   }
 
   /// Gets a scaled radius value.
