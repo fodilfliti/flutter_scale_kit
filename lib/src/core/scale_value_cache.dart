@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'scale_manager.dart';
 import 'cache_key.dart';
 import 'device_detector.dart';
+import 'font_config.dart';
 
 /// Flyweight pattern cache for storing scaled values
 /// Reuses cached calculated values to minimize memory usage
@@ -240,7 +241,10 @@ class ScaleValueCache {
     TextDecorationStyle? decorationStyle,
     double? decorationThickness,
   }) {
-    // Create a unique key based on TextStyle parameters
+    // Get current language code for cache key (to invalidate cache on language change)
+    final languageCode = FontConfig.instance.currentLanguageCode;
+
+    // Create a unique key based on TextStyle parameters including language
     final value =
         fontSize +
         (fontWeight?.index ?? 0) * 1000 +
@@ -252,7 +256,8 @@ class ScaleValueCache {
         (decoration.toString().hashCode) * 0.0000001 +
         (decorationColor?.value.toDouble() ?? 0) * 0.000000001 +
         (decorationStyle?.index ?? 0) * 0.0000000001 +
-        (decorationThickness ?? 0) * 1000;
+        (decorationThickness ?? 0) * 1000 +
+        languageCode.hashCode * 0.00000000001;
 
     final key = CacheKey(
       value: value,
@@ -264,7 +269,8 @@ class ScaleValueCache {
       final manager = ScaleManager.instance;
       final scaledFontSize = manager.getFontSize(fontSize);
 
-      return TextStyle(
+      // Create base TextStyle
+      final baseTextStyle = TextStyle(
         fontSize: scaledFontSize,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
@@ -277,6 +283,14 @@ class ScaleValueCache {
         decorationStyle: decorationStyle,
         decorationThickness: decorationThickness,
       );
+
+      // Apply FontConfig automatically if fontFamily is not explicitly provided
+      // This ensures all TextStyles use the configured font for current language
+      if (fontFamily == null) {
+        return FontConfig.instance.getTextStyle(baseTextStyle: baseTextStyle);
+      }
+
+      return baseTextStyle;
     });
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/scale_manager.dart';
 import '../core/scale_value_cache.dart';
+import '../core/font_config.dart';
 
 /// Wrapper widget that initializes ScaleKit and manages responsive updates.
 ///
@@ -73,6 +74,7 @@ class ScaleKitBuilder extends StatefulWidget {
 class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
   Size? _previousSize;
   Orientation? _previousOrientation;
+  Locale? _previousLocale;
   bool _isInitialized = false;
 
   static const double _sizeChangeThreshold = 0.05;
@@ -104,6 +106,17 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
       final mediaQuery = MediaQuery.of(context);
       _previousSize = mediaQuery.size;
       _previousOrientation = mediaQuery.orientation;
+
+      // Safely get locale - may not be available during initialization
+      try {
+        _previousLocale = Localizations.localeOf(context);
+        // Initialize font config with current language
+        FontConfig.instance.setLanguage(_previousLocale!.languageCode);
+      } catch (e) {
+        // Localizations not available yet, use default
+        _previousLocale = const Locale('en');
+        FontConfig.instance.setLanguage('en');
+      }
     }
   }
 
@@ -112,12 +125,27 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     final currentSize = mediaQuery.size;
     final currentOrientation = mediaQuery.orientation;
 
+    // Safely get locale
+    Locale? currentLocale;
+    try {
+      currentLocale = Localizations.localeOf(context);
+    } catch (e) {
+      // Localizations not available yet
+      currentLocale = _previousLocale ?? const Locale('en');
+    }
+
     if (!_isInitialized) {
       _initializeScaleManager();
       return;
     }
 
     bool shouldUpdate = false;
+
+    // Check for locale/language change
+    if (_previousLocale != null && currentLocale != _previousLocale) {
+      FontConfig.instance.setLanguage(currentLocale.languageCode);
+      shouldUpdate = true;
+    }
 
     if (_previousOrientation != null &&
         currentOrientation != _previousOrientation) {
@@ -149,6 +177,7 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     if (shouldUpdate) {
       _previousSize = currentSize;
       _previousOrientation = currentOrientation;
+      _previousLocale = currentLocale;
 
       _onSizeOrOrientationChange();
     }
@@ -158,6 +187,16 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     ScaleManager.instance.updateFromContext(context);
 
     ScaleValueCache.instance.clearCache();
+
+    // Notify FontConfig listeners if language changed
+    try {
+      final currentLocale = Localizations.localeOf(context);
+      if (_previousLocale != null && currentLocale != _previousLocale) {
+        FontConfig.instance.onLanguageChanged?.call();
+      }
+    } catch (e) {
+      // Localizations not available
+    }
 
     if (mounted) {
       setState(() {});

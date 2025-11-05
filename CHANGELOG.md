@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2025-01-XX
+
+### Fixed
+- Fixed `borderRadius` error when using different border colors on individual sides
+- Fixed Localizations error when context doesn't include Localizations ancestor
+- Made FontConfig a proper singleton with `instance` getter
+- Fixed all lint warnings for local variables starting with underscore
+
+### Added
+- Font configuration system with automatic font selection per language
+- Support for Google Fonts and custom font families
+- Automatic font application to all TextStyles
+- Language group font configuration
+- Safe Localizations access with fallback to default language
+- Default font fallback (uses Flutter's default font if no configuration provided)
+
+### Changed
+- FontConfig now uses singleton pattern with `FontConfig.instance`
+- All TextStyle creation methods automatically apply FontConfig
+- ThemeData integration now includes automatic font configuration
+- Improved error handling for missing Localizations context
+
 ## [1.0.0] - 2024-01-XX
 
 ### Added

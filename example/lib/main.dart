@@ -1,7 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_scale_kit/flutter_scale_kit.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
+  // Configure FontConfig for different languages (optional)
+  // If not configured, Flutter's default font will be used
+  FontConfig.instance.setLanguageFont(
+    LanguageFontConfig(languageCode: 'ar', googleFont: GoogleFonts.almarai),
+  );
+
+  FontConfig.instance.setLanguageFont(
+    LanguageFontConfig(languageCode: 'en', googleFont: GoogleFonts.inter),
+  );
+
+  // Configure font for language group
+  FontConfig.instance.setLanguageGroupFont(
+    LanguageGroupFontConfig(
+      languageCodes: ['ar', 'fa', 'ur'],
+      googleFont: GoogleFonts.almarai,
+    ),
+  );
+
+  // Set default font (used when no specific language config exists)
+  FontConfig.instance.setDefaultFont(googleFont: GoogleFonts.inter);
+
   runApp(const MyApp());
 }
 
@@ -96,6 +118,15 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
             _buildSKitThemeExample(),
+            SizedBox(height: 24.h),
+
+            // Font Configuration
+            _buildSectionTitle(
+              '🔤 Font Configuration',
+              'Automatic font selection per language',
+            ),
+            SizedBox(height: 12.h),
+            _buildFontConfigExample(),
             SizedBox(height: 24.h),
 
             // Optimized Widgets
@@ -966,6 +997,118 @@ class HomePage extends StatelessWidget {
   }
 
   // ============================================================================
+  // FONT CONFIGURATION EXAMPLE
+  // ============================================================================
+  Widget _buildFontConfigExample() {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Font Configuration - Automatic Font Selection',
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              'Configure fonts for different languages. All TextStyles automatically use the configured font for the current language.',
+              style: TextStyle(fontSize: 14.sp),
+            ),
+            SizedBox(height: 16.h),
+            Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: Colors.blue.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Current Language: ${FontConfig.instance.currentLanguageCode}',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade900,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'All TextStyles automatically use the configured font for this language.',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.blue.shade800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'Example TextStyles:',
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              'This text uses FontConfig automatically',
+              style: TextStyle(fontSize: 16.sp),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'Bold text also uses FontConfig',
+              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'Small text with FontConfig',
+              style: TextStyle(fontSize: 12.sp),
+            ),
+            SizedBox(height: 16.h),
+            Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+              child: Text(
+                '// Configure in main():\n'
+                'FontConfig.instance.setLanguageFont(\n'
+                '  LanguageFontConfig(\n'
+                '    languageCode: \'ar\',\n'
+                '    googleFont: GoogleFonts.almarai,\n'
+                '  ),\n'
+                ');\n'
+                '\n'
+                '// Use anywhere - automatically applies:\n'
+                'Text(\'Hello\', style: TextStyle(fontSize: 16.sp))\n'
+                '// Or via theme:\n'
+                'ResponsiveThemeData.create(context: context)',
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontFamily: 'monospace',
+                  color: Colors.grey.shade800,
+                ),
+              ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              'Note: If no font is configured, Flutter\'s default font is used.',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontStyle: FontStyle.italic,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================================
   // OPTIMIZED WIDGETS EXAMPLE
   // ============================================================================
   Widget _buildOptimizedWidgetsExample() {
@@ -1149,7 +1292,7 @@ class HomePage extends StatelessWidget {
     return Card(
       elevation: 2,
       child: Padding(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(16.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1163,19 +1306,19 @@ class HomePage extends StatelessWidget {
                 final scale = ScaleManager.instance;
                 return Container(
                   width: scale.getWidth(200),
-                  height: scale.getHeight(100),
+                  height: scale.getHeight(125),
                   decoration: BoxDecoration(
                     color: Colors.purple.shade200,
                     borderRadius: BorderRadius.circular(scale.getRadius(12)),
                   ),
-                  padding: EdgeInsets.all(16.w),
+                  padding: EdgeInsets.all(16.r),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         'ScaleManager.instance',
                         style: TextStyle(
-                          fontSize: scale.getFontSize(16),
+                          fontSize: scale.getFontSize(14),
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),

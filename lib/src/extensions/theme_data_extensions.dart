@@ -1,110 +1,112 @@
 import 'package:flutter/material.dart';
 import '../core/scale_manager.dart';
+import '../core/font_config.dart';
 
 /// ThemeData extensions for responsive theme configuration
 extension ScaleThemeDataExtension on ThemeData {
-  /// Create responsive text theme
-  TextTheme createResponsiveTextTheme(TextTheme baseTheme) {
+  /// Create responsive text theme with automatic font configuration
+  ///
+  /// This method:
+  /// 1. Scales font sizes based on device dimensions
+  /// 2. Automatically applies FontConfig based on current language
+  ///
+  /// All TextStyles in the theme will automatically use the configured font
+  /// for the current language, without needing to call `.withFontConfig()` manually.
+  TextTheme createResponsiveTextTheme(
+    TextTheme baseTheme, {
+    String? languageCode,
+  }) {
     final scaleKit = ScaleManager.instance;
+    final fontConfig = FontConfig.instance;
+    final lang = languageCode ?? fontConfig.currentLanguageCode;
+
+    // Helper to apply both scaling and font config
+    TextStyle? applyResponsiveStyle(TextStyle? style) {
+      if (style == null) return null;
+
+      // Scale font size
+      final scaledSize =
+          style.fontSize != null ? scaleKit.getFontSize(style.fontSize!) : null;
+
+      final scaledStyle = style.copyWith(fontSize: scaledSize);
+
+      // Apply font config (Google Fonts or custom font family)
+      return fontConfig.getTextStyle(
+        languageCode: lang,
+        baseTextStyle: scaledStyle,
+      );
+    }
 
     return TextTheme(
-      displayLarge: baseTheme.displayLarge?.copyWith(
-        fontSize:
-            baseTheme.displayLarge!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.displayLarge!.fontSize!)
-                : null,
-      ),
-      displayMedium: baseTheme.displayMedium?.copyWith(
-        fontSize:
-            baseTheme.displayMedium!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.displayMedium!.fontSize!)
-                : null,
-      ),
-      displaySmall: baseTheme.displaySmall?.copyWith(
-        fontSize:
-            baseTheme.displaySmall!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.displaySmall!.fontSize!)
-                : null,
-      ),
-      headlineLarge: baseTheme.headlineLarge?.copyWith(
-        fontSize:
-            baseTheme.headlineLarge!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.headlineLarge!.fontSize!)
-                : null,
-      ),
-      headlineMedium: baseTheme.headlineMedium?.copyWith(
-        fontSize:
-            baseTheme.headlineMedium!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.headlineMedium!.fontSize!)
-                : null,
-      ),
-      headlineSmall: baseTheme.headlineSmall?.copyWith(
-        fontSize:
-            baseTheme.headlineSmall!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.headlineSmall!.fontSize!)
-                : null,
-      ),
-      titleLarge: baseTheme.titleLarge?.copyWith(
-        fontSize:
-            baseTheme.titleLarge!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.titleLarge!.fontSize!)
-                : null,
-      ),
-      titleMedium: baseTheme.titleMedium?.copyWith(
-        fontSize:
-            baseTheme.titleMedium!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.titleMedium!.fontSize!)
-                : null,
-      ),
-      titleSmall: baseTheme.titleSmall?.copyWith(
-        fontSize:
-            baseTheme.titleSmall!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.titleSmall!.fontSize!)
-                : null,
-      ),
-      bodyLarge: baseTheme.bodyLarge?.copyWith(
-        fontSize:
-            baseTheme.bodyLarge!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.bodyLarge!.fontSize!)
-                : null,
-      ),
-      bodyMedium: baseTheme.bodyMedium?.copyWith(
-        fontSize:
-            baseTheme.bodyMedium!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.bodyMedium!.fontSize!)
-                : null,
-      ),
-      bodySmall: baseTheme.bodySmall?.copyWith(
-        fontSize:
-            baseTheme.bodySmall!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.bodySmall!.fontSize!)
-                : null,
-      ),
-      labelLarge: baseTheme.labelLarge?.copyWith(
-        fontSize:
-            baseTheme.labelLarge!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.labelLarge!.fontSize!)
-                : null,
-      ),
-      labelMedium: baseTheme.labelMedium?.copyWith(
-        fontSize:
-            baseTheme.labelMedium!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.labelMedium!.fontSize!)
-                : null,
-      ),
-      labelSmall: baseTheme.labelSmall?.copyWith(
-        fontSize:
-            baseTheme.labelSmall!.fontSize != null
-                ? scaleKit.getFontSize(baseTheme.labelSmall!.fontSize!)
-                : null,
-      ),
+      displayLarge: applyResponsiveStyle(baseTheme.displayLarge),
+      displayMedium: applyResponsiveStyle(baseTheme.displayMedium),
+      displaySmall: applyResponsiveStyle(baseTheme.displaySmall),
+      headlineLarge: applyResponsiveStyle(baseTheme.headlineLarge),
+      headlineMedium: applyResponsiveStyle(baseTheme.headlineMedium),
+      headlineSmall: applyResponsiveStyle(baseTheme.headlineSmall),
+      titleLarge: applyResponsiveStyle(baseTheme.titleLarge),
+      titleMedium: applyResponsiveStyle(baseTheme.titleMedium),
+      titleSmall: applyResponsiveStyle(baseTheme.titleSmall),
+      bodyLarge: applyResponsiveStyle(baseTheme.bodyLarge),
+      bodyMedium: applyResponsiveStyle(baseTheme.bodyMedium),
+      bodySmall: applyResponsiveStyle(baseTheme.bodySmall),
+      labelLarge: applyResponsiveStyle(baseTheme.labelLarge),
+      labelMedium: applyResponsiveStyle(baseTheme.labelMedium),
+      labelSmall: applyResponsiveStyle(baseTheme.labelSmall),
+    );
+  }
+
+  /// Apply font configuration to existing text theme
+  ///
+  /// Useful when you want to update the theme after language change
+  TextTheme applyFontConfig(TextTheme textTheme, {String? languageCode}) {
+    final fontConfig = FontConfig.instance;
+    final lang = languageCode ?? fontConfig.currentLanguageCode;
+
+    TextStyle? applyFont(TextStyle? style) {
+      if (style == null) return null;
+      return fontConfig.getTextStyle(languageCode: lang, baseTextStyle: style);
+    }
+
+    return TextTheme(
+      displayLarge: applyFont(textTheme.displayLarge),
+      displayMedium: applyFont(textTheme.displayMedium),
+      displaySmall: applyFont(textTheme.displaySmall),
+      headlineLarge: applyFont(textTheme.headlineLarge),
+      headlineMedium: applyFont(textTheme.headlineMedium),
+      headlineSmall: applyFont(textTheme.headlineSmall),
+      titleLarge: applyFont(textTheme.titleLarge),
+      titleMedium: applyFont(textTheme.titleMedium),
+      titleSmall: applyFont(textTheme.titleSmall),
+      bodyLarge: applyFont(textTheme.bodyLarge),
+      bodyMedium: applyFont(textTheme.bodyMedium),
+      bodySmall: applyFont(textTheme.bodySmall),
+      labelLarge: applyFont(textTheme.labelLarge),
+      labelMedium: applyFont(textTheme.labelMedium),
+      labelSmall: applyFont(textTheme.labelSmall),
     );
   }
 }
 
-/// Helper class for creating responsive ThemeData
+/// Helper class for creating responsive ThemeData with automatic font configuration
+///
+/// This class automatically applies FontConfig to all TextStyles in the theme,
+/// so all text in your app will use the correct font for the current language.
 class ResponsiveThemeData {
-  /// Create ThemeData with responsive text styles
+  /// Create ThemeData with responsive text styles and automatic font configuration
+  ///
+  /// All TextStyles in the theme will automatically use FontConfig based on
+  /// the current language. No need to call `.withFontConfig()` manually.
+  ///
+  /// Example:
+  /// ```dart
+  /// ThemeData(
+  ///   textTheme: ResponsiveThemeData.createTextTheme(
+  ///     context: context,
+  ///     baseTextTheme: ThemeData.light().textTheme,
+  ///   ),
+  /// )
+  /// ```
   static ThemeData create({
     required BuildContext context,
     ColorScheme? colorScheme,
@@ -120,12 +122,55 @@ class ResponsiveThemeData {
       textTheme: textTheme,
     );
 
-    // Scale text theme if provided
+    // Get current language code safely
+    String languageCode = 'en'; // Default fallback
+    try {
+      languageCode = Localizations.localeOf(context).languageCode;
+    } catch (e) {
+      // Localizations not available yet, use default
+    }
+    FontConfig.instance.setLanguage(languageCode);
+
+    // Apply responsive text theme with font config if provided
     if (textTheme != null) {
-      final scaledTextTheme = baseTheme.createResponsiveTextTheme(textTheme);
+      final scaledTextTheme = baseTheme.createResponsiveTextTheme(
+        textTheme,
+        languageCode: languageCode,
+      );
       return baseTheme.copyWith(textTheme: scaledTextTheme);
     }
 
-    return baseTheme;
+    // If no textTheme provided, apply font config to default theme
+    final defaultTextTheme = baseTheme.textTheme;
+    final fontConfigTheme = baseTheme.applyFontConfig(
+      defaultTextTheme,
+      languageCode: languageCode,
+    );
+
+    return baseTheme.copyWith(textTheme: fontConfigTheme);
+  }
+
+  /// Create a TextTheme with automatic font configuration
+  ///
+  /// This is a convenience method that creates a responsive TextTheme
+  /// with automatic font configuration based on current language.
+  static TextTheme createTextTheme({
+    required BuildContext context,
+    required TextTheme baseTextTheme,
+  }) {
+    // Get current language code safely
+    String languageCode = 'en'; // Default fallback
+    try {
+      languageCode = Localizations.localeOf(context).languageCode;
+    } catch (e) {
+      // Localizations not available yet, use default
+    }
+    FontConfig.instance.setLanguage(languageCode);
+
+    final baseTheme = ThemeData(textTheme: baseTextTheme);
+    return baseTheme.createResponsiveTextTheme(
+      baseTextTheme,
+      languageCode: languageCode,
+    );
   }
 }

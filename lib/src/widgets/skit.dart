@@ -590,6 +590,8 @@ class SKit {
         borderRightWidth != null;
 
     Border? border;
+    BorderRadius? effectiveBorderRadius = borderRadius;
+
     if (hasIndividualBorders) {
       // Use Border() constructor for individual sides
       final defaultWidth = scaledBorderWidth ?? 1.0;
@@ -625,6 +627,18 @@ class SKit {
           borderRightColor ??
           (borderRight == true ? defaultColor : Colors.transparent);
 
+      // Check if all border colors are the same
+      final allColorsSame =
+          topColor == bottomColor &&
+          bottomColor == leftColor &&
+          leftColor == rightColor;
+
+      // Flutter doesn't allow borderRadius with non-uniform border colors
+      // If borders have different colors, remove borderRadius
+      if (!allColorsSame) {
+        effectiveBorderRadius = null;
+      }
+
       border = Border(
         top:
             topWidth > 0
@@ -654,7 +668,7 @@ class SKit {
     return SKContainer(
       decoration: BoxDecoration(
         color: color,
-        borderRadius: borderRadius,
+        borderRadius: effectiveBorderRadius,
         border: border,
       ),
       padding: padding,

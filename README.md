@@ -2,6 +2,20 @@
 
 A high-performance responsive design package for Flutter that helps you create adaptive UIs across different screen sizes with easy-to-use scaling utilities.
 
+## Screenshots
+
+### Mobile
+
+![Flutter Scale Kit - Mobile](screenshots/mobile.png)
+
+### Tablet
+
+![Flutter Scale Kit - Tablet](screenshots/table.png)
+
+### Desktop
+
+![Flutter Scale Kit - Desktop](screenshots/desctop.png)
+
 ## Features
 
 - 🎯 **Easy Scaling**: Simple API similar to `flutter_screenutil` (`.w`, `.sw`, `.sh`, `.r`, `.sp`, `.h`)
@@ -14,6 +28,7 @@ A high-performance responsive design package for Flutter that helps you create a
 - 📱 **Device Detection**: Built-in tablet, mobile, and desktop detection
 - 🔄 **Smart Caching**: Flyweight pattern with automatic cache invalidation on size/orientation change
 - 🎨 **ThemeData Integration**: Use responsive scaling in Flutter's theme system
+- 🔤 **Font Configuration**: Automatic font selection per language with Google Fonts support
 
 ## Installation
 
@@ -21,7 +36,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.0.0
+  flutter_scale_kit: ^1.0.1
 ```
 
 Then run:
@@ -457,6 +472,77 @@ ScaleKitBuilder(
   ),
 )
 ```
+
+### Font Configuration (Automatic Font Selection)
+
+Configure fonts for different languages. All TextStyles automatically use the configured font for the current language:
+
+```dart
+import 'package:google_fonts/google_fonts.dart';
+
+void main() {
+  // Configure font for specific language (optional)
+  // If not configured, Flutter's default font will be used
+  FontConfig.instance.setLanguageFont(
+    LanguageFontConfig(
+      languageCode: 'ar',
+      googleFont: GoogleFonts.almarai,  // Pass GoogleFonts function
+    ),
+  );
+
+  FontConfig.instance.setLanguageFont(
+    LanguageFontConfig(
+      languageCode: 'en',
+      googleFont: GoogleFonts.inter,
+    ),
+  );
+
+  // Configure font for language group
+  FontConfig.instance.setLanguageGroupFont(
+    LanguageGroupFontConfig(
+      languageCodes: ['ar', 'fa', 'ur'],
+      googleFont: GoogleFonts.almarai,
+    ),
+  );
+
+  // Set default font (used when no specific language config exists)
+  FontConfig.instance.setDefaultFont(
+    googleFont: GoogleFonts.inter,
+  );
+
+  runApp(const MyApp());
+}
+```
+
+**Usage:**
+
+Once configured, all TextStyles automatically use the configured font:
+
+```dart
+// Automatic font application - no manual configuration needed
+Text('Hello', style: TextStyle(fontSize: 16.sp))  // ✅ Uses FontConfig automatically
+
+// Or via theme - all theme text styles get the font automatically
+ResponsiveThemeData.create(
+  context: context,
+  textTheme: ThemeData.light().textTheme,  // ✅ All styles get font automatically
+)
+```
+
+**Custom Font Family:**
+
+You can also use custom font families (fonts loaded in `pubspec.yaml`):
+
+```dart
+FontConfig.instance.setLanguageFont(
+  LanguageFontConfig(
+    languageCode: 'ar',
+    customFontFamily: 'CustomArabicFont',  // From pubspec.yaml
+  ),
+);
+```
+
+**Note:** If no font is configured, Flutter's default font (Roboto on Android, San Francisco on iOS) will be used. The font configuration is completely optional.
 
 ## API Reference
 
