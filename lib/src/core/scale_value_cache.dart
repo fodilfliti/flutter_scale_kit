@@ -249,12 +249,12 @@ class ScaleValueCache {
         fontSize +
         (fontWeight?.index ?? 0) * 1000 +
         (fontStyle?.index ?? 0) * 100 +
-        (color != null ? color.value.toDouble() : 0) * 0.001 +
+        (color != null ? color.toARGB32().toDouble() : 0) * 0.001 +
         (fontFamily?.hashCode ?? 0) * 0.000001 +
         (letterSpacing ?? 0) * 100 +
         (height ?? 0) * 10 +
         (decoration.toString().hashCode) * 0.0000001 +
-        (decorationColor?.value.toDouble() ?? 0) * 0.000000001 +
+        (decorationColor?.toARGB32().toDouble() ?? 0) * 0.000000001 +
         (decorationStyle?.index ?? 0) * 0.0000000001 +
         (decorationThickness ?? 0) * 1000 +
         languageCode.hashCode * 0.00000000001;
