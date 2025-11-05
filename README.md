@@ -8,11 +8,11 @@ A high-performance responsive design package for Flutter that helps you create a
   <tr>
     <td align="center">
       <strong>Mobile</strong><br/>
-      <img src="screenshots/mobile.png" alt="Flutter Scale Kit - Mobile" width="300" style="max-height:420px; object-fit:contain;"/>
+      <img src="screenshots/mobile.png" alt="Flutter Scale Kit - Mobile" style="height:420px; width:auto; object-fit:contain;"/>
     </td>
     <td align="center">
       <strong>Tablet</strong><br/>
-      <img src="screenshots/table.png" alt="Flutter Scale Kit - Tablet" width="300" style="max-height:420px; object-fit:contain;"/>
+      <img src="screenshots/table.png" alt="Flutter Scale Kit - Tablet" style="height:420px; width:auto; object-fit:contain;"/>
     </td>
   </tr>
 </table>
