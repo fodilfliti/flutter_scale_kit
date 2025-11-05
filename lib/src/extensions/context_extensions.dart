@@ -9,13 +9,16 @@ extension ScaleContextExtension on BuildContext {
   ScaleManager get scaleManager => ScaleManager.instance;
 
   /// Get scaled width
-  double scaleWidth(double width) => ScaleValueFactory.instance.createWidth(width);
+  double scaleWidth(double width) =>
+      ScaleValueFactory.instance.createWidth(width);
 
   /// Get scaled height
-  double scaleHeight(double height) => ScaleValueFactory.instance.createHeight(height);
+  double scaleHeight(double height) =>
+      ScaleValueFactory.instance.createHeight(height);
 
   /// Get scaled font size
-  double scaleFontSize(double fontSize) => ScaleValueFactory.instance.createFontSize(fontSize);
+  double scaleFontSize(double fontSize) =>
+      ScaleValueFactory.instance.createFontSize(fontSize);
 
   /// Get scaled size
   double scaleSize(double size) => ScaleValueFactory.instance.createWidth(size);
@@ -80,12 +83,14 @@ extension ScaleContextExtension on BuildContext {
   }
 
   /// Check if device is mobile
-  bool get isMobile => DeviceDetector.detectFromContext(this) == DeviceType.mobile;
+  bool get isMobile =>
+      DeviceDetector.detectFromContext(this) == DeviceType.mobile;
 
   /// Check if device is tablet
-  bool get isTablet => DeviceDetector.detectFromContext(this) == DeviceType.tablet;
+  bool get isTablet =>
+      DeviceDetector.detectFromContext(this) == DeviceType.tablet;
 
   /// Check if device is desktop
-  bool get isDesktop => DeviceDetector.detectFromContext(this) == DeviceType.desktop;
+  bool get isDesktop =>
+      DeviceDetector.detectFromContext(this) == DeviceType.desktop;
 }
-

@@ -110,4 +110,3 @@ enum ScalingStrategyType {
   wide, // Too wide devices
   standard, // Normal devices
 }
-

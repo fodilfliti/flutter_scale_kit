@@ -3,17 +3,15 @@ import 'package:flutter/material.dart';
 /// Scaled SizedBox widget - extends Flutter's SizedBox
 /// Uses cached values and can be const when size is const
 class SKSizedBox extends SizedBox {
-  const SKSizedBox({
-    super.key,
-    super.width,
-    super.height,
-    super.child,
-  });
+  const SKSizedBox({super.key, super.width, super.height, super.child});
 }
 
 /// Horizontal spacing widget - short name for convenience
 /// Usage: HSpace(16) for horizontal spacing
 class HSpace extends SizedBox {
+  /// Creates a horizontal spacing widget
+  ///
+  /// [width] is the width of the horizontal space in logical pixels.
   const HSpace(double width, {super.key}) : super(width: width);
 }
 
@@ -28,4 +26,3 @@ class VSpace extends SizedBox {
 class SSpace extends SizedBox {
   const SSpace(double size, {super.key}) : super(width: size, height: size);
 }
-

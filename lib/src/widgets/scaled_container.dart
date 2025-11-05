@@ -19,4 +19,3 @@ class SKContainer extends Container {
     super.clipBehavior,
   });
 }
-

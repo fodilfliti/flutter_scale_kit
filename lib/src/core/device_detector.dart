@@ -3,7 +3,12 @@ import 'scale_manager.dart';
 
 /// Device detector utility
 /// Detects device type based on screen dimensions
+///
+/// This class contains only static methods and has no public constructor.
 class DeviceDetector {
+  /// Private constructor to prevent instantiation
+  DeviceDetector._();
+
   /// Detect device type from screen width
   static DeviceType detectDeviceType(double screenWidth) {
     if (screenWidth < 600) {
@@ -59,4 +64,3 @@ enum AspectRatioCategory {
   wide, // Too wide devices
   standard, // Normal aspect ratio devices
 }
-

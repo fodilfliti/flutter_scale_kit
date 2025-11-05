@@ -201,37 +201,66 @@ class SKitTheme {
     final f = ScaleValueFactory.instance;
 
     return SKitThemeValues(
-      textXs: textXs != null ? TextStyle(fontSize: f.createFontSize(textXs!)) : null,
-      textSm: textSm != null ? TextStyle(fontSize: f.createFontSize(textSm!)) : null,
-      textMd: textMd != null ? TextStyle(fontSize: f.createFontSize(textMd!)) : null,
-      textLg: textLg != null ? TextStyle(fontSize: f.createFontSize(textLg!)) : null,
-      textXl: textXl != null ? TextStyle(fontSize: f.createFontSize(textXl!)) : null,
-      textXxl: textXxl != null ? TextStyle(fontSize: f.createFontSize(textXxl!)) : null,
+      textXs:
+          textXs != null
+              ? TextStyle(fontSize: f.createFontSize(textXs!))
+              : null,
+      textSm:
+          textSm != null
+              ? TextStyle(fontSize: f.createFontSize(textSm!))
+              : null,
+      textMd:
+          textMd != null
+              ? TextStyle(fontSize: f.createFontSize(textMd!))
+              : null,
+      textLg:
+          textLg != null
+              ? TextStyle(fontSize: f.createFontSize(textLg!))
+              : null,
+      textXl:
+          textXl != null
+              ? TextStyle(fontSize: f.createFontSize(textXl!))
+              : null,
+      textXxl:
+          textXxl != null
+              ? TextStyle(fontSize: f.createFontSize(textXxl!))
+              : null,
       paddingXs: paddingXs != null ? f.createPadding(all: paddingXs!) : null,
       paddingSm: paddingSm != null ? f.createPadding(all: paddingSm!) : null,
       paddingMd: paddingMd != null ? f.createPadding(all: paddingMd!) : null,
       paddingLg: paddingLg != null ? f.createPadding(all: paddingLg!) : null,
       paddingXl: paddingXl != null ? f.createPadding(all: paddingXl!) : null,
-      paddingHorizontal: paddingHorizontal ?? f.createPadding(horizontal: paddingMd ?? 16),
-      paddingVertical: paddingVertical ?? f.createPadding(vertical: paddingMd ?? 16),
+      paddingHorizontal:
+          paddingHorizontal ?? f.createPadding(horizontal: paddingMd ?? 16),
+      paddingVertical:
+          paddingVertical ?? f.createPadding(vertical: paddingMd ?? 16),
       marginXs: marginXs != null ? f.createMargin(all: marginXs!) : null,
       marginSm: marginSm != null ? f.createMargin(all: marginSm!) : null,
       marginMd: marginMd != null ? f.createMargin(all: marginMd!) : null,
       marginLg: marginLg != null ? f.createMargin(all: marginLg!) : null,
       marginXl: marginXl != null ? f.createMargin(all: marginXl!) : null,
-      marginHorizontal: marginHorizontal ?? f.createMargin(horizontal: marginMd ?? 16),
-      marginVertical: marginVertical ?? f.createMargin(vertical: marginMd ?? 16),
+      marginHorizontal:
+          marginHorizontal ?? f.createMargin(horizontal: marginMd ?? 16),
+      marginVertical:
+          marginVertical ?? f.createMargin(vertical: marginMd ?? 16),
       radiusXs: radiusXs != null ? f.createRadius(radiusXs!) : null,
       radiusSm: radiusSm != null ? f.createRadius(radiusSm!) : null,
       radiusMd: radiusMd != null ? f.createRadius(radiusMd!) : null,
       radiusLg: radiusLg != null ? f.createRadius(radiusLg!) : null,
       radiusXl: radiusXl != null ? f.createRadius(radiusXl!) : null,
-      radiusAll: radiusAll ?? (radiusMd != null ? f.createBorderRadius(all: radiusMd!) : null),
-      borderRadiusXs: radiusXs != null ? f.createBorderRadius(all: radiusXs!) : null,
-      borderRadiusSm: radiusSm != null ? f.createBorderRadius(all: radiusSm!) : null,
-      borderRadiusMd: radiusMd != null ? f.createBorderRadius(all: radiusMd!) : null,
-      borderRadiusLg: radiusLg != null ? f.createBorderRadius(all: radiusLg!) : null,
-      borderRadiusXl: radiusXl != null ? f.createBorderRadius(all: radiusXl!) : null,
+      radiusAll:
+          radiusAll ??
+          (radiusMd != null ? f.createBorderRadius(all: radiusMd!) : null),
+      borderRadiusXs:
+          radiusXs != null ? f.createBorderRadius(all: radiusXs!) : null,
+      borderRadiusSm:
+          radiusSm != null ? f.createBorderRadius(all: radiusSm!) : null,
+      borderRadiusMd:
+          radiusMd != null ? f.createBorderRadius(all: radiusMd!) : null,
+      borderRadiusLg:
+          radiusLg != null ? f.createBorderRadius(all: radiusLg!) : null,
+      borderRadiusXl:
+          radiusXl != null ? f.createBorderRadius(all: radiusXl!) : null,
       spacingXs: spacingXs != null ? f.createWidth(spacingXs!) : null,
       spacingSm: spacingSm != null ? f.createWidth(spacingSm!) : null,
       spacingMd: spacingMd != null ? f.createWidth(spacingMd!) : null,
@@ -502,9 +531,17 @@ class SKitValues {
     final f = ScaleValueFactory.instance;
 
     return SKitValues(
-      padding: paddingEdgeInsets ?? (padding != null ? f.createPadding(all: padding) : EdgeInsets.zero),
-      margin: marginEdgeInsets ?? (margin != null ? f.createMargin(all: margin) : EdgeInsets.zero),
-      borderRadius: borderRadiusValue ?? (borderRadius != null ? f.createBorderRadius(all: borderRadius) : BorderRadius.zero),
+      padding:
+          paddingEdgeInsets ??
+          (padding != null ? f.createPadding(all: padding) : EdgeInsets.zero),
+      margin:
+          marginEdgeInsets ??
+          (margin != null ? f.createMargin(all: margin) : EdgeInsets.zero),
+      borderRadius:
+          borderRadiusValue ??
+          (borderRadius != null
+              ? f.createBorderRadius(all: borderRadius)
+              : BorderRadius.zero),
       width: width != null ? f.createWidth(width) : 0,
       height: height != null ? f.createHeight(height) : 0,
       fontSize: fontSize != null ? f.createFontSize(fontSize) : 0,

@@ -17,6 +17,9 @@ class LanguageFontConfig {
   /// Custom font family name (used when googleFont is null)
   final String? customFontFamily;
 
+  /// Creates a font configuration for a specific language
+  ///
+  /// Either [googleFont] or [customFontFamily] must be provided.
   const LanguageFontConfig({
     required this.languageCode,
     this.googleFont,
@@ -79,6 +82,13 @@ class LanguageGroupFontConfig {
 /// ```
 class FontConfig {
   static FontConfig? _instance;
+
+  /// Singleton instance of FontConfig
+  ///
+  /// Use this to access the global font configuration:
+  /// ```dart
+  /// FontConfig.instance.setLanguageFont(...);
+  /// ```
   static FontConfig get instance => _instance ??= FontConfig._internal();
 
   FontConfig._internal();

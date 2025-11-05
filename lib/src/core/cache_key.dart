@@ -36,4 +36,3 @@ enum ScaleType {
   margin,
   borderRadius,
 }
-
