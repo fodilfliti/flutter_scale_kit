@@ -854,3 +854,33 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Support
 
 If you find this package useful, please consider giving it a star ⭐ on GitHub!
+
+## Acknowledgements
+
+Huge thanks to the authors and contributors of `flutter_screenutil` and similar responsive design packages. We used them extensively, learned from their great ideas, and built Flutter Scale Kit as an alternative optimized for our apps' performance and developer experience. `flutter_screenutil` is a solid package; this project simply explores a different set of trade‑offs (compute-once patterns, caching, language-aware fonts, and orientation-aware scaling) that matched our needs.
+
+## FAQ
+
+Q: Why choose Flutter Scale Kit over `flutter_screenutil`?
+
+A: If you want compute-once patterns, automatic font selection by language, orientation-aware scaling controls, and an optional runtime toggle to compare raw Flutter vs scaled values, Scale Kit might fit better. If you’re happy with your current setup, `flutter_screenutil` remains an excellent choice.
+
+Q: How do I disable scaling to compare with raw Flutter sizes?
+
+A: Use `ScaleKitBuilder(enabled: false)` or provide `enabledListenable` for a runtime switch. In the example, tap the tune icon to toggle and Save.
+
+Q: Can I control autoscale separately for portrait and landscape?
+
+A: Yes. `autoScaleLandscape` (default true) and `autoScalePortrait` (default false) let you enable/disable boosts per orientation. You can also set device-specific font/size boosts.
+
+Q: Do all TextStyles get my configured font automatically?
+
+A: Yes. Fonts apply automatically via `FontConfig` integration in theme creation and text style scaling. If no configuration is provided, Flutter’s default font is used.
+
+Q: Why is borderRadius removed when using different border colors per side?
+
+A: It’s a Flutter limitation. When individual sides have different colors, `BoxDecoration` can’t combine non-uniform borders with `borderRadius`. We avoid the rendering error by omitting `borderRadius` in those cases.
+
+Q: Will this increase my package size?
+
+A: The package only ships the `lib/` code. The example and screenshots are not included in the pub.dev download. Use Google Fonts conditionally as needed.
