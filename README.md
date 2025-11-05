@@ -397,6 +397,114 @@ SKPadding(
 )
 ```
 
+### Compute once, use everywhere (performance best practice)
+
+The compute pattern lets you pre-scale all your design tokens once per build and reuse them across your widget tree. This minimizes repeated calculations, enables more const-friendly widgets, and improves frame-time stability.
+
+When to use compute:
+- Use `SKitTheme.compute()` in a widget's build method (or builder) when you need many scaled values together (text styles, paddings, margins, radii, spacing, sizes).
+- Prefer it for list/grid items and complex screens to avoid recalculating the same values per child.
+
+Benefits:
+- All values are scaled together with one factory access.
+- Fewer object allocations and repeated calculations.
+- Cleaner code: one place defines your tokens, one object provides them.
+
+Example: precompute many values and build with them
+
+```dart
+// Define your design tokens once (can be const)
+const theme = SKitTheme(
+  textSm: 12,
+  textMd: 14,
+  textLg: 16,
+  paddingSm: 8,
+  paddingMd: 16,
+  paddingLg: 24,
+  spacingSm: 8,
+  spacingMd: 16,
+  spacingLg: 24,
+  radiusSm: 6,
+  radiusMd: 12,
+);
+
+@override
+Widget build(BuildContext context) {
+  // Compute once per build
+  final values = theme.compute();
+
+  return ListView.separated(
+    padding: values.paddingHorizontal,
+    itemCount: 20,
+    separatorBuilder: (_, __) => SizedBox(height: values.spacingMd!),
+    itemBuilder: (context, index) {
+      return SKContainer(
+        margin: values.marginHorizontal,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: values.borderRadiusMd,
+        ),
+        padding: values.paddingMd,
+        child: Row(
+          children: [
+            Container(
+              width: values.widthSm ?? 40,
+              height: values.heightSm ?? 40,
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: values.borderRadiusSm,
+              ),
+            ),
+            SizedBox(width: values.spacingMd!),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Title', style: values.textLg?.copyWith(fontWeight: FontWeight.bold)),
+                  SizedBox(height: values.spacingSm!),
+                  Text('Subtitle text', style: values.textSm),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+```
+
+Legacy compute helper (simple one-off values)
+
+If you only need a few values in places where defining a full theme is overkill, you can use the legacy `SKitValues.compute` factory. This is maintained for convenience but `SKitTheme.compute()` is recommended for larger UIs.
+
+```dart
+final v = SKitValues.compute(
+  padding: 16,
+  margin: 8,
+  borderRadius: 12,
+  width: 120,
+  height: 48,
+  fontSize: 16,
+);
+
+return SKPadding(
+  padding: v.padding,
+  child: SKContainer(
+    margin: v.margin,
+    decoration: BoxDecoration(borderRadius: v.borderRadius),
+    width: v.width,
+    height: v.height,
+    child: Text('Button', style: TextStyle(fontSize: v.fontSize)),
+  ),
+);
+```
+
+Tips:
+- Compute close to where values are used to respect current device metrics and orientation.
+- Recompute automatically when `MediaQuery` or locale changes (ScaleKitBuilder handles this); do not store across frames.
+- Pair with `FontConfig`: precomputed `TextStyle`s automatically apply the selected font per language.
+
 ### Context Extensions
 
 Use context extensions for responsive scaling:
