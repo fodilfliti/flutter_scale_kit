@@ -2,14 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.6] - 2025-11-05
+
+### Fixed
+- Fixed formatting issues in `scale_value_factory.dart` to match Dart formatter
+
 ## [1.0.5] - 2025-11-05
 
 ### Fixed
+
 - Removed dangling library doc comment (changed to regular comment)
 - Fixed formatting issues in `aspect_ratio_adapter.dart` and all lib files
 - Removed `.pubignore` to include example folder (pub.dev requirement)
 
 ### Added
+
 - Complete dartdoc documentation for all public API symbols:
   - `AspectRatioAdapter` constructor documentation
   - `DeviceDetector` constructor documentation
@@ -18,6 +25,7 @@ All notable changes to this project will be documented in this file.
   - `LanguageFontConfig` constructor documentation
 
 ### Changed
+
 - All library files formatted with `dart format` for consistency
 - Example folder now included in published package (required by pub.dev)
 
