@@ -81,7 +81,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.0.6
+  flutter_scale_kit: ^1.0.7
 ```
 
 Then run:
@@ -576,14 +576,43 @@ if (context.isMobile) {
 
 Build different widgets per device/orientation with sensible fallbacks, and resolve responsive integers (e.g., Grid columns) quickly.
 
+#### SKResponsive Widget
+
+Use when you have separate builders for each device/orientation:
+
 ```dart
-// Widget builder
+// Widget builder with separate builders
 SKResponsive(
   mobile: (_) => Text('Mobile portrait'),
-  mobileLandscape: (_) => Text('Mobile landscape'),
+  mobileLandscape: (_) => Text('Mobile landscape'), // Falls back to mobile if null
   tablet: (_) => Text('Tablet portrait'),
-  tabletLandscape: (_) => Text('Tablet landscape'),
+  tabletLandscape: (_) => Text('Tablet landscape'), // Falls back to tablet -> mobileLandscape -> mobile
   desktop: (_) => Text('Desktop'),
+)
+```
+
+Fallback rules:
+- `mobileLandscape` → falls back to `mobile` if null
+- `tabletLandscape` → falls back to `tablet` → `mobileLandscape` → `mobile` if null
+- Device: desktop → tablet → mobile; tablet → mobile
+
+#### SKResponsiveBuilder Widget
+
+Use when you need access to device and orientation in your builder function:
+
+```dart
+// Builder pattern with device and orientation info
+SKResponsiveBuilder(
+  builder: (context, device, orientation) {
+    if (device == DeviceType.mobile && orientation == Orientation.landscape) {
+      return Text('Mobile Landscape');
+    }
+    if (device == DeviceType.tablet) {
+      return Text('Tablet');
+    }
+    return Text('Desktop or other');
+  },
+  desktopAs: DesktopAs.tablet, // Optional: make desktop behave like tablet
 )
 
 // Responsive integer with fallback rules (alias for columns)
@@ -597,10 +626,10 @@ final cols = SKit.responsiveInt(
 GridView.count(crossAxisCount: cols)
 ```
 
-Fallback rules:
+Both widgets support the same fallback rules:
 
-- Device: desktop -> tablet -> mobile; tablet -> mobile.
-- Orientation: landscape -> device portrait; for tablet.landscape -> mobile.landscape -> mobile.portrait.
+- Device: desktop → tablet → mobile; tablet → mobile
+- Orientation: landscape → device portrait; for tablet.landscape → mobile.landscape → mobile.portrait
 
 Desktop behavior (CSS-like):
 

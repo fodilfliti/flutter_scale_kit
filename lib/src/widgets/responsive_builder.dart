@@ -57,8 +57,10 @@ class SKResponsive extends StatelessWidget {
       if (isLandscape) {
         switch (device) {
           case DeviceType.tablet:
-            return tabletLandscape ?? mobileLandscape ?? tablet ?? mobile;
+            // If tabletLandscape is null, fall back to tablet, then mobileLandscape, then mobile
+            return tabletLandscape ?? tablet ?? mobileLandscape ?? mobile;
           case DeviceType.mobile:
+            // If mobileLandscape is null, fall back to mobile
             return mobileLandscape ?? mobile;
           case DeviceType.desktop:
             return desktop; // unreachable due to early return, keeps analyzer happy
@@ -142,4 +144,73 @@ class SKResponsiveValue<T> {
   }
 
   // device() not needed; using ScaleManager.deviceType
+}
+
+/// Builder function type for SKResponsiveBuilder
+/// Receives context, device type, and orientation
+typedef ResponsiveBuilder =
+    Widget Function(
+      BuildContext context,
+      DeviceType device,
+      Orientation orientation,
+    );
+
+/// A responsive builder widget that provides device and orientation information
+/// to the builder function.
+///
+/// This widget is useful when you need access to device type and orientation
+/// in your builder function, rather than just providing separate builders.
+///
+/// Example:
+/// ```dart
+/// SKResponsiveBuilder(
+///   builder: (context, device, orientation) {
+///     if (device == DeviceType.mobile && orientation == Orientation.landscape) {
+///       return Text('Mobile Landscape');
+///     }
+///     return Text('Other');
+///   },
+/// )
+/// ```
+class SKResponsiveBuilder extends StatelessWidget {
+  final ResponsiveBuilder builder;
+  final DesktopAs desktopAs;
+
+  const SKResponsiveBuilder({
+    super.key,
+    required this.builder,
+    this.desktopAs = DesktopAs.desktop,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scale = ScaleManager.instance;
+    final device = _deviceByWidth();
+    final orientation = scale.orientation;
+
+    // Handle desktop resolution based on desktopAs
+    DeviceType resolvedDevice = device;
+    if (device == DeviceType.desktop || device == DeviceType.web) {
+      switch (desktopAs) {
+        case DesktopAs.desktop:
+          resolvedDevice = device;
+          break;
+        case DesktopAs.tablet:
+          resolvedDevice = DeviceType.tablet;
+          break;
+        case DesktopAs.mobile:
+          resolvedDevice = DeviceType.mobile;
+          break;
+      }
+    }
+
+    return builder(context, resolvedDevice, orientation);
+  }
+
+  DeviceType _deviceByWidth() {
+    final w = ScaleManager.instance.screenWidth;
+    if (w < 600) return DeviceType.mobile;
+    if (w < 1200) return DeviceType.tablet;
+    return DeviceType.desktop;
+  }
 }
