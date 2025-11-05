@@ -6,12 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- `SKResponsiveBuilder` widget with builder pattern that receives `(context, device, orientation)`
+- `SKResponsiveBuilder` widget with dual usage patterns:
+  - Builder pattern: main `builder` that receives `(context, device, orientation)`
+  - Device-specific builders: optional `mobile`, `tablet`, `desktop`, `mobileLandscape`, `tabletLandscape`, `desktopLandscape` (similar to `SKResponsive`)
 - Improved fallback logic for `SKResponsive`: `mobileLandscape` now falls back to `mobile`, `tabletLandscape` falls back to `tablet` then `mobileLandscape` then `mobile`
 
 ### Changed
 
 - `SKResponsive` fallback order: `tabletLandscape ?? tablet ?? mobileLandscape ?? mobile` (more intuitive)
+- `SKResponsiveBuilder`: device-specific builders take priority over main builder when both are provided
 
 ## [1.0.6] - 2025-11-05
 
