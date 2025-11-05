@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_scale_kit/flutter_scale_kit.dart';
+import 'package:flutter_scale_kit/src/widgets/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'
     as su
@@ -433,6 +434,15 @@ class HomePage extends StatelessWidget {
             _buildExtensionMethodsExample(),
             SizedBox(height: 24.h),
 
+            // Responsive Builder & Columns
+            _buildSectionTitle(
+              '🧩 Responsive Builder & Columns',
+              'Build per device/orientation and resolve grid counts',
+            ),
+            SizedBox(height: 12.h),
+            _buildResponsiveExamples(),
+            SizedBox(height: 24.h),
+
             // SKit Helper Class
             _buildSectionTitle(
               '🛠️ SKit Helper Class',
@@ -767,6 +777,100 @@ class HomePage extends StatelessWidget {
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                   ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================================
+  // RESPONSIVE BUILDER & COLUMNS EXAMPLES
+  // ============================================================================
+  Widget _buildResponsiveExamples() {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'SKResponsive (Widget builder with fallbacks):',
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.h),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              padding: EdgeInsets.all(12.w),
+              child: SKResponsive(
+                mobile:
+                    (_) => Text(
+                      'Mobile portrait',
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                mobileLandscape:
+                    (_) => Text(
+                      'Mobile landscape',
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                tablet:
+                    (_) => Text(
+                      'Tablet portrait',
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                tabletLandscape:
+                    (_) => Text(
+                      'Tablet landscape',
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                desktop:
+                    (_) => Text('Desktop', style: TextStyle(fontSize: 12.sp)),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'SKit.responsiveInt (e.g., Grid crossAxisCount):',
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.h),
+            Builder(
+              builder: (context) {
+                final cols = SKit.responsiveInt(
+                  mobile: 2,
+                  tablet: 4,
+                  desktop: 8,
+                );
+                return Text(
+                  'Resolved columns: $cols',
+                  style: TextStyle(fontSize: 12.sp),
+                );
+              },
+            ),
+            SizedBox(height: 8.h),
+            Container(
+              height: 120.h,
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: GridView.count(
+                crossAxisCount: SKit.responsiveInt(
+                  mobile: 2,
+                  tablet: 4,
+                  desktop: 8,
+                ),
+                crossAxisSpacing: 8.w,
+                mainAxisSpacing: 8.h,
+                children: List.generate(
+                  8,
+                  (i) => Container(color: Colors.blue[(i % 9 + 1) * 100]),
                 ),
               ),
             ),

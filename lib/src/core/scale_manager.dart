@@ -86,6 +86,9 @@ class ScaleManager {
   /// Current screen orientation.
   Orientation get orientation => _orientation;
 
+  /// Public device type detection (uses platform-aware logic).
+  DeviceType get deviceType => _detectDeviceType();
+
   /// Top safe area height.
   double get topSafeHeight => _topSafeHeight;
 

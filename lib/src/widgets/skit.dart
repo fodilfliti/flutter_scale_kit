@@ -18,6 +18,8 @@ import 'scaled_padding.dart';
 import 'scaled_margin.dart';
 import 'scaled_container.dart';
 import 'spacing_widgets.dart';
+import '../core/scale_manager.dart';
+import '../core/responsive_enums.dart';
 
 /// ScaleKit helper class providing convenient methods for creating
 /// responsive widgets and scaled values.
@@ -1027,4 +1029,169 @@ class SKit {
     bottomLeft: bottomLeft,
     bottomRight: bottomRight,
   );
+
+  /// Resolves a responsive integer (e.g., grid columns) based on device and orientation.
+  ///
+  /// Fallbacks:
+  /// - Device: desktop -> tablet -> mobile; tablet -> mobile
+  /// - Orientation: landscape -> device portrait; tablet.landscape -> mobile.landscape -> mobile.portrait
+  ///
+  /// Examples:
+  /// - columns(mobile: 2) => tablet=2, desktop=2
+  /// - columns(mobile: 2, desktop: 8) => tablet=2, desktop=8
+  /// - columns(mobile: 2, mobileLandscape: 4) => tabletLandscape=4 (if not provided)
+  static int columns({
+    int? mobile,
+    int? tablet,
+    int? desktop,
+    int? mobileLandscape,
+    int? tabletLandscape,
+    int? desktopLandscape,
+  }) {
+    return responsiveInt(
+      mobile: mobile,
+      tablet: tablet,
+      desktop: desktop,
+      mobileLandscape: mobileLandscape,
+      tabletLandscape: tabletLandscape,
+      desktopLandscape: desktopLandscape,
+    );
+  }
+
+  /// Resolves a responsive integer with the same rules as [columns],
+  /// but with a generic name suitable for any integer-based config
+  /// (e.g., grid columns, padding steps, itemCount, etc.).
+  static int responsiveInt({
+    int? mobile,
+    int? tablet,
+    int? desktop,
+    int? mobileLandscape,
+    int? tabletLandscape,
+    int? desktopLandscape,
+    DesktopAs desktopAs = DesktopAs.desktop,
+  }) {
+    final scale = ScaleManager.instance;
+    final isLandscape = scale.orientation == Orientation.landscape;
+    final device = _device();
+
+    int? pickLandscape() {
+      switch (device) {
+        case DeviceType.desktop:
+        case DeviceType.web:
+          return desktopLandscape ??
+              tabletLandscape ??
+              mobileLandscape ??
+              desktop ??
+              tablet ??
+              mobile;
+        case DeviceType.tablet:
+          return tabletLandscape ?? mobileLandscape ?? tablet ?? mobile;
+        case DeviceType.mobile:
+          return mobileLandscape ?? mobile;
+      }
+    }
+
+    int? pickPortrait() {
+      switch (device) {
+        case DeviceType.desktop:
+        case DeviceType.web:
+          return desktop ?? tablet ?? mobile;
+        case DeviceType.tablet:
+          return tablet ?? mobile;
+        case DeviceType.mobile:
+          return mobile;
+      }
+    }
+
+    if (device == DeviceType.desktop || device == DeviceType.web) {
+      switch (desktopAs) {
+        case DesktopAs.desktop:
+          return (desktop ?? tablet ?? mobile) ?? (mobile ?? 0);
+        case DesktopAs.tablet:
+          if (isLandscape) {
+            return (tabletLandscape ?? mobileLandscape ?? tablet ?? mobile) ??
+                (mobile ?? 0);
+          }
+          return (tablet ?? mobile) ?? (mobile ?? 0);
+        case DesktopAs.mobile:
+          if (isLandscape) {
+            return (mobileLandscape ?? mobile) ?? 0;
+          }
+          return (mobile ?? 0);
+      }
+    }
+    final value = isLandscape ? pickLandscape() : pickPortrait();
+    return value ?? (mobile ?? 0);
+  }
+
+  static DeviceType _device() {
+    final w = ScaleManager.instance.screenWidth;
+    if (w < 600) return DeviceType.mobile;
+    if (w < 1200) return DeviceType.tablet;
+    return DeviceType.desktop;
+  }
+
+  /// Resolves a responsive double value using the same fallback rules as [responsiveInt].
+  static double responsiveDouble({
+    double? mobile,
+    double? tablet,
+    double? desktop,
+    double? mobileLandscape,
+    double? tabletLandscape,
+    double? desktopLandscape,
+    DesktopAs desktopAs = DesktopAs.desktop,
+  }) {
+    final scale = ScaleManager.instance;
+    final isLandscape = scale.orientation == Orientation.landscape;
+    final device = _device();
+
+    double? pickLandscape() {
+      switch (device) {
+        case DeviceType.desktop:
+        case DeviceType.web:
+          return desktopLandscape ??
+              tabletLandscape ??
+              mobileLandscape ??
+              desktop ??
+              tablet ??
+              mobile;
+        case DeviceType.tablet:
+          return tabletLandscape ?? mobileLandscape ?? tablet ?? mobile;
+        case DeviceType.mobile:
+          return mobileLandscape ?? mobile;
+      }
+    }
+
+    double? pickPortrait() {
+      switch (device) {
+        case DeviceType.desktop:
+        case DeviceType.web:
+          return desktop ?? tablet ?? mobile;
+        case DeviceType.tablet:
+          return tablet ?? mobile;
+        case DeviceType.mobile:
+          return mobile;
+      }
+    }
+
+    if (device == DeviceType.desktop || device == DeviceType.web) {
+      switch (desktopAs) {
+        case DesktopAs.desktop:
+          return (desktop ?? tablet ?? mobile) ?? (mobile ?? 0.0);
+        case DesktopAs.tablet:
+          if (isLandscape) {
+            return (tabletLandscape ?? mobileLandscape ?? tablet ?? mobile) ??
+                (mobile ?? 0.0);
+          }
+          return (tablet ?? mobile) ?? (mobile ?? 0.0);
+        case DesktopAs.mobile:
+          if (isLandscape) {
+            return (mobileLandscape ?? mobile) ?? 0.0;
+          }
+          return (mobile ?? 0.0);
+      }
+    }
+    final value = isLandscape ? pickLandscape() : pickPortrait();
+    return value ?? (mobile ?? 0.0);
+  }
 }
