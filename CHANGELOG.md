@@ -13,11 +13,19 @@ All notable changes to this project will be documented in this file.
 - Desktop can optionally mimic tablet/mobile values using `desktopAs` parameter
 - Example app section demonstrating responsive builder and columns usage
 - README updates: Responsive Builder & Columns section with DesktopAs examples and CSS-like behavior notes
+- Pub badges (version, likes, points, popularity) and CTA in README
+- Pub.dev metadata: topics, platforms, screenshots, issue_tracker, documentation links
 
 ### Changed
 - Desktop behavior: treated as single form by default; can opt-in to tablet/mobile behavior via `desktopAs`
 - Android/iOS: devices classified only as mobile/tablet by width; desktop logic doesn't apply
 - README: added DesktopAs documentation and CSS-like grid examples
+- Package description shortened to 169 characters (within pub.dev 60-180 range)
+
+### Fixed
+- Removed unnecessary library declaration (`library flutter_scale_kit;`)
+- Replaced deprecated `Color.value` with `Color.toARGB32()` for cache key generation
+- Added `.pubignore` to exclude example folder from published package
 
 ## [1.0.2] - 2025-11-05
 
