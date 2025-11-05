@@ -634,12 +634,13 @@ SKResponsiveBuilder(
 
 **Priority**: If both patterns are provided, device-specific builders take priority over the main builder.
 
+```dart
 // Responsive integer with fallback rules (alias for columns)
 final cols = SKit.responsiveInt(
-  mobile: 2,            // required base
-  tablet: 4,            // optional (falls back to mobile if null)
-  desktop: 8,           // optional (falls back to tablet->mobile if null)
-  mobileLandscape: 4,   // optional override for mobile landscape
+  mobile: 2, // required base
+  tablet: 4, // optional (falls back to mobile if null)
+  desktop: 8, // optional (falls back to tablet->mobile if null)
+  mobileLandscape: 4, // optional override for mobile landscape
   // tabletLandscape falls back to mobileLandscape, then tablet, then mobile
 );
 GridView.count(crossAxisCount: cols)

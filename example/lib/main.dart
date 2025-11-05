@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_scale_kit/flutter_scale_kit.dart';
-import 'package:flutter_scale_kit/src/widgets/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'
     as su
@@ -886,26 +885,28 @@ class HomePage extends StatelessWidget {
               ),
               padding: EdgeInsets.all(12.w),
               child: SKResponsiveBuilder(
-                mobile: (_) => Text(
-                  'Mobile Portrait',
-                  style: TextStyle(fontSize: 12.sp),
-                ),
-                mobileLandscape: (_) => Text(
-                  'Mobile Landscape',
-                  style: TextStyle(fontSize: 12.sp),
-                ),
-                tablet: (_) => Text(
-                  'Tablet Portrait',
-                  style: TextStyle(fontSize: 12.sp),
-                ),
-                tabletLandscape: (_) => Text(
-                  'Tablet Landscape',
-                  style: TextStyle(fontSize: 12.sp),
-                ),
-                desktop: (_) => Text(
-                  'Desktop',
-                  style: TextStyle(fontSize: 12.sp),
-                ),
+                mobile:
+                    (_) => Text(
+                      'Mobile Portrait',
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                mobileLandscape:
+                    (_) => Text(
+                      'Mobile Landscape',
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                tablet:
+                    (_) => Text(
+                      'Tablet Portrait',
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                tabletLandscape:
+                    (_) => Text(
+                      'Tablet Landscape',
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                desktop:
+                    (_) => Text('Desktop', style: TextStyle(fontSize: 12.sp)),
               ),
             ),
             SizedBox(height: 16.h),
