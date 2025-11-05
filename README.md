@@ -592,16 +592,19 @@ SKResponsive(
 ```
 
 Fallback rules:
+
 - `mobileLandscape` → falls back to `mobile` if null
 - `tabletLandscape` → falls back to `tablet` → `mobileLandscape` → `mobile` if null
 - Device: desktop → tablet → mobile; tablet → mobile
 
 #### SKResponsiveBuilder Widget
 
+Supports two usage patterns:
+
+**Pattern 1: Builder with device/orientation info**
 Use when you need access to device and orientation in your builder function:
 
 ```dart
-// Builder pattern with device and orientation info
 SKResponsiveBuilder(
   builder: (context, device, orientation) {
     if (device == DeviceType.mobile && orientation == Orientation.landscape) {
@@ -614,6 +617,22 @@ SKResponsiveBuilder(
   },
   desktopAs: DesktopAs.tablet, // Optional: make desktop behave like tablet
 )
+```
+
+**Pattern 2: Separate builders (like SKResponsive)**
+Use when you prefer separate builders for each device/orientation:
+
+```dart
+SKResponsiveBuilder(
+  mobile: (_) => Text('Mobile'),
+  tablet: (_) => Text('Tablet'),
+  desktop: (_) => Text('Desktop'),
+  mobileLandscape: (_) => Text('Mobile Landscape'), // Falls back to mobile if null
+  tabletLandscape: (_) => Text('Tablet Landscape'), // Falls back to tablet -> mobileLandscape -> mobile
+)
+```
+
+**Priority**: If both patterns are provided, device-specific builders take priority over the main builder.
 
 // Responsive integer with fallback rules (alias for columns)
 final cols = SKit.responsiveInt(
