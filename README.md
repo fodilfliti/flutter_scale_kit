@@ -26,14 +26,30 @@ A high-performance responsive design package for Flutter that helps you create a
 <table>
   <tr>
     <td align="center">
-      <strong>Autoscale Settings</strong><br/>
-      <img src="screenshots/autoscale.png" alt="Autoscale Settings" style="max-height:420px; object-fit:contain;"/>
+      <strong>Autoscale: Enabled</strong><br/>
+      <img src="screenshots/autoscale_enable.png" alt="Autoscale Enabled" style="max-height:420px; object-fit:contain;"/>
     </td>
     <td align="center">
-      <strong>Enabled vs Disabled</strong><br/>
-      <img src="screenshots/enabled_disabled.png" alt="Enable Disable" style="max-height:420px; object-fit:contain;"/>
+      <strong>Autoscale: Disabled</strong><br/>
+      <img src="screenshots/auto_scale_disable.png" alt="Autoscale Disabled" style="max-height:420px; object-fit:contain;"/>
     </td>
   </tr>
+  <tr>
+    <td align="center">
+      <strong>Package Enabled (Scaling On)</strong><br/>
+      <img src="screenshots/package_enable_true.png" alt="Package Enabled" style="max-height:420px; object-fit:contain;"/>
+    </td>
+    <td align="center">
+      <strong>Package Disabled (Raw Flutter)</strong><br/>
+      <img src="screenshots/package_enable_false.png" alt="Package Disabled" style="max-height:420px; object-fit:contain;"/>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center" style="color:#666; font-size: 12px;">
+      Use the settings (tune icon) in the example app to toggle autoscale and package enable/disable, then Save.
+    </td>
+  </tr>
+  
 </table>
 
 ## Features
@@ -49,8 +65,8 @@ A high-performance responsive design package for Flutter that helps you create a
 - 🔄 **Smart Caching**: Flyweight pattern with automatic cache invalidation on size/orientation change
 - 🎨 **ThemeData Integration**: Use responsive scaling in Flutter's theme system
 - 🔤 **Font Configuration**: Automatic font selection per language with Google Fonts support
- - 🧭 **Orientation Autoscale**: Enable different autoscale behavior for landscape vs portrait
- - 🔁 **Runtime Toggle**: Enable/disable scaling globally to compare with raw Flutter sizes
+- 🧭 **Orientation Autoscale**: Enable different autoscale behavior for landscape vs portrait
+- 🔁 **Runtime Toggle**: Enable/disable scaling globally to compare with raw Flutter sizes
 
 ## Installation
 
@@ -630,6 +646,7 @@ Notes:
 - Size boosts only apply in landscape by default; portrait preserves your design intent.
 
 #### Comparison with flutter_screenutil
+
 ### Enable/Disable Scaling (Runtime Toggle)
 
 You can turn scaling off entirely to compare against raw Flutter sizes.
@@ -650,6 +667,7 @@ enabled.value = false; // disables scaling (values returned unmodified)
 ```
 
 Notes:
+
 - When disabled, `.w/.h/.sp` and ScaleManager methods return the input value (no scaling).
 - Re-enable to restore responsive scaling.
 
