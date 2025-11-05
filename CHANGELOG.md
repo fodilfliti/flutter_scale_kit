@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2025-11-05
+
+### Fixed
+- Pub.dev compliance: shortened description (60–180 chars), removed library declaration, replaced deprecated Color.value
+- Added pub badges, topics, platforms, screenshots, issue tracker and documentation links
+- Exclude example from publish via `.pubignore`
+
+### Changed
+- Docs refinements and export additions (no breaking API changes)
+
 ## [1.0.3] - 2025-11-05
 
 ### Added
@@ -75,7 +85,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Initial release of Flutter Scale Kit
-- Extension methods for easy scaling (`.w`, `.h`, `.sp`, `.r`, `.sw`, `.sh`, `.spf`)
+- Extension methods for easy scaling (`.w`, `.sw`, `.sh`, `.r`, `.sp`, `.h`)
 - `ScaleKitBuilder` widget for app-level responsive configuration
 - `SKit` helper class with convenient methods for creating widgets
 - Size system with predefined enums (`SKSize`, `SKTextSize`)
