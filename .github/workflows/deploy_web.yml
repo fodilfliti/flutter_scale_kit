@@ -1,0 +1,56 @@
+name: Deploy Web Example to GitHub Pages
+
+on:
+  # Manual trigger only - run from GitHub Actions tab when you want to deploy
+  workflow_dispatch:
+  # Optional: Uncomment below if you want to deploy only when creating a release/tag
+  # release:
+  #   types: [published]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+        working-directory: ./example
+
+      - name: Build web app
+        run: flutter build web --release --base-href /flutter_scale_kit/
+        working-directory: ./example
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./example/build/web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+

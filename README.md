@@ -4,10 +4,25 @@
 [![Pub Likes](https://img.shields.io/pub/likes/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit)
 [![Pub Points](https://img.shields.io/pub/points/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit/score)
 [![Popularity](https://img.shields.io/pub/popularity/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit/score)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20Me-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/fodilfliti)
+
+---
+
+<div align="center">
+
+### 🚀 [**👉 Try Live Demo - Interactive Web App 👈**](https://fodilfliti.github.io/flutter_scale_kit/) 🚀
+
+**[Test all features in your browser!](https://fodilfliti.github.io/flutter_scale_kit/)** • Responsive • Interactive • No Installation Required
+
+</div>
+
+---
 
 A high-performance responsive design package for Flutter that helps you create adaptive UIs across different screen sizes with easy-to-use scaling utilities.
 
-> If this package helps you, please click “Like” on the pub.dev page — it improves discoverability and ranking.
+> If this package helps you, please click "Like" on the pub.dev page — it improves discoverability and ranking.
+
+> 💝 **Support this project**: If you find Flutter Scale Kit useful, consider [buying me a coffee](https://ko-fi.com/fodilfliti) to help me continue developing and maintaining open-source packages. Your support means a lot! 🙏
 
 ## Screenshots
 
@@ -81,7 +96,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.0.8
+  flutter_scale_kit: ^1.0.9
 ```
 
 Then run:
@@ -966,7 +981,23 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Support
 
-If you find this package useful, please consider giving it a star ⭐ on GitHub!
+If you find this package useful, please consider:
+
+- ⭐ **Giving it a star** on GitHub - it helps others discover the package
+- 💝 **[Buy me a coffee](https://ko-fi.com/fodilfliti)** - Support my open-source work and help me continue developing and maintaining packages
+- 🐛 **Report bugs** - Help improve the package by reporting issues
+- 💡 **Suggest features** - Share your ideas for improvements
+- 📖 **Share with others** - Let other developers know about Flutter Scale Kit
+
+Your support, whether through donations, stars, or feedback, helps me dedicate more time to:
+
+- ✨ Maintaining and improving Flutter Scale Kit
+- 🚀 Building new features and projects
+- 📚 Creating better documentation and examples
+- 🐛 Fixing bugs and responding to issues faster
+- 💡 Exploring new ideas and innovations
+
+Thank you for being part of this journey! Every contribution, no matter how small, makes a difference. 💙
 
 ## Acknowledgements
 

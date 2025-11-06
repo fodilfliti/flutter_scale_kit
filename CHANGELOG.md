@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.9] - 2025-01-15
+
+### Added
+
+- GitHub Pages deployment workflow for hosting live web demo
+- Live web demo link in README for easy access to interactive example
+- GitHub Actions workflow for automated web app deployment (manual trigger)
+
+### Changed
+
+- Updated GitHub Actions workflow to use Flutter 3.29.2
+- Web demo deployment is now manual-only to prevent unnecessary builds
+
+### Fixed
+
+- Documentation improvements for GitHub Pages setup
+
 ## [1.0.8] - 2025-11-06
 
 ### Changed

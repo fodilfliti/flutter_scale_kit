@@ -17,6 +17,31 @@ class ScaleManager {
 
   ScaleManager._();
 
+  /// Optional callback to get the simulated platform from device_preview.
+  /// This is only used for testing purposes and should only be set in debug mode.
+  /// Set this callback in your app to enable device_preview support.
+  /// Example:
+  /// ```dart
+  /// ScaleManager.instance.setDevicePreviewPlatformGetter((context) {
+  ///   try {
+  ///     return DevicePreview.platformOf(context);
+  ///   } catch (e) {
+  ///     return null;
+  ///   }
+  /// });
+  /// ```
+  static TargetPlatform? Function(BuildContext?)? _devicePreviewPlatformGetter;
+
+  /// Sets the callback to get the simulated platform from device_preview.
+  /// This should only be used for testing purposes in debug mode.
+  /// The callback should return the simulated platform from device_preview,
+  /// or null if device_preview is not available or not enabled.
+  static void setDevicePreviewPlatformGetter(
+    TargetPlatform? Function(BuildContext?)? getter,
+  ) {
+    _devicePreviewPlatformGetter = getter;
+  }
+
   double _designWidth = 375.0;
   double _designHeight = 812.0;
 
@@ -25,6 +50,9 @@ class ScaleManager {
   double _devicePixelRatio = 1.0;
   double _textScaleFactor = 1.0;
   Orientation _orientation = Orientation.portrait;
+
+  // Store the current context for device_preview support (optional, testing only)
+  BuildContext? _currentContext;
 
   double _scaleWidth = 1.0;
   double _scaleHeight = 1.0;
@@ -195,6 +223,9 @@ class ScaleManager {
   }
 
   void _updateFromContext(BuildContext context) {
+    // Store context for device_preview support (optional, testing only)
+    _currentContext = context;
+
     final mediaQuery = MediaQuery.of(context);
     final size = mediaQuery.size;
     final padding = mediaQuery.padding;
@@ -240,10 +271,27 @@ class ScaleManager {
   }
 
   DeviceType _detectDeviceType() {
-    // On Android/iOS (including emulators), classify as mobile/tablet by width only
+    // Check if device_preview is enabled and get simulated platform
+    TargetPlatform? platform = defaultTargetPlatform;
+    if (_devicePreviewPlatformGetter != null && _currentContext != null) {
+      try {
+        final simulatedPlatform = _devicePreviewPlatformGetter!(
+          _currentContext,
+        );
+        if (simulatedPlatform != null) {
+          platform = simulatedPlatform;
+        }
+      } catch (e) {
+        // device_preview not available or error, use default
+        platform = defaultTargetPlatform;
+      }
+    }
+
+    // On Android/iOS (including emulators and device_preview simulation),
+    // classify as mobile/tablet by width only
     if (!kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.android ||
-            defaultTargetPlatform == TargetPlatform.iOS)) {
+        (platform == TargetPlatform.android ||
+            platform == TargetPlatform.iOS)) {
       if (_screenWidth < 600) {
         return DeviceType.mobile;
       }
