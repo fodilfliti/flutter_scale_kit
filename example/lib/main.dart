@@ -284,79 +284,79 @@ class _MyAppState extends State<MyApp> {
                           final bool isCompact = constraints.maxWidth < 360;
                           final actions = <Widget>[
                             OutlinedButton(
-                            onPressed: () {
-                              setModalState(() {
-                                // Reset staged values to defaults
-                                tempEnabled = true;
-                                tempAutoScale = true;
-                                tempAutoScaleLandscape = true;
-                                tempAutoScalePortrait = false;
+                              onPressed: () {
+                                setModalState(() {
+                                  // Reset staged values to defaults
+                                  tempEnabled = true;
+                                  tempAutoScale = true;
+                                  tempAutoScaleLandscape = true;
+                                  tempAutoScalePortrait = false;
 
-                                tempMobileLandscapeFontBoost = 1.2;
-                                tempMobileLandscapeSizeBoost = 1.2;
-                                tempTabletLandscapeFontBoost = 1.2;
-                                tempTabletLandscapeSizeBoost = 1.2;
-                                tempDesktopLandscapeFontBoost = 1.0;
-                                tempDesktopLandscapeSizeBoost = 1.0;
+                                  tempMobileLandscapeFontBoost = 1.2;
+                                  tempMobileLandscapeSizeBoost = 1.2;
+                                  tempTabletLandscapeFontBoost = 1.2;
+                                  tempTabletLandscapeSizeBoost = 1.2;
+                                  tempDesktopLandscapeFontBoost = 1.0;
+                                  tempDesktopLandscapeSizeBoost = 1.0;
 
-                                tempMobilePortraitFontBoost = 1.0;
-                                tempMobilePortraitSizeBoost = 1.0;
-                                tempTabletPortraitFontBoost = 1.0;
-                                tempTabletPortraitSizeBoost = 1.0;
-                                tempDesktopPortraitFontBoost = 1.0;
-                                tempDesktopPortraitSizeBoost = 1.0;
-                              });
-                            },
-                            child: const Text('Reset to defaults'),
-                          ),
+                                  tempMobilePortraitFontBoost = 1.0;
+                                  tempMobilePortraitSizeBoost = 1.0;
+                                  tempTabletPortraitFontBoost = 1.0;
+                                  tempTabletPortraitSizeBoost = 1.0;
+                                  tempDesktopPortraitFontBoost = 1.0;
+                                  tempDesktopPortraitSizeBoost = 1.0;
+                                });
+                              },
+                              child: const Text('Reset to defaults'),
+                            ),
                             TextButton(
                               onPressed: () => Navigator.pop(ctx),
                               child: const Text('Cancel'),
                             ),
                             ElevatedButton(
                               onPressed: () async {
-                              setState(() {
-                                _autoScale = tempAutoScale;
-                                _autoScaleLandscape = tempAutoScaleLandscape;
-                                _autoScalePortrait = tempAutoScalePortrait;
-                                _mobileLandscapeFontBoost =
-                                    tempMobileLandscapeFontBoost;
-                                _mobileLandscapeSizeBoost =
-                                    tempMobileLandscapeSizeBoost;
-                                _tabletLandscapeFontBoost =
-                                    tempTabletLandscapeFontBoost;
-                                _tabletLandscapeSizeBoost =
-                                    tempTabletLandscapeSizeBoost;
-                                _desktopLandscapeFontBoost =
-                                    tempDesktopLandscapeFontBoost;
-                                _desktopLandscapeSizeBoost =
-                                    tempDesktopLandscapeSizeBoost;
-                                _mobilePortraitFontBoost =
-                                    tempMobilePortraitFontBoost;
-                                _mobilePortraitSizeBoost =
-                                    tempMobilePortraitSizeBoost;
-                                _tabletPortraitFontBoost =
-                                    tempTabletPortraitFontBoost;
-                                _tabletPortraitSizeBoost =
-                                    tempTabletPortraitSizeBoost;
-                                _desktopPortraitFontBoost =
-                                    tempDesktopPortraitFontBoost;
-                                _desktopPortraitSizeBoost =
-                                    tempDesktopPortraitSizeBoost;
-                              });
-                              // Close sheet before async work to avoid using context after await
-                              Navigator.pop(ctx);
-                              // Force-apply: toggle disable -> wait -> restore target enabled
-                              final bool targetEnabled = tempEnabled;
-                              _enabled.value = false;
-                              await Future.delayed(
-                                const Duration(milliseconds: 30),
-                              );
-                              _enabled.value = targetEnabled;
-                              // Nudge a full rebuild of the ScaleKitBuilder subtree
-                              setState(() {
-                                _builderVersion++;
-                              });
+                                setState(() {
+                                  _autoScale = tempAutoScale;
+                                  _autoScaleLandscape = tempAutoScaleLandscape;
+                                  _autoScalePortrait = tempAutoScalePortrait;
+                                  _mobileLandscapeFontBoost =
+                                      tempMobileLandscapeFontBoost;
+                                  _mobileLandscapeSizeBoost =
+                                      tempMobileLandscapeSizeBoost;
+                                  _tabletLandscapeFontBoost =
+                                      tempTabletLandscapeFontBoost;
+                                  _tabletLandscapeSizeBoost =
+                                      tempTabletLandscapeSizeBoost;
+                                  _desktopLandscapeFontBoost =
+                                      tempDesktopLandscapeFontBoost;
+                                  _desktopLandscapeSizeBoost =
+                                      tempDesktopLandscapeSizeBoost;
+                                  _mobilePortraitFontBoost =
+                                      tempMobilePortraitFontBoost;
+                                  _mobilePortraitSizeBoost =
+                                      tempMobilePortraitSizeBoost;
+                                  _tabletPortraitFontBoost =
+                                      tempTabletPortraitFontBoost;
+                                  _tabletPortraitSizeBoost =
+                                      tempTabletPortraitSizeBoost;
+                                  _desktopPortraitFontBoost =
+                                      tempDesktopPortraitFontBoost;
+                                  _desktopPortraitSizeBoost =
+                                      tempDesktopPortraitSizeBoost;
+                                });
+                                // Close sheet before async work to avoid using context after await
+                                Navigator.pop(ctx);
+                                // Force-apply: toggle disable -> wait -> restore target enabled
+                                final bool targetEnabled = tempEnabled;
+                                _enabled.value = false;
+                                await Future.delayed(
+                                  const Duration(milliseconds: 30),
+                                );
+                                _enabled.value = targetEnabled;
+                                // Nudge a full rebuild of the ScaleKitBuilder subtree
+                                setState(() {
+                                  _builderVersion++;
+                                });
                               },
                               child: const Text('Save'),
                             ),
