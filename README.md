@@ -24,6 +24,21 @@ A high-performance responsive design package for Flutter that helps you create a
 
 > 💝 **Support this project**: If you find Flutter Scale Kit useful, consider [buying me a coffee](https://ko-fi.com/fodilfliti) to help me continue developing and maintaining open-source packages. Your support means a lot! 🙏
 
+---
+
+<div align="center">
+
+### 🎯 [**🚀 TRY LIVE DEMO NOW 🚀**](https://fodilfliti.github.io/flutter_scale_kit/)
+
+[![Demo Button](https://img.shields.io/badge/🌐-Try%20Live%20Demo-4CAF50?style=for-the-badge&logo=flutter&logoColor=white)](https://fodilfliti.github.io/flutter_scale_kit/)
+[![Web Demo](https://img.shields.io/badge/🎮-Interactive%20Demo-2196F3?style=for-the-badge&logo=google-chrome&logoColor=white)](https://fodilfliti.github.io/flutter_scale_kit/)
+
+**👆 Click above to test all features in your browser! 👆**
+
+</div>
+
+---
+
 ## Screenshots
 
 <table style="width:100%;">
