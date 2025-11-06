@@ -278,13 +278,12 @@ class _MyAppState extends State<MyApp> {
                         ),
                       ],
                       const SizedBox(height: 12),
-                      // Responsive actions: avoid overflow on small screens
-                      Wrap(
-                        alignment: WrapAlignment.end,
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          OutlinedButton(
+                      // Responsive actions: prefer Row aligned to end; fallback to Wrap on compact widths
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final bool isCompact = constraints.maxWidth < 360;
+                          final actions = <Widget>[
+                            OutlinedButton(
                             onPressed: () {
                               setModalState(() {
                                 // Reset staged values to defaults
@@ -310,12 +309,12 @@ class _MyAppState extends State<MyApp> {
                             },
                             child: const Text('Reset to defaults'),
                           ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(ctx),
-                            child: const Text('Cancel'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('Cancel'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
                               setState(() {
                                 _autoScale = tempAutoScale;
                                 _autoScaleLandscape = tempAutoScaleLandscape;
@@ -350,16 +349,36 @@ class _MyAppState extends State<MyApp> {
                               // Force-apply: toggle disable -> wait -> restore target enabled
                               final bool targetEnabled = tempEnabled;
                               _enabled.value = false;
-                              await Future.delayed(const Duration(milliseconds: 30));
+                              await Future.delayed(
+                                const Duration(milliseconds: 30),
+                              );
                               _enabled.value = targetEnabled;
                               // Nudge a full rebuild of the ScaleKitBuilder subtree
                               setState(() {
                                 _builderVersion++;
                               });
-                            },
-                            child: const Text('Save'),
-                          ),
-                        ],
+                              },
+                              child: const Text('Save'),
+                            ),
+                          ];
+                          if (isCompact) {
+                            return Wrap(
+                              alignment: WrapAlignment.end,
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: actions,
+                            );
+                          }
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ...actions
+                                  .expand((w) => [w, const SizedBox(width: 8)])
+                                  .toList()
+                                ..removeLast(),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -593,18 +612,18 @@ class HomePage extends StatelessWidget {
 
   Widget _buildSectionTitle(String title, String subtitle) {
     return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
           title,
-                      style: TextStyle(
+          style: TextStyle(
             fontSize: 22.sp,
-                        fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.bold,
             color: Colors.deepPurple,
-                      ),
-                    ),
+          ),
+        ),
         SizedBox(height: 4.h),
-                    Text(
+        Text(
           subtitle,
           style: TextStyle(
             fontSize: 14.sp,
@@ -627,12 +646,12 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-                    Text(
+            Text(
               'Orientation-Specific Autoscale',
               style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-                    ),
+            ),
             SizedBox(height: 8.h),
-                    Text(
+            Text(
               'By default: autoScaleLandscape=true, autoScalePortrait=false. This keeps portrait UI stable while allowing readability boosts in landscape.',
               style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade700),
             ),
@@ -657,7 +676,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 12.h),
-                    Text(
+            Text(
               'Compared to flutter_screenutil: when resizing desktop windows, its cards often scale disproportionately. Scale Kit keeps practical sizes due to clamped scales and orientation-aware boosts.',
               style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade700),
             ),
@@ -678,18 +697,18 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-                    Text(
+            Text(
               'Enable/Disable Scaling',
               style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-                    ),
+            ),
             SizedBox(height: 8.h),
-                    Text(
+            Text(
               'Use the switch in the AppBar to toggle Scale Kit on/off and visually compare against Flutter\'s raw sizes.',
               style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade700),
-                    ),
-                  ],
-                ),
-              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -792,11 +811,11 @@ class HomePage extends StatelessWidget {
               child: Center(
                 child: Text(
                   '50% Screen Width',
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ],
@@ -1039,11 +1058,11 @@ class HomePage extends StatelessWidget {
               child: Container(
                 color: Colors.blue.shade100,
                 padding: EdgeInsets.all(8.w),
-              child: Text(
+                child: Text(
                   'SKit.padding(all: 16)',
-                style: TextStyle(fontSize: 14.sp),
+                  style: TextStyle(fontSize: 14.sp),
+                ),
               ),
-            ),
             ),
             SizedBox(height: 12.h),
             Text(
@@ -1275,10 +1294,10 @@ class HomePage extends StatelessWidget {
                     children: [
                       Text(
                         'SKit.paddingSize(all: SKSize.md)',
-              style: TextStyle(
+                        style: TextStyle(
                           fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-              ),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SizedBox(height: 8.h),
                       Text(
@@ -1739,7 +1758,7 @@ class HomePage extends StatelessWidget {
                 color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(4.r),
               ),
-                child: Text(
+              child: Text(
                 '// Configure in main():\n'
                 'FontConfig.instance.setLanguageFont(\n'
                 '  LanguageFontConfig(\n'
@@ -1803,9 +1822,9 @@ class HomePage extends StatelessWidget {
                   children: [
                     Text(
                       'SKPadding + SKContainer',
-              style: TextStyle(
+                      style: TextStyle(
                         fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 8.h),
@@ -1908,14 +1927,14 @@ class HomePage extends StatelessWidget {
                   Text(
                     'context.scalePadding(horizontal: 20, vertical: 16)',
                     style: TextStyle(fontSize: 12.sp),
-            ),
-            SizedBox(height: 8.h),
-            Text(
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
                     'context.scaleMargin(all: 8)',
                     style: TextStyle(fontSize: 12.sp),
-            ),
+                  ),
                   SizedBox(height: 8.h),
-            Text(
+                  Text(
                     'context.scaleBorderRadius(all: 10)',
                     style: TextStyle(fontSize: 12.sp),
                   ),
@@ -1924,10 +1943,10 @@ class HomePage extends StatelessWidget {
                   SizedBox(height: 8.h),
                   Text(
                     'Device Detection:',
-              style: TextStyle(
+                    style: TextStyle(
                       fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-              ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SizedBox(height: 8.h),
                   Text(
@@ -2030,16 +2049,16 @@ class HomePage extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.blue.shade200,
                         borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Center(
-                    child: Text(
-                          '75% Screen Width',
-                      style: TextStyle(
-                            fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ),
+                      child: Center(
+                        child: Text(
+                          '75% Screen Width',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 );
@@ -2218,11 +2237,11 @@ class HomePage extends StatelessWidget {
     return Card(
       elevation: 2,
       color: Colors.blue.shade50,
-              child: Padding(
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
               children: [
                 Icon(Icons.lightbulb_outline, size: 20.sp, color: Colors.blue),
