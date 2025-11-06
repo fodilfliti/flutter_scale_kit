@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'
-    show kDebugMode, kIsWeb, defaultTargetPlatform, TargetPlatform;
+    show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_scale_kit/flutter_scale_kit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'
@@ -88,19 +88,17 @@ class _MyAppState extends State<MyApp> {
     // Set up device_preview callback for ScaleManager (testing only)
     // Note: device_preview platform detection may not work correctly
     // This is for visual testing only
-    if (kDebugMode) {
-      ScaleManager.setDevicePreviewPlatformGetter((context) {
-        if (!_devicePreviewEnabled || context == null) return null;
-        // Note: device_preview doesn't provide a reliable way to get the simulated platform
-        // This is a limitation - device detection may not work correctly with device_preview
-        // This feature is for visual testing only
-        return null; // Return null to use default platform detection
-      });
-    }
+    // Works in both debug and release builds (for web deployment)
+    ScaleManager.setDevicePreviewPlatformGetter((context) {
+      if (!_devicePreviewEnabled || context == null) return null;
+      // Note: device_preview doesn't provide a reliable way to get the simulated platform
+      // This is a limitation - device detection may not work correctly with device_preview
+      // This feature is for visual testing only
+      return null; // Return null to use default platform detection
+    });
   }
 
   void _toggleDevicePreview() {
-    if (!kDebugMode) return;
     setState(() {
       _devicePreviewEnabled = !_devicePreviewEnabled;
       // Force rebuild when toggling device preview
@@ -110,7 +108,6 @@ class _MyAppState extends State<MyApp> {
 
   // Direct activation without dialog (for banner button)
   void _activateDevicePreviewDirectly() {
-    if (!kDebugMode) return;
     if (_devicePreviewEnabled) {
       // Already enabled, do nothing
       return;
@@ -188,8 +185,8 @@ class _MyAppState extends State<MyApp> {
       ),
     );
 
-    // Wrap with DevicePreview if enabled (debug mode only, testing only)
-    if (kDebugMode && _devicePreviewEnabled) {
+    // Wrap with DevicePreview if enabled (works in both debug and release builds)
+    if (_devicePreviewEnabled) {
       return DevicePreview(enabled: true, builder: (context) => app);
     }
 
@@ -324,8 +321,9 @@ class HomePage extends StatelessWidget {
                   );
                 },
               ),
-              // Device Preview Toggle (debug mode only, web/desktop only, testing only)
-              if (kDebugMode && _isDesktop()) ...[
+              // Device Preview Toggle (web/desktop only, testing only)
+              // Works in both debug and release builds
+              if (_isDesktop()) ...[
                 SizedBox(width: 8.w),
                 Tooltip(
                   message:
@@ -355,7 +353,7 @@ class HomePage extends StatelessWidget {
                                 '• You must reload the app after changing devices\n'
                                 '• This should only be used for visual testing\n'
                                 '• Do not rely on this for production behavior\n\n'
-                                'This feature is only available in debug mode on web/desktop.',
+                                'This feature is available on web/desktop.',
                               ),
                               actions: [
                                 TextButton(
@@ -388,10 +386,10 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Device Preview Banner (desktop/web only, when not active)
-            if (kDebugMode && _isDesktop() && !devicePreviewEnabled)
+            // Works in both debug and release builds
+            if (_isDesktop() && !devicePreviewEnabled)
               _buildDevicePreviewBanner(),
-            if (kDebugMode && _isDesktop() && !devicePreviewEnabled)
-              SizedBox(height: 24.h),
+            if (_isDesktop() && !devicePreviewEnabled) SizedBox(height: 24.h),
             // Quick Start Section
             const SectionTitle(
               title: '🚀 Quick Start',
@@ -724,7 +722,7 @@ class HomePage extends StatelessWidget {
                           ),
                           SizedBox(width: 6.w),
                           Text(
-                            'Click the button below or the phone icon in the AppBar to activate',
+                            'Click the phone icon in the AppBar to activate',
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: Colors.orange.shade700,
@@ -737,45 +735,14 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 16.w),
-                // Action Button - Show dialog before activation
+                // Action Button - Direct activation without dialog
                 ElevatedButton.icon(
                   onPressed:
                       devicePreviewEnabled
                           ? null // Disable if already enabled
                           : () {
-                            // Show dialog before activation (same as AppBar icon)
-                            showDialog(
-                              context: context,
-                              builder:
-                                  (context) => AlertDialog(
-                                    title: const Text('Device Preview'),
-                                    content: const Text(
-                                      '⚠️ WARNING: This is for testing only!\n\n'
-                                      'Device Preview allows you to test your app on different device sizes and platforms.\n\n'
-                                      'IMPORTANT:\n'
-                                      '• Device detection may not work correctly\n'
-                                      '• Mobile/tablet detection may be inaccurate\n'
-                                      '• You must reload the app after changing devices\n'
-                                      '• This should only be used for visual testing\n'
-                                      '• Do not rely on this for production behavior\n\n'
-                                      'This feature is only available in debug mode on web/desktop.',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed:
-                                            () => Navigator.of(context).pop(),
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          onDevicePreviewToggle();
-                                        },
-                                        child: const Text('Enable'),
-                                      ),
-                                    ],
-                                  ),
-                            );
+                            // Direct activation without dialog
+                            onDevicePreviewActivateDirectly();
                           },
                   icon: Icon(Icons.phone_android, size: 20.sp),
                   label: Text(
@@ -858,7 +825,7 @@ class HomePage extends StatelessWidget {
                     SizedBox(width: 6.w),
                     Expanded(
                       child: Text(
-                        'Click the button below or the phone icon in the AppBar to activate',
+                        'Click the phone icon in the AppBar to activate',
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: Colors.orange.shade700,
@@ -869,7 +836,7 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 16.h),
-                // Action Button (full width on narrow screens) - Show dialog before activation
+                // Action Button (full width on narrow screens) - Direct activation without dialog
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
@@ -877,39 +844,8 @@ class HomePage extends StatelessWidget {
                         devicePreviewEnabled
                             ? null // Disable if already enabled
                             : () {
-                              // Show dialog before activation (same as AppBar icon)
-                              showDialog(
-                                context: context,
-                                builder:
-                                    (context) => AlertDialog(
-                                      title: const Text('Device Preview'),
-                                      content: const Text(
-                                        '⚠️ WARNING: This is for testing only!\n\n'
-                                        'Device Preview allows you to test your app on different device sizes and platforms.\n\n'
-                                        'IMPORTANT:\n'
-                                        '• Device detection may not work correctly\n'
-                                        '• Mobile/tablet detection may be inaccurate\n'
-                                        '• You must reload the app after changing devices\n'
-                                        '• This should only be used for visual testing\n'
-                                        '• Do not rely on this for production behavior\n\n'
-                                        'This feature is only available in debug mode on web/desktop.',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed:
-                                              () => Navigator.of(context).pop(),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            onDevicePreviewToggle();
-                                          },
-                                          child: const Text('Enable'),
-                                        ),
-                                      ],
-                                    ),
-                              );
+                              // Direct activation without dialog
+                              onDevicePreviewActivateDirectly();
                             },
                     icon: Icon(Icons.phone_android, size: 20.sp),
                     label: Text(

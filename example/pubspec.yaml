@@ -39,6 +39,8 @@ dependencies:
   flutter_scale_kit:
     path: ../
   syntax_highlight: ^0.5.0
+  # device_preview is only used in debug mode, but must be in dependencies
+  # All usage is guarded with kDebugMode checks to prevent issues in release builds
   device_preview: ^1.1.0
 
 dev_dependencies:
