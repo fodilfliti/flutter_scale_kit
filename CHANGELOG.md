@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.8] - 2025-11-06
+
+### Changed
+
+- Example Android: set `ndkVersion` to r28 to support 16 KB memory page size requirement
+- Settings UX: Save now force-applies changes (disable → short wait → enable) and rebuilds
+- Settings UI: buttons use Row aligned end (Wrap fallback on compact), controls hide/show based on toggles
+
+### Fixed
+
+- Avoid overflow in settings action area on small screens
+- Hide settings action when scaling is disabled
+
 ## [1.0.7] - 2025-11-05
 
 ### Added
