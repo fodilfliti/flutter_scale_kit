@@ -8,7 +8,8 @@ plugins {
 android {
     namespace = "com.example.example"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // Explicit NDK r28 to ensure 16 KB page size support on new Android requirements
+    ndkVersion = "28.0.12433566"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
