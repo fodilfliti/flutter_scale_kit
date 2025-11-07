@@ -160,6 +160,15 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
       reapply = true;
     }
 
+    if (oldWidget.minScale != widget.minScale ||
+        oldWidget.maxScale != widget.maxScale) {
+      ScaleManager.instance.setScaleLimits(
+        minScale: widget.minScale,
+        maxScale: widget.maxScale,
+      );
+      reapply = true;
+    }
+
     if (oldWidget.enabled != widget.enabled) {
       ScaleManager.instance.setEnabled(widget.enabled);
       reapply = true;
@@ -223,6 +232,8 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
         designWidth: widget.designWidth,
         designHeight: widget.designHeight,
         designType: widget.designType,
+        minScale: widget.minScale,
+        maxScale: widget.maxScale,
       );
       ScaleManager.instance.setAutoScale(widget.autoScale);
       ScaleManager.instance.setEnabled(widget.enabled);
@@ -243,6 +254,10 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
         mobilePortraitSizeBoost: widget.mobilePortraitSizeBoost,
         tabletPortraitSizeBoost: widget.tabletPortraitSizeBoost,
         desktopPortraitSizeBoost: widget.desktopPortraitSizeBoost,
+      );
+      ScaleManager.instance.setScaleLimits(
+        minScale: widget.minScale,
+        maxScale: widget.maxScale,
       );
       _isInitialized = true;
 

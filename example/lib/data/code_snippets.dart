@@ -290,6 +290,45 @@ SKit.roundedContainer(
   borderBottomWidth: 2,
 )''';
 
+  // Rounded Container advanced decoration
+  static const roundedContainerDecorations =
+      '''// Gradient with elevation helper
+SKit.roundedContainer(
+  all: 16,
+  gradient: const LinearGradient(
+    colors: [Color(0xFF7F7FD5), Color(0xFF86A8E7)],
+  ),
+  elevation: 8,
+  shadowColor: Colors.black45,
+  padding: EdgeInsets.all(20),
+  child: const Text(
+    'Elevated gradient card',
+    style: TextStyle(color: Colors.white),
+  ),
+)
+
+// Background image with custom box shadow
+SKit.roundedContainer(
+  all: 20,
+  backgroundImage: const DecorationImage(
+    image: AssetImage('assets/images/rounded_bg.png'),
+    fit: BoxFit.cover,
+    colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
+  ),
+  boxShadow: const [
+    BoxShadow(
+      color: Colors.black26,
+      blurRadius: 24,
+      offset: Offset(0, 14),
+    ),
+  ],
+  padding: EdgeInsets.all(24),
+  child: const Text(
+    'Background image + shadow',
+    style: TextStyle(color: Colors.white),
+  ),
+);''';
+
   // Live Scaling Debug
   static const liveScalingDebug = '''final scale = ScaleManager.instance;
 const baseFont = 12.0;

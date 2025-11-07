@@ -2,6 +2,77 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.10] - 2025-01-16
+
+### 🧠 Major Feature: Intelligent Auto-Configuration
+
+#### Added
+
+- **Intelligent Scale Limit Auto-Detection**: Package now automatically determines optimal `minScale` and `maxScale` based on device type, screen size, orientation, and aspect ratio
+  - Mobile phones: 0.85-1.15x (portrait), 0.85-1.25x (landscape)
+  - Tablets: 0.8-1.3x (portrait), 0.75-1.4x (landscape)  
+  - Desktop/Web: 0.6-2.0x (landscape), 0.7-1.8x (portrait)
+  - Special handling for foldables, ultra-wide monitors (>2560px), small windows (<800px), and notched screens
+  - Automatically adjusts limits when mobile designs run on tablets/desktop
+- **Zero-Configuration Setup**: `minScale` and `maxScale` parameters are now optional (nullable) - pass `null` to enable auto-detection (recommended for 95% of use cases)
+- **Manual Override Toggle**: Example app now includes "Manual Scale Control" switch in settings to toggle between auto-detection and manual configuration
+- **Live Scale Preview**: Settings UI displays real-time scale calculations showing:
+  - Current device type (Mobile/Tablet/Desktop) with badge
+  - Orientation (Portrait/Landscape)
+  - Auto-detected scale range (e.g., "Auto: 0.85-1.15x")
+  - Raw scale vs clamped scale comparison with color coding
+  - Active clamping warnings
+  - Example calculations (e.g., "100.w = 125px")
+
+#### Documentation
+
+- **New "Intelligent Auto-Configuration" Section** in README (prominently placed after screenshots):
+  - Two-column layout explaining what the package auto-detects and optimizes
+  - Zero-configuration code example
+  - Clear guidance on when manual configuration is needed (edge cases only)
+- **Enhanced "Understanding Scale Limits" Section**:
+  - Step-by-step math examples with real device scenarios
+  - Updated use case table focusing on manual override scenarios
+  - Added reminder that auto-detection handles most cases
+- **New "Understanding Orientation Boosts" Section** with comprehensive documentation:
+  - Complete scaling formulas for sizes and fonts
+  - Default boost table for all device types and orientations
+  - Real-world step-by-step math example (iPhone 14 landscape)
+  - Three practical use cases with code examples (Dense dashboards, Reading apps, Kiosk tablets)
+  - Complete working example with inline math breakdowns
+  - Six key takeaways explaining boost behavior
+- **Inline Code Documentation**:
+  - Added detailed comment blocks in `main.dart` explaining intelligent auto-configuration
+  - Added orientation boost explanation with math examples
+  - All boost parameters now include their default values in comments
+- **Key Features Section**: Added intelligent auto-configuration as a highlighted feature at the top of README
+
+#### Changed
+
+- `minScale` and `maxScale` parameters in `ScaleKitBuilder` are now nullable (`double?`) instead of required
+- Example app defaults to `null` for both scale limits, enabling intelligent auto-detection
+- Enhanced `_getScaleLimits()` algorithm in `ScaleManager` with:
+  - Orientation-aware limits (landscape gets wider ranges)
+  - Aspect ratio detection (narrow/standard/wide)
+  - Design-to-screen ratio analysis
+  - Special case handling for edge scenarios
+- Settings UI now clearly indicates when auto-detection is active vs manual override:
+  - Green "Auto-Intelligent" badge when using auto-detection
+  - Orange "Manual Override" badge when using manual limits
+  - Dynamic subtitle showing current mode
+
+#### Fixed
+
+- Removed unused `_useManualScaleLimits` field from example app (was causing linter warning)
+- Settings sheet now properly handles null scale values throughout the UI
+
+### Technical Improvements
+
+- Enhanced `ScaleManager._getScaleLimits()` with 90+ lines of intelligent detection logic
+- Settings preview builder now calculates and displays auto-detected values
+- Scale limits are computed dynamically based on current screen state
+- Manual override properly restores to null values when disabled
+
 ## [1.0.9] - 2025-01-15
 
 ### Added

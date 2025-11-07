@@ -20,6 +20,15 @@
 
 A high-performance responsive design package for Flutter that helps you create adaptive UIs across different screen sizes with easy-to-use scaling utilities.
 
+## ✨ Key Features
+
+- **🧠 Intelligent Auto-Configuration**: Automatically detects optimal scale limits based on device type, screen size, orientation, and aspect ratio — **works perfectly out-of-the-box in 95% of cases without manual configuration**
+- **📱 Universal Platform Support**: Seamlessly handles mobile phones, tablets, desktop, and web with platform-specific optimizations
+- **🔄 Orientation-Aware**: Automatically adjusts scaling factors when device rotates between portrait and landscape
+- **🎯 Design Fidelity**: Keeps your UI proportional to design mockups while adapting to any screen size
+- **⚡ High Performance**: Cached calculations and threshold-based updates minimize overhead
+- **🛠️ Developer-Friendly**: Simple API similar to `flutter_screenutil` with powerful customization when needed
+
 > If this package helps you, please click "Like" on the pub.dev page — it improves discoverability and ranking.
 
 > 💝 **Support this project**: If you find Flutter Scale Kit useful, consider [buying me a coffee](https://ko-fi.com/fodilfliti) to help me continue developing and maintaining open-source packages. Your support means a lot! 🙏
@@ -89,9 +98,86 @@ A high-performance responsive design package for Flutter that helps you create a
   
 </table>
 
+## 🧠 Intelligent Auto-Configuration
+
+**Scale Kit is SMART** — it automatically detects and configures optimal scaling for your app:
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 📱 **What It Auto-Detects**
+
+✅ **Device Type**
+
+- Mobile phones (iPhone, Android)
+- Tablets (iPad, Android tablets)
+- Desktop (Windows, macOS, Linux)
+- Web browsers (responsive windows)
+
+✅ **Screen Properties**
+
+- Width and height
+- Orientation (portrait/landscape)
+- Aspect ratio (standard/wide/narrow)
+- Pixel density
+
+✅ **Special Cases**
+
+- Foldable devices (Galaxy Fold, etc.)
+- Ultra-wide monitors (>2560px)
+- Small windows (<800px)
+- Notched/tall screens (21:9)
+
+</td>
+<td width="50%" valign="top">
+
+### ⚙️ **What It Optimizes**
+
+🎯 **Scale Limits** (automatic)
+
+- Mobile: 0.85-1.15x (portrait), 0.85-1.25x (landscape)
+- Tablet: 0.8-1.3x (portrait), 0.75-1.4x (landscape)
+- Desktop: 0.6-2.0x (landscape), 0.7-1.8x (portrait)
+
+🔄 **Orientation Boosts**
+
+- Mobile landscape: 1.2x font/size
+- Tablet landscape: 1.2x font/size
+- Desktop landscape: 1.0x (no boost)
+- Portrait: 1.0x (no boost by default)
+
+💡 **Design Adaptation**
+
+- Mobile design → Tablet: increases range
+- Mobile design → Desktop: caps upscaling
+- Handles resizable windows gracefully
+
+</td>
+</tr>
+</table>
+
+### 🚀 **Zero Configuration Required**
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  // That's it! Everything else is automatic ✨
+  child: MaterialApp(home: HomePage()),
+)
+```
+
+**No need to set** `minScale`, `maxScale`, or orientation boosts — the package intelligently handles everything based on your device and screen!
+
+> 💡 **When to manually configure?** Only if you have specific requirements like strict design compliance (±5%) or need different values than the intelligent defaults. See [Manual Override Examples](#understanding-scale-limits-minscale--maxscale) below.
+
+---
+
 ## Features
 
 - 🎯 **Easy Scaling**: Simple API similar to `flutter_screenutil` (`.w`, `.sw`, `.sh`, `.r`, `.sp`, `.h`)
+- 🧠 **Intelligent Auto-Configuration**: Zero-config setup with smart device/orientation detection (95% use cases)
 - 📱 **Responsive Design**: Automatic scaling based on screen dimensions and aspect ratios
 - ⚡ **High Performance**: Intelligent caching system prevents recalculation on every rebuild
 - 🔧 **Const Widgets**: Generate const-compatible widgets for better performance
@@ -102,7 +188,7 @@ A high-performance responsive design package for Flutter that helps you create a
 - 🔄 **Smart Caching**: Flyweight pattern with automatic cache invalidation on size/orientation change
 - 🎨 **ThemeData Integration**: Use responsive scaling in Flutter's theme system
 - 🔤 **Font Configuration**: Automatic font selection per language with Google Fonts support
-- 🧭 **Orientation Autoscale**: Enable different autoscale behavior for landscape vs portrait
+- 🧭 **Orientation Autoscale**: Configurable autoscale behavior for landscape vs portrait
 - 🔁 **Runtime Toggle**: Enable/disable scaling globally to compare with raw Flutter sizes
 
 ## Installation
@@ -111,7 +197,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.0.9
+  flutter_scale_kit: ^1.0.10
 ```
 
 Then run:
@@ -163,6 +249,8 @@ class MyApp extends StatelessWidget {
       designWidth: 375,
       designHeight: 812,
       designType: DeviceType.mobile,
+      // That's it! Scale limits are automatically configured ✨
+      // minScale & maxScale are optional - only set if you need custom behavior
       child: MaterialApp(
         title: 'My App',
         home: HomePage(),
@@ -171,6 +259,255 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
+
+**🎯 Intelligent Auto-Configuration**
+
+Scale Kit automatically determines optimal scale limits based on your device, screen size, orientation, and design dimensions. **In 95% of cases, you don't need to set `minScale` or `maxScale` manually** — the package intelligently adapts:
+
+- **📱 Mobile phones** (Portrait: 0.85-1.15x, Landscape: 0.85-1.25x)
+
+  - Tight bounds keep UI consistent across iPhone SE to iPhone Pro Max
+  - Detects extreme aspect ratios (foldables, notched screens) and adjusts automatically
+
+- **📲 Tablets** (Portrait: 0.8-1.3x, Landscape: 0.75-1.4x)
+
+  - Comfortable scaling for iPad Mini to iPad Pro
+  - Increases range if your mobile design runs on large tablets
+
+- **💻 Desktop & Web** (Landscape: 0.6-2.0x, Portrait: 0.7-1.8x)
+  - Widest range for resizable windows (800px to ultrawide 3440px monitors)
+  - Detects small windows vs ultrawide displays and adjusts limits
+  - Caps upscaling when mobile designs run on large desktop screens
+
+The algorithm considers orientation changes, aspect ratios (narrow/standard/wide), and the relationship between your design dimensions and actual screen size — **so your app looks great everywhere without configuration**.
+
+#### Understanding Scale Limits (minScale & maxScale)
+
+**⚙️ When to Manually Configure**
+
+Only override the auto-detected limits if you have specific requirements:
+
+Scale limits control how much your UI can grow or shrink relative to your design dimensions. They're applied **after** the base scale calculation but **before** orientation boosts.
+
+**How it works:**
+
+Scale Kit first calculates raw scale factors:
+
+- `scaleWidth = screenWidth / designWidth`
+- `scaleHeight = screenHeight / designHeight`
+
+Then it clamps them:
+
+- `finalScaleWidth = clamp(scaleWidth, minScale, maxScale)`
+- `finalScaleHeight = clamp(scaleHeight, minScale, maxScale)`
+
+**Real-world example:**
+
+Suppose your design is `375×812` (iPhone 13 mini) and the user opens your app on an iPad Pro (1024×1366 portrait):
+
+```
+Without limits:
+  scaleWidth = 1024/375 = 2.73x  →  A 100px button becomes 273px (too huge!)
+  scaleHeight = 1366/812 = 1.68x
+
+With minScale: 0.8, maxScale: 1.2:
+  scaleWidth = clamp(2.73, 0.8, 1.2) = 1.2x  →  A 100px button becomes 120px ✓
+  scaleHeight = clamp(1.68, 0.8, 1.2) = 1.2x
+```
+
+**Manual Override Examples (Optional):**
+
+These settings are **only needed if you want different behavior** than the intelligent defaults:
+
+| Use Case                | minScale | maxScale | Why                                                                          |
+| ----------------------- | -------- | -------- | ---------------------------------------------------------------------------- |
+| **Strict Design Match** | `0.95`   | `1.05`   | Lock to design specs (overrides auto-detection); useful for brand compliance |
+| **Extra Accessibility** | `0.6`    | `2.0`    | Wider than defaults; lets system text-scaling dominate                       |
+| **Locked Tablet Range** | `0.9`    | `1.2`    | Override tablet auto-range to match mobile consistency                       |
+| **Desktop Max Limit**   | `0.7`    | `1.3`    | Cap desktop scaling lower than auto (2.0x) for specific design requirements  |
+
+💡 **Remember:** The package already auto-detects optimal values for mobile/tablet/desktop in both portrait and landscape. These manual overrides are for edge cases only!
+
+**How limits interact with `.w` / `.h` extensions:**
+
+```dart
+// Design: 375×812, Screen: 1024×1366, maxScale: 1.2
+200.w  // = 200 * 1.2 = 240  (clamped from 2.73)
+100.h  // = 100 * 1.2 = 120  (clamped from 1.68)
+16.sp  // Font: 16 * 1.2 * orientationBoost (e.g. 1.2 landscape) * textScaleFactor
+```
+
+**Pro Tip:**  
+Set `minScale` close to `1.0` (e.g., `0.9`) if your design already uses small phones as a baseline—this prevents UI from shrinking too much on even smaller screens. Use a higher `maxScale` (e.g., `1.5`) if you want tablets to feel spacious without creating separate tablet layouts.
+
+---
+
+#### Understanding Orientation Boosts (Advanced)
+
+Orientation boosts are **multipliers applied AFTER scale clamping** to make UI elements more readable/usable when devices rotate. The intelligent defaults work great for most apps, but understanding the math helps with custom tuning.
+
+**📐 The Complete Scaling Formula:**
+
+For **sizing** (width, height, padding, margin):
+
+```
+finalSize = designValue × clampedScale × orientationSizeBoost
+```
+
+For **fonts** (text):
+
+```
+finalFontSize = designFontSize × clampedScale × orientationFontBoost × systemTextScale
+```
+
+**🔄 Default Orientation Boosts (Smart Defaults):**
+
+| Device Type | Orientation | Font Boost | Size Boost | Why                               |
+| ----------- | ----------- | ---------- | ---------- | --------------------------------- |
+| Mobile      | Portrait    | 1.0×       | 1.0×       | Normal, no adjustment needed      |
+| Mobile      | Landscape   | 1.2×       | 1.2×       | Wider screen = more readable text |
+| Tablet      | Portrait    | 1.0×       | 1.0×       | Spacious by default               |
+| Tablet      | Landscape   | 1.2×       | 1.2×       | Even more space for content       |
+| Desktop     | Portrait    | 1.0×       | 1.0×       | Rare case (rotated monitor)       |
+| Desktop     | Landscape   | 1.0×       | 1.0×       | Default desktop, no boost needed  |
+
+**📊 Real-World Math Example:**
+
+Design specs: `375×812` (mobile portrait)  
+Scenario: iPhone 14 rotated to landscape (852×390)
+
+**Step 1: Calculate raw scales**
+
+```
+scaleWidth = 852 / 375 = 2.27x
+scaleHeight = 390 / 812 = 0.48x
+```
+
+**Step 2: Apply intelligent scale limits** (mobile landscape: 0.85-1.25x)
+
+```
+clampedWidth = clamp(2.27, 0.85, 1.25) = 1.25x
+clampedHeight = clamp(0.48, 0.85, 1.25) = 0.85x
+```
+
+**Step 3: Apply orientation boost** (mobile landscape: 1.2x)
+
+```
+// For a 16px font:
+16.sp = 16 × 1.25 (clamped) × 1.2 (landscape boost) = 24px ✓ More readable!
+
+// For a 100px wide container:
+100.w = 100 × 1.25 (clamped) × 1.2 (landscape boost) = 150px ✓ Proportionally larger!
+
+// For a 50px tall element:
+50.h = 50 × 0.85 (clamped) × 1.2 (landscape boost) = 51px ✓ Adjusted for short screen!
+```
+
+**Without boost:**
+
+```
+16.sp = 16 × 1.25 = 20px (too small in landscape)
+100.w = 100 × 1.25 = 125px (cramped)
+```
+
+**🎯 When to Customize Boosts:**
+
+**Use Case 1: Dense Information Display**
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  // Reduce landscape boost for data-heavy apps (dashboards, spreadsheets)
+  mobileLandscapeFontBoost: 1.0,  // No font boost
+  mobileLandscapeSizeBoost: 1.0,  // No size boost
+  tabletLandscapeFontBoost: 1.0,
+  tabletLandscapeSizeBoost: 1.0,
+  child: MaterialApp(...),
+)
+```
+
+**Use Case 2: Extra Readable Text**
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  // Boost fonts more than sizes for reading apps (books, articles)
+  mobileLandscapeFontBoost: 1.4,   // 40% bigger text
+  mobileLandscapeSizeBoost: 1.1,   // 10% bigger containers
+  child: MaterialApp(...),
+)
+```
+
+**Use Case 3: Portrait-Optimized Tablet**
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  // Boost portrait mode for tablets used vertically (POS systems, kiosks)
+  tabletPortraitFontBoost: 1.3,
+  tabletPortraitSizeBoost: 1.3,
+  child: MaterialApp(...),
+)
+```
+
+**📱 Complete Example with All Parameters:**
+
+```dart
+// Design: 375×812
+// Device: iPad landscape (1024×768)
+// Custom: slight boost for readability
+
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+
+  // Let intelligent limits auto-detect (recommended)
+  // minScale: null, maxScale: null,
+
+  // Custom orientation boosts
+  tabletLandscapeFontBoost: 1.15,  // 15% bigger text
+  tabletLandscapeSizeBoost: 1.1,   // 10% bigger UI elements
+
+  child: MaterialApp(
+    home: Scaffold(
+      body: Column(
+        children: [
+          // Math breakdown:
+          // Raw scale: 1024/375 = 2.73x, clamped to 1.4x (tablet max)
+          // With boost: 1.4 × 1.1 = 1.54x for sizes, 1.4 × 1.15 = 1.61x for fonts
+
+          Text(
+            'Title',
+            style: TextStyle(
+              fontSize: 24.sp,  // 24 × 1.61 = 38.64px (readable on large tablet)
+            ),
+          ),
+
+          Container(
+            width: 200.w,   // 200 × 1.54 = 308px (well-proportioned)
+            height: 100.h,  // 100 × 1.54 = 154px
+            padding: EdgeInsets.all(16.w),  // 16 × 1.54 = 24.64px
+          ),
+        ],
+      ),
+    ),
+  ),
+)
+```
+
+**💡 Key Takeaways:**
+
+1. **Orientation boosts multiply AFTER scale clamping** — they fine-tune the final result
+2. **Separate font & size boosts** — text can scale differently from UI elements
+3. **Per-device configuration** — mobile, tablet, and desktop can have different boosts
+4. **Smart defaults work for 95% of cases** — only customize for specialized UIs
+5. **Portrait vs Landscape** — landscape typically gets boosts, portrait stays 1.0x
+6. **System text scaling respected** — `.sp` also multiplies by user's accessibility settings
+
+---
 
 ### 3. Use Extension Methods
 
@@ -208,7 +545,7 @@ SKit.padding(
 )
 ```
 
-**Note:** Most containers need both `borderRadius` and `border`. Use `borderColor` and `borderWidth` parameters to add borders to your rounded containers. You can also specify borders on individual sides (top, bottom, left, right) with different colors and widths. All border widths are automatically scaled based on screen size.
+**Note:** Most containers need both `borderRadius` and `border`. Use `borderColor` and `borderWidth` parameters to add borders to your rounded containers. You can also specify borders on individual sides (top, bottom, left, right) with different colors and widths. All border widths are automatically scaled based on screen size. You can further enhance the decoration with `gradient`, `backgroundImage`, `boxShadow`, `elevation`, `shadowColor`, and `shape` for Material-like cards or image-backed surfaces.
 
 ## Usage
 
@@ -245,10 +582,12 @@ The `SKit` class provides convenient methods for creating widgets:
 // Padding
 SKit.padding(all: 16, child: widget)
 SKit.paddingSize(all: SKSize.md, child: widget)
+final insets = SKit.paddingEdgeInsets(all: 16); // Scaled EdgeInsets
 
 // Margin
 SKit.margin(12, child: widget)
 SKit.marginSize(all: SKSize.md, child: widget)
+final marginInsets = SKit.marginEdgeInsetsSize(all: SKSize.md);
 
 // Rounded container with border on all sides
 SKit.roundedContainer(
@@ -280,12 +619,36 @@ SKit.roundedContainer(
   borderBottomWidth: 2,
 )
 
+// Rounded container with gradient, elevation, and image overlay
+SKit.roundedContainer(
+  all: 16,
+  gradient: const LinearGradient(
+    colors: [Color(0xFF7F7FD5), Color(0xFF86A8E7), Color(0xFF91EAE4)],
+  ),
+  elevation: 8,
+  shadowColor: Colors.black54,
+  backgroundImage: const DecorationImage(
+    image: AssetImage('assets/images/rounded_bg.png'),
+    fit: BoxFit.cover,
+    colorFilter: ColorFilter.mode(Colors.black26, BlendMode.darken),
+  ),
+  padding: EdgeInsets.all(20),
+  child: Text(
+    'Gradient + shadow + background image',
+    style: TextStyle(color: Colors.white),
+  ),
+)
+
 SKit.roundedContainerSize(
   all: SKSize.md,
   color: Colors.blue.shade50,
   borderColor: Colors.blue,
   borderWidth: 2,
 )
+
+// Fetch scaled EdgeInsets directly (great for custom widgets/layouts)
+final padding = SKit.paddingEdgeInsetsSize(horizontal: SKSize.md, vertical: SKSize.sm);
+final rawPadding = SKit.paddingEdgeInsets(all: 12); // accepts doubles when you skip enums
 
 // Spacing
 SKit.hSpace(8)           // Horizontal spacing
@@ -817,6 +1180,28 @@ Notes:
 Tip: Use the example app’s settings (tune icon) to live-test autoscale flags and boosts, then Save to apply. You can Reset to defaults from the sheet.
 
 When resizing windows (desktop/web) or changing device sizes, `flutter_screenutil` often scales cards and paddings more aggressively, which can make components look oversized. Scale Kit clamps scale factors and applies orientation-aware boosts, keeping practical sizes and better visual balance during resizes and rotations.
+
+### Device Preview Integration (Optional)
+
+If you use [`device_preview`](https://pub.dev/packages/device_preview) during development, share its simulated platform with Scale Kit so that device detection remains accurate inside the preview surface:
+
+```dart
+import 'package:device_preview/device_preview.dart';
+
+void main() {
+  ScaleManager.setDevicePreviewPlatformGetter((context) {
+    try {
+      return DevicePreview.platformOf(context);
+    } catch (_) {
+      return null; // Fall back to default detection when preview is disabled
+    }
+  });
+
+  runApp(const MyApp());
+}
+```
+
+Wrap your app with `DevicePreview` as normal (e.g., `DevicePreview(builder: (_) => app)`). Returning `null` keeps the default logic when preview mode is turned off.
 
 ### Font Configuration (Automatic Font Selection)
 

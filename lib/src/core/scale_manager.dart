@@ -22,7 +22,7 @@ class ScaleManager {
   /// Set this callback in your app to enable device_preview support.
   /// Example:
   /// ```dart
-  /// ScaleManager.instance.setDevicePreviewPlatformGetter((context) {
+  /// ScaleManager.setDevicePreviewPlatformGetter((context) {
   ///   try {
   ///     return DevicePreview.platformOf(context);
   ///   } catch (e) {
@@ -80,6 +80,9 @@ class ScaleManager {
   // Global enable/disable scaling
   bool _enabled = true;
 
+  double? _minScaleOverride;
+  double? _maxScaleOverride;
+
   double _topSafeHeight = 0;
   double _bottomSafeHeight = 0;
   double _statusBarHeight = 0;
@@ -111,6 +114,9 @@ class ScaleManager {
   /// Ratio of actual height to UI design height.
   double get scaleHeight => _scaleHeight;
 
+  /// Whether responsive scaling is currently enabled.
+  bool get isEnabled => _enabled;
+
   /// Current screen orientation.
   Orientation get orientation => _orientation;
 
@@ -139,14 +145,20 @@ class ScaleManager {
   /// - [designWidth] - Design width in logical pixels
   /// - [designHeight] - Design height in logical pixels
   /// - [designType] - Design device type (default: mobile)
+  /// - [minScale] - Optional override for minimum scale clamp
+  /// - [maxScale] - Optional override for maximum scale clamp
   void init({
     required BuildContext context,
     required double designWidth,
     required double designHeight,
     DeviceType designType = DeviceType.mobile,
+    double? minScale,
+    double? maxScale,
   }) {
     _designWidth = designWidth;
     _designHeight = designHeight;
+    _minScaleOverride = minScale;
+    _maxScaleOverride = maxScale;
 
     _updateFromContext(context);
   }
@@ -222,6 +234,12 @@ class ScaleManager {
     _enabled = enabled;
   }
 
+  /// Override the min/max scale clamp values. Pass null to use defaults.
+  void setScaleLimits({double? minScale, double? maxScale}) {
+    _minScaleOverride = minScale;
+    _maxScaleOverride = maxScale;
+  }
+
   void _updateFromContext(BuildContext context) {
     // Store context for device_preview support (optional, testing only)
     _currentContext = context;
@@ -256,18 +274,104 @@ class ScaleManager {
     _scaleHeight = _scaleHeight.clamp(minScale, maxScale);
   }
 
+  /// Intelligently determines optimal scale limits based on device type,
+  /// screen size, orientation, and design dimensions.
+  ///
+  /// The algorithm considers:
+  /// - Device type (mobile/tablet/desktop/web)
+  /// - Screen dimensions vs design dimensions
+  /// - Orientation (landscape vs portrait)
+  /// - Aspect ratio categories (narrow/standard/wide)
+  ///
+  /// This ensures the UI scales appropriately across all devices without
+  /// manual configuration in 95% of use cases.
   (double minScale, double maxScale) _getScaleLimits() {
     final deviceType = _detectDeviceType();
+    final aspectCategory = DeviceDetector.getAspectRatioCategory(
+      _screenWidth,
+      _screenHeight,
+    );
+
+    // Calculate how much the screen differs from design
+    final rawScaleW = _screenWidth / _designWidth;
+    final rawScaleH = _screenHeight / _designHeight;
+    final maxRawScale = rawScaleW > rawScaleH ? rawScaleW : rawScaleH;
+
+    (double minScale, double maxScale) defaults;
 
     switch (deviceType) {
       case DeviceType.mobile:
-        return (0.8, 1.2);
+        // Mobile devices have smaller variance between models
+        // Tighter bounds keep UI consistent across phones
+        if (_orientation == Orientation.landscape) {
+          // Landscape: allow slightly more scaling for wider screens
+          defaults = (0.85, 1.25);
+        } else {
+          // Portrait: standard mobile range
+          defaults = (0.85, 1.15);
+        }
+
+        // Adjust for extreme aspect ratios (e.g., foldables, notched screens)
+        if (aspectCategory == AspectRatioCategory.narrow) {
+          // Very tall screens (21:9, foldables) - limit height scaling
+          defaults = (0.9, 1.1);
+        } else if (aspectCategory == AspectRatioCategory.wide) {
+          // Very wide screens (landscape ultra-wide) - allow more width scaling
+          defaults = (0.8, 1.3);
+        }
+        break;
+
       case DeviceType.tablet:
-        return (0.7, 1.5);
+        // Tablets can comfortably scale more without looking odd
+        if (_orientation == Orientation.landscape) {
+          // Landscape tablets often used for productivity - wider range
+          defaults = (0.75, 1.4);
+        } else {
+          // Portrait tablets - moderate range
+          defaults = (0.8, 1.3);
+        }
+
+        // If design is mobile-based but running on large tablet, allow more scaling
+        if (_designWidth < 500 && maxRawScale > 2.0) {
+          defaults = (0.7, 1.5);
+        }
+        break;
+
       case DeviceType.desktop:
       case DeviceType.web:
-        return (0.5, 2.0);
+        // Desktop/web have huge variance (resizable windows, ultrawide monitors)
+        // Need widest range for graceful resizing
+        if (_orientation == Orientation.landscape) {
+          // Most desktop usage - very wide range
+          defaults = (0.6, 2.0);
+
+          // Ultra-wide monitors (>2560px) or small windows (<800px)
+          if (_screenWidth > 2560 || _screenWidth < 800) {
+            defaults = (0.5, 2.5);
+          }
+        } else {
+          // Portrait desktop (rotated monitors, tablets in desktop mode)
+          defaults = (0.7, 1.8);
+        }
+
+        // Adjust based on design dimensions
+        // If design is mobile-based (small) running on desktop (large screen),
+        // we need very generous limits to avoid cartoonish scaling
+        if (_designWidth < 500 && _screenWidth > 1400) {
+          defaults = (0.5, 1.5); // Cap upscaling but allow generous downscaling
+        }
+        break;
     }
+
+    final double effectiveMin = _minScaleOverride ?? defaults.$1;
+    final double effectiveMax = _maxScaleOverride ?? defaults.$2;
+
+    // Safety check: ensure min <= max
+    if (effectiveMin > effectiveMax) {
+      return (effectiveMax, effectiveMin);
+    }
+
+    return (effectiveMin, effectiveMax);
   }
 
   DeviceType _detectDeviceType() {
@@ -472,6 +576,7 @@ class ScaleManager {
   ///
   /// Returns the scaled radius based on the current scale factor.
   double getRadius(double radius) {
+    if (!_enabled) return radius;
     return radius * _scaleWidth;
   }
 

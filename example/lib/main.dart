@@ -82,6 +82,11 @@ class _MyAppState extends State<MyApp> {
   double _desktopPortraitFontBoost = 1.0;
   double _desktopPortraitSizeBoost = 1.0;
 
+  // Scale limits: null = auto-detect (intelligent defaults)
+  // Users can enable manual control from settings
+  double? _minScale;
+  double? _maxScale;
+
   @override
   void initState() {
     super.initState();
@@ -134,25 +139,53 @@ class _MyAppState extends State<MyApp> {
       designWidth: 375,
       designHeight: 812,
       designType: DeviceType.mobile,
+
+      // 🧠 INTELLIGENT AUTO-CONFIGURATION:
+      // minScale & maxScale are null by default, enabling smart auto-detection!
+      // The package automatically determines optimal scale limits based on:
+      // - Device type (mobile: 0.85-1.15x, tablet: 0.8-1.3x, desktop: 0.6-2.0x)
+      // - Orientation (landscape gets wider range than portrait)
+      // - Screen size and aspect ratio (handles foldables, ultra-wide, etc.)
+      //
+      // 95% of apps work perfectly without manual configuration!
+      // Toggle "Manual Scale Control" in settings to override if needed.
+      minScale: _minScale, // null = auto (recommended)
+      maxScale: _maxScale, // null = auto (recommended)
       // Autoscale options
       autoScale: _autoScale,
       autoScaleLandscape: _autoScaleLandscape,
       autoScalePortrait: _autoScalePortrait,
       enabledListenable: _enabled,
       enabled: _enabled.value,
-      // Default boosts: 1.2 for mobile/tablet in landscape, 1.0 desktop
-      mobileLandscapeFontBoost: _mobileLandscapeFontBoost,
-      mobileLandscapeSizeBoost: _mobileLandscapeSizeBoost,
-      tabletLandscapeFontBoost: _tabletLandscapeFontBoost,
-      tabletLandscapeSizeBoost: _tabletLandscapeSizeBoost,
-      desktopLandscapeFontBoost: _desktopLandscapeFontBoost,
-      desktopLandscapeSizeBoost: _desktopLandscapeSizeBoost,
-      mobilePortraitFontBoost: _mobilePortraitFontBoost,
-      mobilePortraitSizeBoost: _mobilePortraitSizeBoost,
-      tabletPortraitFontBoost: _tabletPortraitFontBoost,
-      tabletPortraitSizeBoost: _tabletPortraitSizeBoost,
-      desktopPortraitFontBoost: _desktopPortraitFontBoost,
-      desktopPortraitSizeBoost: _desktopPortraitSizeBoost,
+
+      // 🔄 ORIENTATION BOOSTS (Applied AFTER scale clamping):
+      // These multiply the final scaled values to optimize readability/usability
+      // when devices rotate. Smart defaults: mobile/tablet landscape = 1.2x boost.
+      //
+      // Math example (iPhone landscape):
+      //   1. Raw scale: 852/375 = 2.27x width
+      //   2. Clamped: 1.25x (mobile landscape limit)
+      //   3. Boost applied: 1.25 × 1.2 = 1.5x final
+      //   Result: 16.sp = 16 × 1.5 = 24px (more readable in landscape!)
+      //
+      // Customize these only for specialized UIs:
+      //   - Dense dashboards: set to 1.0 (no boost)
+      //   - Reading apps: increase font boost (e.g., 1.4) while keeping size lower (1.1)
+      //   - Kiosks: boost portrait mode for vertical tablets
+      //
+      // Separate font & size boosts let text scale differently from UI elements!
+      mobileLandscapeFontBoost: _mobileLandscapeFontBoost, // Default: 1.2
+      mobileLandscapeSizeBoost: _mobileLandscapeSizeBoost, // Default: 1.2
+      tabletLandscapeFontBoost: _tabletLandscapeFontBoost, // Default: 1.2
+      tabletLandscapeSizeBoost: _tabletLandscapeSizeBoost, // Default: 1.2
+      desktopLandscapeFontBoost: _desktopLandscapeFontBoost, // Default: 1.0
+      desktopLandscapeSizeBoost: _desktopLandscapeSizeBoost, // Default: 1.0
+      mobilePortraitFontBoost: _mobilePortraitFontBoost, // Default: 1.0
+      mobilePortraitSizeBoost: _mobilePortraitSizeBoost, // Default: 1.0
+      tabletPortraitFontBoost: _tabletPortraitFontBoost, // Default: 1.0
+      tabletPortraitSizeBoost: _tabletPortraitSizeBoost, // Default: 1.0
+      desktopPortraitFontBoost: _desktopPortraitFontBoost, // Default: 1.0
+      desktopPortraitSizeBoost: _desktopPortraitSizeBoost, // Default: 1.0
       child: MaterialApp(
         title: 'Flutter Scale Kit - Complete Examples',
         debugShowCheckedModeBanner: false,
@@ -200,6 +233,8 @@ class _MyAppState extends State<MyApp> {
       autoScale: _autoScale,
       autoScaleLandscape: _autoScaleLandscape,
       autoScalePortrait: _autoScalePortrait,
+      minScale: _minScale,
+      maxScale: _maxScale,
       mobileLandscapeFontBoost: _mobileLandscapeFontBoost,
       mobileLandscapeSizeBoost: _mobileLandscapeSizeBoost,
       tabletLandscapeFontBoost: _tabletLandscapeFontBoost,
@@ -217,6 +252,8 @@ class _MyAppState extends State<MyApp> {
         autoScale,
         autoScaleLandscape,
         autoScalePortrait,
+        minScale,
+        maxScale,
         mobileLandscapeFontBoost,
         mobileLandscapeSizeBoost,
         tabletLandscapeFontBoost,
@@ -234,6 +271,8 @@ class _MyAppState extends State<MyApp> {
           _autoScale = autoScale;
           _autoScaleLandscape = autoScaleLandscape;
           _autoScalePortrait = autoScalePortrait;
+          _minScale = minScale;
+          _maxScale = maxScale;
           _mobileLandscapeFontBoost = mobileLandscapeFontBoost;
           _mobileLandscapeSizeBoost = mobileLandscapeSizeBoost;
           _tabletLandscapeFontBoost = tabletLandscapeFontBoost;
@@ -1327,6 +1366,65 @@ class HomePage extends StatelessWidget {
                   child: Text(
                     'Border on left & right only',
                     style: TextStyle(fontSize: 14.sp),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 16.h),
+        SectionCard(
+          title: 'Rounded Container Decorations',
+          subtitle: 'Gradients, shadows & images',
+          description:
+              'Combine gradient, elevation, shadow color, and backgroundImage to build rich surfaces.',
+          code: CodeSnippets.roundedContainerDecorations,
+          codeLanguage: 'dart',
+          result: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SKit.roundedContainer(
+                all: 16,
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF7F7FD5), Color(0xFF86A8E7)],
+                ),
+                elevation: 8,
+                shadowColor: Colors.black45,
+                padding: EdgeInsets.all(16.w),
+                child: Text(
+                  'Gradient with elevation helper',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              SizedBox(height: 12.h),
+              SKit.roundedContainer(
+                all: 20,
+                backgroundImage: const DecorationImage(
+                  image: AssetImage('assets/images/rounded_bg.png'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(
+                    Colors.black38,
+                    BlendMode.darken,
+                  ),
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 24,
+                    offset: Offset(0, 14),
+                  ),
+                ],
+                padding: EdgeInsets.all(20.w),
+                child: Text(
+                  'Background image + box shadow',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
               ),

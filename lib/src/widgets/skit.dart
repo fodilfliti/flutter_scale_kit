@@ -197,6 +197,9 @@ class SKit {
   /// - [borderColor] - Optional border color
   /// - [borderWidth] - Optional border width (thickness)
   ///
+  /// For advanced decoration options (gradient, shadows, background images), use
+  /// [roundedContainer] or [roundedContainerSize].
+  ///
   /// Returns a [SKContainer] widget with scaled border radius and optional border.
   static SKContainer rounded([
     dynamic size,
@@ -236,11 +239,18 @@ class SKit {
   /// - [borderTop], [borderBottom], [borderLeft], [borderRight] - Optional border on specific sides
   /// - [borderTopColor], [borderBottomColor], [borderLeftColor], [borderRightColor] - Optional border colors for specific sides
   /// - [borderTopWidth], [borderBottomWidth], [borderLeftWidth], [borderRightWidth] - Optional border widths for specific sides
+  /// - [gradient] - Optional background gradient (ignored if [shape] is [BoxShape.circle] with custom borders)
+  /// - [backgroundImage] - Optional background image
+  /// - [backgroundBlendMode] - Optional blend mode applied to [backgroundImage] and [color]/[gradient]
+  /// - [boxShadow] - Optional list of shadows applied to the container
+  /// - [elevation] - Optional elevation helper that generates Material-like shadows when [boxShadow] is not provided
+  /// - [shadowColor] - Optional color applied to generated elevation shadows or to override [boxShadow] colors
+  /// - [shape] - Optional box shape (defaults to [BoxShape.rectangle])
   /// - [child] - Optional child widget
   /// - [padding] - Optional padding
   /// - [margin] - Optional margin
   ///
-  /// Returns a [SKContainer] widget with scaled border radius and optional border.
+  /// Returns a [SKContainer] widget with scaled border radius, border, and advanced decoration options.
   static SKContainer roundedContainerSize({
     dynamic all,
     dynamic topLeft,
@@ -265,6 +275,13 @@ class SKit {
     Widget? child,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
+    Gradient? gradient,
+    DecorationImage? backgroundImage,
+    BlendMode? backgroundBlendMode,
+    List<BoxShadow>? boxShadow,
+    double? elevation,
+    Color? shadowColor,
+    BoxShape? shape,
   }) {
     final values = radiusSizes;
     return roundedContainer(
@@ -292,6 +309,13 @@ class SKit {
       child: child,
       padding: padding,
       margin: margin,
+      gradient: gradient,
+      backgroundImage: backgroundImage,
+      backgroundBlendMode: backgroundBlendMode,
+      boxShadow: boxShadow,
+      elevation: elevation,
+      shadowColor: shadowColor,
+      shape: shape,
     );
   }
 
@@ -535,11 +559,18 @@ class SKit {
   /// - [borderTop], [borderBottom], [borderLeft], [borderRight] - Optional border on specific sides
   /// - [borderTopColor], [borderBottomColor], [borderLeftColor], [borderRightColor] - Optional border colors for specific sides
   /// - [borderTopWidth], [borderBottomWidth], [borderLeftWidth], [borderRightWidth] - Optional border widths for specific sides
+  /// - [gradient] - Optional background gradient (ignored if [shape] is [BoxShape.circle] with custom borders)
+  /// - [backgroundImage] - Optional background image
+  /// - [backgroundBlendMode] - Optional blend mode applied to [backgroundImage] and [color]/[gradient]
+  /// - [boxShadow] - Optional list of shadows to apply to the container
+  /// - [elevation] - Optional elevation helper that generates Material-like shadows when [boxShadow] is not provided
+  /// - [shadowColor] - Optional color applied to generated elevation shadows or to override [boxShadow] colors
+  /// - [shape] - Optional box shape (defaults to [BoxShape.rectangle])
   /// - [child] - Optional child widget
   /// - [padding] - Optional padding
   /// - [margin] - Optional margin
   ///
-  /// Returns a [SKContainer] widget with scaled border radius and optional border.
+  /// Returns a [SKContainer] widget with scaled border radius, border, and advanced decoration options.
   static SKContainer roundedContainer({
     double? all,
     double? topLeft,
@@ -564,6 +595,13 @@ class SKit {
     Widget? child,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
+    Gradient? gradient,
+    DecorationImage? backgroundImage,
+    BlendMode? backgroundBlendMode,
+    List<BoxShadow>? boxShadow,
+    double? elevation,
+    Color? shadowColor,
+    BoxShape? shape,
   }) {
     final borderRadius = _f.createBorderRadius(
       all: all,
@@ -593,6 +631,7 @@ class SKit {
 
     Border? border;
     BorderRadius? effectiveBorderRadius = borderRadius;
+    final resolvedShape = shape ?? BoxShape.rectangle;
 
     if (hasIndividualBorders) {
       // Use Border() constructor for individual sides
@@ -667,16 +706,86 @@ class SKit {
       );
     }
 
+    if (resolvedShape != BoxShape.rectangle) {
+      effectiveBorderRadius = null;
+    }
+
+    final resolvedShadows = _resolveBoxShadows(
+      boxShadow: boxShadow,
+      elevation: elevation,
+      shadowColor: shadowColor,
+    );
+
     return SKContainer(
       decoration: BoxDecoration(
         color: color,
         borderRadius: effectiveBorderRadius,
         border: border,
+        gradient: gradient,
+        image: backgroundImage,
+        backgroundBlendMode: backgroundBlendMode,
+        boxShadow: resolvedShadows,
+        shape: resolvedShape,
       ),
       padding: padding,
       margin: margin,
       child: child,
     );
+  }
+
+  static List<BoxShadow>? _resolveBoxShadows({
+    List<BoxShadow>? boxShadow,
+    double? elevation,
+    Color? shadowColor,
+  }) {
+    if (boxShadow != null) {
+      if (shadowColor != null) {
+        return boxShadow
+            .map(
+              (shadow) => shadow.copyWith(
+                color: shadowColor.withValues(alpha: shadow.color.a),
+              ),
+            )
+            .toList(growable: false);
+      }
+      return boxShadow;
+    }
+
+    if (elevation != null && elevation > 0) {
+      final clampedElevation = elevation.clamp(0.0, 24.0);
+      final baseShadows = kElevationToShadow[clampedElevation.round()];
+
+      if (baseShadows != null && baseShadows.isNotEmpty) {
+        if (shadowColor != null) {
+          return baseShadows
+              .map(
+                (shadow) => shadow.copyWith(
+                  color: shadowColor.withValues(alpha: shadow.color.a),
+                ),
+              )
+              .toList(growable: false);
+        }
+        return baseShadows;
+      }
+
+      final defaultColor = (shadowColor ?? Colors.black).withValues(
+        alpha: 0.24,
+      );
+      final blurRadius = _f.createWidth(clampedElevation * 1.5);
+      final spreadRadius = _f.createWidth(clampedElevation * 0.1);
+      final dy = _f.createWidth(clampedElevation / 2);
+
+      return [
+        BoxShadow(
+          color: defaultColor,
+          blurRadius: blurRadius,
+          spreadRadius: spreadRadius,
+          offset: Offset(0, dy),
+        ),
+      ];
+    }
+
+    return null;
   }
 
   /// Creates a scaled container widget.

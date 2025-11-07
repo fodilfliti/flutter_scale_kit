@@ -155,6 +155,7 @@ class ScaleValueCache {
         (left ?? 0) * 100000 +
         (right ?? 0) * 1000000;
 
+    final manager = ScaleManager.instance;
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.padding,
@@ -162,7 +163,15 @@ class ScaleValueCache {
     );
 
     return _paddingCache.putIfAbsent(key, () {
-      final manager = ScaleManager.instance;
+      if (!manager.isEnabled) {
+        return EdgeInsets.only(
+          top: top ?? vertical ?? all ?? 0,
+          bottom: bottom ?? vertical ?? all ?? 0,
+          left: left ?? horizontal ?? all ?? 0,
+          right: right ?? horizontal ?? all ?? 0,
+        );
+      }
+
       return EdgeInsets.only(
         top: (top ?? vertical ?? all ?? 0) * manager.scaleHeight,
         bottom: (bottom ?? vertical ?? all ?? 0) * manager.scaleHeight,
@@ -209,6 +218,7 @@ class ScaleValueCache {
         (bottomLeft ?? 0) * 1000 +
         (bottomRight ?? 0) * 10000;
 
+    final manager = ScaleManager.instance;
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.borderRadius,
@@ -216,7 +226,15 @@ class ScaleValueCache {
     );
 
     return _borderRadiusCache.putIfAbsent(key, () {
-      final manager = ScaleManager.instance;
+      if (!manager.isEnabled) {
+        return BorderRadius.only(
+          topLeft: Radius.circular(topLeft ?? all ?? 0),
+          topRight: Radius.circular(topRight ?? all ?? 0),
+          bottomLeft: Radius.circular(bottomLeft ?? all ?? 0),
+          bottomRight: Radius.circular(bottomRight ?? all ?? 0),
+        );
+      }
+
       final radius = manager.scaleWidth;
       return BorderRadius.only(
         topLeft: Radius.circular((topLeft ?? all ?? 0) * radius),
