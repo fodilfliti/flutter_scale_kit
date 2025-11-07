@@ -5,11 +5,7 @@ class SectionTitle extends StatelessWidget {
   final String title;
   final String subtitle;
 
-  const SectionTitle({
-    super.key,
-    required this.title,
-    required this.subtitle,
-  });
+  const SectionTitle({super.key, required this.title, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -39,4 +35,3 @@ class SectionTitle extends StatelessWidget {
     );
   }
 }
-

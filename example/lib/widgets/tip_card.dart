@@ -5,11 +5,7 @@ class TipCard extends StatelessWidget {
   final String title;
   final String description;
 
-  const TipCard({
-    super.key,
-    required this.title,
-    required this.description,
-  });
+  const TipCard({super.key, required this.title, required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -37,4 +33,3 @@ class TipCard extends StatelessWidget {
     );
   }
 }
-

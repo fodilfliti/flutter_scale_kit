@@ -253,8 +253,11 @@ class SettingsSheet extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.auto_awesome,
-                                    size: 14, color: Colors.green.shade700),
+                                Icon(
+                                  Icons.auto_awesome,
+                                  size: 14,
+                                  color: Colors.green.shade700,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   'Auto-Intelligent',
@@ -281,8 +284,11 @@ class SettingsSheet extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.tune,
-                                    size: 14, color: Colors.orange.shade700),
+                                Icon(
+                                  Icons.tune,
+                                  size: 14,
+                                  color: Colors.orange.shade700,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   'Manual Override',
@@ -306,9 +312,10 @@ class SettingsSheet extends StatelessWidget {
                             : 'Using intelligent auto-detection (recommended)',
                         style: TextStyle(
                           fontSize: 11,
-                          color: tempUseManualScaleLimits
-                              ? Colors.orange.shade700
-                              : Colors.green.shade700,
+                          color:
+                              tempUseManualScaleLimits
+                                  ? Colors.orange.shade700
+                                  : Colors.green.shade700,
                         ),
                       ),
                       value: tempUseManualScaleLimits,
@@ -319,252 +326,282 @@ class SettingsSheet extends StatelessWidget {
                     if (tempUseManualScaleLimits) ...[
                       const SizedBox(height: 8),
                       slider(
-                      'Min scale',
-                      tempMinScale,
-                      (v) {
-                        tempMinScale = v;
-                        if (tempMinScale > tempMaxScale) {
-                          tempMaxScale = v;
-                        }
-                      },
-                      min: 0.5,
-                      max: 1.5,
-                    ),
-                    slider(
-                      'Max scale',
-                      tempMaxScale,
-                      (v) {
-                        tempMaxScale = v;
-                        if (tempMaxScale < tempMinScale) {
+                        'Min scale',
+                        tempMinScale,
+                        (v) {
                           tempMinScale = v;
-                        }
-                      },
-                      min: tempMinScale,
-                      max: 2.0,
-                    ),
+                          if (tempMinScale > tempMaxScale) {
+                            tempMaxScale = v;
+                          }
+                        },
+                        min: 0.5,
+                        max: 1.5,
+                      ),
+                      slider(
+                        'Max scale',
+                        tempMaxScale,
+                        (v) {
+                          tempMaxScale = v;
+                          if (tempMaxScale < tempMinScale) {
+                            tempMinScale = v;
+                          }
+                        },
+                        min: tempMinScale,
+                        max: 2.0,
+                      ),
                       const SizedBox(height: 8),
                       // Live scale preview
                       Builder(
-                      builder: (ctx) {
-                        final screenSize = MediaQuery.of(ctx).size;
-                        final designWidth = 375.0;
-                        final designHeight = 812.0;
-                        final rawScaleW = screenSize.width / designWidth;
-                        final rawScaleH = screenSize.height / designHeight;
-                        final clampedScaleW = rawScaleW.clamp(tempMinScale, tempMaxScale);
-                        final clampedScaleH = rawScaleH.clamp(tempMinScale, tempMaxScale);
-                        
-                        // Calculate what auto-detection would choose
-                        final orientation = MediaQuery.of(ctx).orientation;
-                        final isLandscape = orientation == Orientation.landscape;
-                        final screenWidth = screenSize.width;
-                        
-                        // Simple device type detection (mimics ScaleManager logic)
-                        String deviceType;
-                        double autoMin, autoMax;
-                        if (screenWidth < 600) {
-                          deviceType = 'Mobile';
-                          if (isLandscape) {
-                            autoMin = 0.85;
-                            autoMax = 1.25;
+                        builder: (ctx) {
+                          final screenSize = MediaQuery.of(ctx).size;
+                          final designWidth = 375.0;
+                          final designHeight = 812.0;
+                          final rawScaleW = screenSize.width / designWidth;
+                          final rawScaleH = screenSize.height / designHeight;
+                          final clampedScaleW = rawScaleW.clamp(
+                            tempMinScale,
+                            tempMaxScale,
+                          );
+                          final clampedScaleH = rawScaleH.clamp(
+                            tempMinScale,
+                            tempMaxScale,
+                          );
+
+                          // Calculate what auto-detection would choose
+                          final orientation = MediaQuery.of(ctx).orientation;
+                          final isLandscape =
+                              orientation == Orientation.landscape;
+                          final screenWidth = screenSize.width;
+
+                          // Simple device type detection (mimics ScaleManager logic)
+                          String deviceType;
+                          double autoMin, autoMax;
+                          if (screenWidth < 600) {
+                            deviceType = 'Mobile';
+                            if (isLandscape) {
+                              autoMin = 0.85;
+                              autoMax = 1.25;
+                            } else {
+                              autoMin = 0.85;
+                              autoMax = 1.15;
+                            }
+                          } else if (screenWidth < 1200) {
+                            deviceType = 'Tablet';
+                            if (isLandscape) {
+                              autoMin = 0.75;
+                              autoMax = 1.4;
+                            } else {
+                              autoMin = 0.8;
+                              autoMax = 1.3;
+                            }
                           } else {
-                            autoMin = 0.85;
-                            autoMax = 1.15;
+                            deviceType = 'Desktop';
+                            if (isLandscape) {
+                              autoMin = 0.6;
+                              autoMax = 2.0;
+                            } else {
+                              autoMin = 0.7;
+                              autoMax = 1.8;
+                            }
                           }
-                        } else if (screenWidth < 1200) {
-                          deviceType = 'Tablet';
-                          if (isLandscape) {
-                            autoMin = 0.75;
-                            autoMax = 1.4;
-                          } else {
-                            autoMin = 0.8;
-                            autoMax = 1.3;
-                          }
-                        } else {
-                          deviceType = 'Desktop';
-                          if (isLandscape) {
-                            autoMin = 0.6;
-                            autoMax = 2.0;
-                          } else {
-                            autoMin = 0.7;
-                            autoMax = 1.8;
-                          }
-                        }
-                        
-                        return Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.blue.shade200),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '📊 Live Scale Preview',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue.shade900,
+
+                          return Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.blue.shade200),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '📊 Live Scale Preview',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue.shade900,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Screen: ${screenSize.width.toInt()}×${screenSize.height.toInt()}',
-                                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: Colors.purple.shade100,
-                                      borderRadius: BorderRadius.circular(3),
-                                    ),
-                                    child: Text(
-                                      deviceType,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.purple.shade700,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                'Design: ${designWidth.toInt()}×${designHeight.toInt()} • ${isLandscape ? "Landscape" : "Portrait"}',
-                                style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
-                              ),
-                              const SizedBox(height: 8),
-                              Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: Colors.green.shade50,
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(color: Colors.green.shade200),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.tips_and_updates,
-                                        size: 12, color: Colors.green.shade700),
-                                    const SizedBox(width: 4),
-                                    Expanded(
-                                      child: Text(
-                                        'Auto: ${autoMin.toStringAsFixed(2)}-${autoMax.toStringAsFixed(2)}x',
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.green.shade700,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const Divider(height: 16),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Width',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.grey.shade600,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Raw: ${rawScaleW.toStringAsFixed(2)}x',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: rawScaleW == clampedScaleW
-                                                ? Colors.green.shade700
-                                                : Colors.orange.shade700,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Final: ${clampedScaleW.toStringAsFixed(2)}x',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blue.shade900,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Height',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.grey.shade600,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Raw: ${rawScaleH.toStringAsFixed(2)}x',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: rawScaleH == clampedScaleH
-                                                ? Colors.green.shade700
-                                                : Colors.orange.shade700,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Final: ${clampedScaleH.toStringAsFixed(2)}x',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blue.shade900,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              if (rawScaleW != clampedScaleW || rawScaleH != clampedScaleH) ...[
                                 const SizedBox(height: 8),
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Icon(Icons.warning_amber_rounded,
-                                        size: 16, color: Colors.orange.shade700),
-                                    const SizedBox(width: 4),
-                                    Expanded(
+                                    Text(
+                                      'Screen: ${screenSize.width.toInt()}×${screenSize.height.toInt()}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.purple.shade100,
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
                                       child: Text(
-                                        'Clamping active: scale limited by min/max',
+                                        deviceType,
                                         style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.orange.shade700,
-                                          fontStyle: FontStyle.italic,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.purple.shade700,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                              ],
-                              const SizedBox(height: 8),
-                              Text(
-                                'Example: 100.w = ${(100 * clampedScaleW).toStringAsFixed(1)}px',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.purple.shade700,
-                                  fontWeight: FontWeight.w500,
+                                Text(
+                                  'Design: ${designWidth.toInt()}×${designHeight.toInt()} • ${isLandscape ? "Landscape" : "Portrait"}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade700,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                                const SizedBox(height: 8),
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade50,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: Colors.green.shade200,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.tips_and_updates,
+                                        size: 12,
+                                        color: Colors.green.shade700,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          'Auto: ${autoMin.toStringAsFixed(2)}-${autoMax.toStringAsFixed(2)}x',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.green.shade700,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Divider(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Width',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey.shade600,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Raw: ${rawScaleW.toStringAsFixed(2)}x',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color:
+                                                  rawScaleW == clampedScaleW
+                                                      ? Colors.green.shade700
+                                                      : Colors.orange.shade700,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Final: ${clampedScaleW.toStringAsFixed(2)}x',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue.shade900,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Height',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey.shade600,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Raw: ${rawScaleH.toStringAsFixed(2)}x',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color:
+                                                  rawScaleH == clampedScaleH
+                                                      ? Colors.green.shade700
+                                                      : Colors.orange.shade700,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Final: ${clampedScaleH.toStringAsFixed(2)}x',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue.shade900,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (rawScaleW != clampedScaleW ||
+                                    rawScaleH != clampedScaleH) ...[
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.warning_amber_rounded,
+                                        size: 16,
+                                        color: Colors.orange.shade700,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          'Clamping active: scale limited by min/max',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.orange.shade700,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Example: 100.w = ${(100 * clampedScaleW).toStringAsFixed(1)}px',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.purple.shade700,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ], // end if tempUseManualScaleLimits
                   ], // end if tempEnabled

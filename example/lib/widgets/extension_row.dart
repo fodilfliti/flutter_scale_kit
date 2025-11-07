@@ -51,4 +51,3 @@ class ExtensionRow extends StatelessWidget {
     );
   }
 }
-
