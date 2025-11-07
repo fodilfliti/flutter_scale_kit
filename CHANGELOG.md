@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.11] - 2025-01-16
+
+### 🎨 New Features: Comprehensive Text Widgets
+
+#### Added
+
+- **`SKit.textFull()`** - Complete Text widget factory with ALL 30+ Flutter Text attributes
+  - Style parameters: fontSize, fontWeight, fontStyle, color, backgroundColor, fontFamily, fontFamilyFallback
+  - Spacing: letterSpacing, wordSpacing, height, textBaseline
+  - Decoration: decoration, decorationColor, decorationStyle, decorationThickness
+  - Effects: shadows, foreground, background, leadingDistribution
+  - Layout: textAlign, textDirection, softWrap, overflow, maxLines
+  - Accessibility: semanticsLabel, textScaleFactor, textWidthBasis, textHeightBehavior, selectionColor
+  - Advanced: locale, fontFeatures, fontVariations
+  - **Automatic fontSize scaling** - no need to use `.sp` manually!
+  
+- **`SKit.textStyleFull()`** - Complete TextStyle factory with ALL Flutter TextStyle attributes
+  - Includes all TextStyle properties: fontSize, fontWeight, colors, spacing, decoration, shadows, etc.
+  - Supports advanced features: fontFeatures, fontVariations, debugLabel, overflow
+  - **Automatic fontSize scaling** built-in
+  - Perfect for creating reusable comprehensive text styles
+
+#### Enhanced
+
+- **`ScaleValueFactory.createTextStyle()`** - Extended to support 25+ TextStyle attributes
+  - Added: backgroundColor, fontFamilyFallback, wordSpacing, textBaseline
+  - Added: shadows, foreground, background, leadingDistribution  
+  - Added: locale, fontFeatures, fontVariations, debugLabel, overflow
+  - Smart caching: Core parameters cached, additional parameters applied via copyWith for optimal performance
+
+#### Documentation
+
+- **New "Comprehensive Text Widgets" section** in README with:
+  - Before/after code examples showing the convenience
+  - Complete list of all 30+ available parameters organized by category
+  - Real-world usage examples with shadows, decorations, and advanced styling
+  - Clear guidance on when to use `text()` vs `textFull()` vs `textStyleFull()`
+  - Benefits explanation: less boilerplate, automatic scaling, type-safe, consistent styling
+
+#### Benefits for Developers
+
+✅ **One-stop solution** - All Text/TextStyle attributes in single method calls  
+✅ **Less boilerplate** - No need to manually create TextStyle then Text  
+✅ **Automatic scaling** - fontSize scaled without `.sp`  
+✅ **Type-safe** - Full autocomplete support for all Flutter attributes  
+✅ **Reusable styles** - Easy to create and share comprehensive text styles  
+✅ **No breaking changes** - Existing `text()` and `textStyle()` methods unchanged  
+
 ## [1.0.10] - 2025-01-16
 
 ### 🧠 Major Feature: Intelligent Auto-Configuration

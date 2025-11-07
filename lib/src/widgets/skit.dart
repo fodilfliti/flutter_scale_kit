@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import '../core/scale_value_factory.dart';
 import '../core/size_enums.dart';
@@ -937,6 +938,183 @@ class SKit {
       style: style,
       textAlign: textAlign,
       maxLines: maxLines,
+      overflow: overflow,
+    );
+  }
+
+  /// Creates a fully-featured [Text] widget with ALL commonly-used attributes pre-configured.
+  ///
+  /// This comprehensive version includes all Text widget properties for maximum flexibility.
+  /// Use this when you need full control over text rendering without manually specifying
+  /// every parameter.
+  ///
+  /// Parameters:
+  /// - [data] - The text to display (required)
+  /// - Style parameters: [textSize], [fontSize], [fontWeight], [fontStyle], [color], etc.
+  /// - Text layout: [textAlign], [textDirection], [softWrap], [overflow], [maxLines], [minFontSize]
+  /// - Accessibility: [semanticsLabel], [textScaleFactor], [textWidthBasis]
+  /// - Localization: [locale]
+  /// - Selection: [selectionColor]
+  ///
+  /// Returns a [Text] widget with scaled font size and all specified attributes.
+  static Text textFull(
+    String data, {
+    // Text style parameters
+    SKTextSize? textSize,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    Color? color,
+    Color? backgroundColor,
+    String? fontFamily,
+    List<String>? fontFamilyFallback,
+    double? letterSpacing,
+    double? wordSpacing,
+    double? height,
+    TextBaseline? textBaseline,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+    List<Shadow>? shadows,
+    Paint? foreground,
+    Paint? background,
+    TextLeadingDistribution? leadingDistribution,
+    // Text widget parameters
+    TextAlign? textAlign,
+    TextDirection? textDirection,
+    Locale? locale,
+    bool? softWrap,
+    TextOverflow? overflow,
+    double? textScaleFactor,
+    int? maxLines,
+    String? semanticsLabel,
+    TextWidthBasis? textWidthBasis,
+    TextHeightBehavior? textHeightBehavior,
+    Color? selectionColor,
+  }) {
+    // Calculate scaled font size
+    double finalFontSize;
+    if (textSize != null) {
+      finalFontSize = textSizes.get(textSize);
+    } else if (fontSize != null) {
+      finalFontSize = fontSize;
+    } else {
+      finalFontSize = defaultTextSizeValue;
+    }
+
+    // Create comprehensive text style
+    final style = _f.createTextStyle(
+      fontSize: finalFontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      color: color,
+      backgroundColor: backgroundColor,
+      fontFamily: fontFamily,
+      fontFamilyFallback: fontFamilyFallback,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      height: height,
+      textBaseline: textBaseline,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      shadows: shadows,
+      foreground: foreground,
+      background: background,
+      leadingDistribution: leadingDistribution,
+    );
+
+    return Text(
+      data,
+      style: style,
+      textAlign: textAlign,
+      textDirection: textDirection,
+      locale: locale,
+      softWrap: softWrap,
+      overflow: overflow,
+      textScaleFactor: textScaleFactor,
+      maxLines: maxLines,
+      semanticsLabel: semanticsLabel,
+      textWidthBasis: textWidthBasis,
+      textHeightBehavior: textHeightBehavior,
+      selectionColor: selectionColor,
+    );
+  }
+
+  /// Creates a comprehensive [TextStyle] with ALL commonly-used attributes.
+  ///
+  /// This is the complete TextStyle factory with every Flutter TextStyle property.
+  /// Use this when you need full styling control without creating TextStyle manually.
+  ///
+  /// All size-related properties ([fontSize], [letterSpacing], [wordSpacing], [height])
+  /// are automatically scaled based on screen size.
+  ///
+  /// Parameters include: fontSize, fontWeight, fontStyle, color, backgroundColor,
+  /// shadows, decoration, letterSpacing, wordSpacing, height, and more.
+  ///
+  /// Returns a fully-configured [TextStyle] with scaled font size.
+  static TextStyle textStyleFull({
+    SKTextSize? textSize,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    Color? color,
+    Color? backgroundColor,
+    String? fontFamily,
+    List<String>? fontFamilyFallback,
+    double? letterSpacing,
+    double? wordSpacing,
+    double? height,
+    TextBaseline? textBaseline,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+    List<Shadow>? shadows,
+    Paint? foreground,
+    Paint? background,
+    TextLeadingDistribution? leadingDistribution,
+    Locale? locale,
+    List<ui.FontFeature>? fontFeatures,
+    List<ui.FontVariation>? fontVariations,
+    String? debugLabel,
+    TextOverflow? overflow,
+  }) {
+    double finalFontSize;
+    if (textSize != null) {
+      finalFontSize = textSizes.get(textSize);
+    } else if (fontSize != null) {
+      finalFontSize = fontSize;
+    } else {
+      finalFontSize = defaultTextSizeValue;
+    }
+
+    return _f.createTextStyle(
+      fontSize: finalFontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      color: color,
+      backgroundColor: backgroundColor,
+      fontFamily: fontFamily,
+      fontFamilyFallback: fontFamilyFallback,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      height: height,
+      textBaseline: textBaseline,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      shadows: shadows,
+      foreground: foreground,
+      background: background,
+      leadingDistribution: leadingDistribution,
+      locale: locale,
+      fontFeatures: fontFeatures,
+      fontVariations: fontVariations,
+      debugLabel: debugLabel,
       overflow: overflow,
     );
   }

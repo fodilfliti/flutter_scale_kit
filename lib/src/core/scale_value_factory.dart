@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'scale_value_cache.dart';
 
@@ -204,15 +205,29 @@ class ScaleValueFactory {
     FontWeight? fontWeight,
     FontStyle? fontStyle,
     Color? color,
+    Color? backgroundColor,
     String? fontFamily,
+    List<String>? fontFamilyFallback,
     double? letterSpacing,
+    double? wordSpacing,
     double? height,
+    TextBaseline? textBaseline,
     TextDecoration? decoration,
     Color? decorationColor,
     TextDecorationStyle? decorationStyle,
     double? decorationThickness,
+    List<Shadow>? shadows,
+    Paint? foreground,
+    Paint? background,
+    TextLeadingDistribution? leadingDistribution,
+    Locale? locale,
+    List<ui.FontFeature>? fontFeatures,
+    List<ui.FontVariation>? fontVariations,
+    String? debugLabel,
+    TextOverflow? overflow,
   }) {
-    return _cache.getTextStyle(
+    // Get base cached style with core parameters
+    final baseStyle = _cache.getTextStyle(
       fontSize: fontSize,
       fontWeight: fontWeight,
       fontStyle: fontStyle,
@@ -225,6 +240,39 @@ class ScaleValueFactory {
       decorationStyle: decorationStyle,
       decorationThickness: decorationThickness,
     );
+
+    // Apply additional parameters via copyWith (these don't need caching)
+    if (backgroundColor != null ||
+        fontFamilyFallback != null ||
+        wordSpacing != null ||
+        textBaseline != null ||
+        shadows != null ||
+        foreground != null ||
+        background != null ||
+        leadingDistribution != null ||
+        locale != null ||
+        fontFeatures != null ||
+        fontVariations != null ||
+        debugLabel != null ||
+        overflow != null) {
+      return baseStyle.copyWith(
+        backgroundColor: backgroundColor,
+        fontFamilyFallback: fontFamilyFallback,
+        wordSpacing: wordSpacing,
+        textBaseline: textBaseline,
+        shadows: shadows,
+        foreground: foreground,
+        background: background,
+        leadingDistribution: leadingDistribution,
+        locale: locale,
+        fontFeatures: fontFeatures,
+        fontVariations: fontVariations,
+        debugLabel: debugLabel,
+        overflow: overflow,
+      );
+    }
+
+    return baseStyle;
   }
 }
 

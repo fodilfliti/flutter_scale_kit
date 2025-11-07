@@ -197,7 +197,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.0.10
+  flutter_scale_kit: ^1.0.11
 ```
 
 Then run:
@@ -655,10 +655,131 @@ SKit.hSpace(8)           // Horizontal spacing
 SKit.vSpace(8)           // Vertical spacing
 SKit.sSpace(8)           // Square spacing
 
-// Text
+// Text - Simple version (common use)
 SKit.text('Hello', textSize: SKTextSize.s16)
-SKit.text('Hello', fontSize: 16)
+SKit.text('Hello', fontSize: 16, fontWeight: FontWeight.bold)
+
+// Text - Full version (ALL attributes available)
+SKit.textFull(
+  'Hello World',
+  fontSize: 18,
+  fontWeight: FontWeight.w600,
+  color: Colors.blue,
+  letterSpacing: 0.5,
+  textAlign: TextAlign.center,
+  maxLines: 2,
+  overflow: TextOverflow.ellipsis,
+  shadows: [Shadow(color: Colors.black26, offset: Offset(1, 1))],
+  // + 20 more attributes available!
+)
+
+// TextStyle - Full version (ALL attributes)
+final style = SKit.textStyleFull(
+  fontSize: 16,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+  backgroundColor: Colors.blue,
+  letterSpacing: 1.0,
+  height: 1.5,
+  decoration: TextDecoration.underline,
+  shadows: [Shadow(...)],
+  // + more attributes!
+)
 ```
+
+### Comprehensive Text Widgets (New in v1.0.11)
+
+**Problem:** Manually creating Text widgets with all attributes is verbose and repetitive.
+
+**Solution:** Use `SKit.textFull()` and `SKit.textStyleFull()` with **ALL** Flutter Text/TextStyle attributes pre-configured!
+
+#### SKit.textFull() - Complete Text Widget
+
+Instead of writing this:
+
+```dart
+Text(
+  'Hello World',
+  style: TextStyle(
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w600,
+    color: Colors.blue,
+    letterSpacing: 0.5,
+    decoration: TextDecoration.underline,
+    shadows: [Shadow(color: Colors.black26, offset: Offset(1, 1))],
+  ),
+  textAlign: TextAlign.center,
+  maxLines: 2,
+  overflow: TextOverflow.ellipsis,
+  softWrap: true,
+  textDirection: TextDirection.ltr,
+)
+```
+
+Simply write this:
+
+```dart
+SKit.textFull(
+  'Hello World',
+  fontSize: 18,  // Automatically scaled!
+  fontWeight: FontWeight.w600,
+  color: Colors.blue,
+  letterSpacing: 0.5,
+  decoration: TextDecoration.underline,
+  shadows: [Shadow(color: Colors.black26, offset: Offset(1, 1))],
+  textAlign: TextAlign.center,
+  maxLines: 2,
+  overflow: TextOverflow.ellipsis,
+  softWrap: true,
+  textDirection: TextDirection.ltr,
+)
+```
+
+**Available Parameters (30+ attributes):**
+- **Style**: fontSize, fontWeight, fontStyle, color, backgroundColor, fontFamily, fontFamilyFallback
+- **Spacing**: letterSpacing, wordSpacing, height
+- **Decoration**: decoration, decorationColor, decorationStyle, decorationThickness
+- **Effects**: shadows, foreground, background
+- **Layout**: textAlign, textDirection, textBaseline, leadingDistribution
+- **Behavior**: softWrap, overflow, maxLines, textScaleFactor
+- **Accessibility**: semanticsLabel, textWidthBasis, textHeightBehavior, selectionColor
+- **Advanced**: locale, fontFeatures, fontVariations
+
+#### SKit.textStyleFull() - Complete TextStyle
+
+Create comprehensive TextStyles with all Flutter attributes:
+
+```dart
+final headerStyle = SKit.textStyleFull(
+  fontSize: 24,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+  backgroundColor: Colors.blue,
+  letterSpacing: 1.2,
+  wordSpacing: 2.0,
+  height: 1.5,
+  decoration: TextDecoration.none,
+  shadows: [
+    Shadow(color: Colors.black38, offset: Offset(2, 2), blurRadius: 4),
+  ],
+  textBaseline: TextBaseline.alphabetic,
+  leadingDistribution: TextLeadingDistribution.even,
+);
+
+Text('Header', style: headerStyle)
+```
+
+**Why use these?**
+✅ **All attributes in one place** - no need to remember which parameters go where  
+✅ **Automatic scaling** - fontSize automatically scaled with `.sp`  
+✅ **Type-safe** - all Flutter Text/TextStyle parameters available with autocomplete  
+✅ **Less boilerplate** - write less code, get more functionality  
+✅ **Consistent styling** - reuse styles easily across your app  
+
+**When to use:**
+- Use `SKit.text()` for simple text (basic styling)
+- Use `SKit.textFull()` when you need advanced Text widget features
+- Use `SKit.textStyleFull()` when you need reusable comprehensive styles
 
 ### Size System Configuration
 
