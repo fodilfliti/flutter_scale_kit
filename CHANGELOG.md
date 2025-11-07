@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 #### Documentation
 
 - **Interactive Table of Contents** - Added comprehensive TOC to README after screenshots
+
   - 30+ clickable navigation links organized into 5 categories
   - Quick Start, Core Concepts, Usage & Widgets, Advanced Features, Reference, Community
   - Significantly improved documentation navigation and user experience
@@ -55,7 +56,6 @@ All notable changes to this project will be documented in this file.
   - Accessibility: semanticsLabel, textScaleFactor, textWidthBasis, textHeightBehavior, selectionColor
   - Advanced: locale, fontFeatures, fontVariations
   - **Automatic fontSize scaling** - no need to use `.sp` manually!
-  
 - **`SKit.textStyleFull()`** - Complete TextStyle factory with ALL Flutter TextStyle attributes
   - Includes all TextStyle properties: fontSize, fontWeight, colors, spacing, decoration, shadows, etc.
   - Supports advanced features: fontFeatures, fontVariations, debugLabel, overflow
@@ -66,7 +66,7 @@ All notable changes to this project will be documented in this file.
 
 - **`ScaleValueFactory.createTextStyle()`** - Extended to support 25+ TextStyle attributes
   - Added: backgroundColor, fontFamilyFallback, wordSpacing, textBaseline
-  - Added: shadows, foreground, background, leadingDistribution  
+  - Added: shadows, foreground, background, leadingDistribution
   - Added: locale, fontFeatures, fontVariations, debugLabel, overflow
   - Smart caching: Core parameters cached, additional parameters applied via copyWith for optimal performance
 
@@ -86,7 +86,7 @@ All notable changes to this project will be documented in this file.
 ✅ **Automatic scaling** - fontSize scaled without `.sp`  
 ✅ **Type-safe** - Full autocomplete support for all Flutter attributes  
 ✅ **Reusable styles** - Easy to create and share comprehensive text styles  
-✅ **No breaking changes** - Existing `text()` and `textStyle()` methods unchanged  
+✅ **No breaking changes** - Existing `text()` and `textStyle()` methods unchanged
 
 ## [1.0.10] - 2025-01-16
 
@@ -96,7 +96,7 @@ All notable changes to this project will be documented in this file.
 
 - **Intelligent Scale Limit Auto-Detection**: Package now automatically determines optimal `minScale` and `maxScale` based on device type, screen size, orientation, and aspect ratio
   - Mobile phones: 0.85-1.15x (portrait), 0.85-1.25x (landscape)
-  - Tablets: 0.8-1.3x (portrait), 0.75-1.4x (landscape)  
+  - Tablets: 0.8-1.3x (portrait), 0.75-1.4x (landscape)
   - Desktop/Web: 0.6-2.0x (landscape), 0.7-1.8x (portrait)
   - Special handling for foldables, ultra-wide monitors (>2560px), small windows (<800px), and notched screens
   - Automatically adjusts limits when mobile designs run on tablets/desktop
