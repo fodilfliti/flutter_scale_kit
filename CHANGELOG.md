@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.12] - 2025-01-16
+
+### 🔧 Fixes & Improvements
+
+#### Fixed
+
+- **Android SDK Compatibility** - Updated example app to require minimum SDK 23
+  - Required by `super_native_extensions` plugin dependency
+  - Updated `example/android/app/build.gradle.kts` with `minSdk = 23`
+  - Example app now compatible with Android 6.0 (Marshmallow) and above
+
+#### Documentation
+
+- **Interactive Table of Contents** - Added comprehensive TOC to README after screenshots
+  - 30+ clickable navigation links organized into 5 categories
+  - Quick Start, Core Concepts, Usage & Widgets, Advanced Features, Reference, Community
+  - Significantly improved documentation navigation and user experience
+  - Users can now jump directly to any section without scrolling
+
+- **Deprecation Fix** - Replaced deprecated `textScaleFactor` with `textScaler`
+  - Updated `SKit.textFull()` to use Flutter's latest text scaling API
+  - Prepares for upcoming nonlinear text scaling support (Flutter v3.12+)
+  - Updated all documentation references
+
+#### Technical
+
+- **Code Formatting** - Applied `dart format` to all source files
+  - 8 files reformatted for consistency
+  - Meets pub.dev publishing standards
+
+### 📦 Publishing
+
+- ✅ **0 warnings** - Package validation passed
+- ✅ All Flutter analyze checks passed
+- ✅ Production-ready for pub.dev
+
+---
+
 ## [1.0.11] - 2025-01-16
 
 ### 🎨 New Features: Comprehensive Text Widgets

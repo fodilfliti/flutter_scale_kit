@@ -250,7 +250,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.0.11
+  flutter_scale_kit: ^1.0.12
 ```
 
 Then run:
