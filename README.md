@@ -98,6 +98,53 @@ A high-performance responsive design package for Flutter that helps you create a
   
 </table>
 
+---
+
+## 📑 Table of Contents
+
+Jump to any section:
+
+### 🚀 Quick Start
+- [🧠 Intelligent Auto-Configuration](#-intelligent-auto-configuration)
+- [✨ Key Features](#-key-features)
+- [📦 Installation](#installation)
+- [⚡ Quick Start Guide](#quick-start)
+
+### 📖 Core Concepts
+- [Understanding Scale Limits (minScale & maxScale)](#understanding-scale-limits-minscale--maxscale)
+- [Understanding Orientation Boosts (Advanced)](#understanding-orientation-boosts-advanced)
+
+### 🎨 Usage & Widgets
+- [Extension Methods (.w, .h, .sp, .r)](#extension-methods)
+- [SKit Helper Class](#skit-helper-class)
+- [Comprehensive Text Widgets (textFull, textStyleFull)](#comprehensive-text-widgets-new-in-v1011)
+- [Size System Configuration](#size-system-configuration)
+- [SKitTheme - Centralized Design System](#skittheme---centralized-design-system)
+- [Context Extensions](#context-extensions)
+
+### 🔧 Advanced Features
+- [ScaleManager Direct API](#scalemanager-direct-api)
+- [Responsive Builder & Columns](#responsive-builder--columns)
+- [ThemeData Integration](#themedata-integration)
+- [Orientation Autoscale (Landscape vs Portrait)](#orientation-autoscale-landscape-vs-portrait)
+- [Enable/Disable Scaling (Runtime Toggle)](#enabledisable-scaling-runtime-toggle)
+- [Device Preview Integration](#device-preview-integration-optional)
+- [Font Configuration (Automatic Font Selection)](#font-configuration-automatic-font-selection)
+
+### 📚 Reference
+- [API Reference](#api-reference)
+- [Performance](#performance)
+- [Architecture](#architecture)
+- [Device-Specific Scaling](#device-specific-scaling)
+- [FAQ](#faq)
+
+### 🤝 Community
+- [Contributing](#contributing)
+- [Support](#support)
+- [License](#license)
+
+---
+
 ## 🧠 Intelligent Auto-Configuration
 
 **Scale Kit is SMART** — it automatically detects and configures optimal scaling for your app:
