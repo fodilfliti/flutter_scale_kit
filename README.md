@@ -736,12 +736,13 @@ SKit.textFull(
 ```
 
 **Available Parameters (30+ attributes):**
+
 - **Style**: fontSize, fontWeight, fontStyle, color, backgroundColor, fontFamily, fontFamilyFallback
 - **Spacing**: letterSpacing, wordSpacing, height
 - **Decoration**: decoration, decorationColor, decorationStyle, decorationThickness
 - **Effects**: shadows, foreground, background
 - **Layout**: textAlign, textDirection, textBaseline, leadingDistribution
-- **Behavior**: softWrap, overflow, maxLines, textScaleFactor
+- **Behavior**: softWrap, overflow, maxLines, textScaler
 - **Accessibility**: semanticsLabel, textWidthBasis, textHeightBehavior, selectionColor
 - **Advanced**: locale, fontFeatures, fontVariations
 
@@ -774,9 +775,10 @@ Text('Header', style: headerStyle)
 ✅ **Automatic scaling** - fontSize automatically scaled with `.sp`  
 ✅ **Type-safe** - all Flutter Text/TextStyle parameters available with autocomplete  
 ✅ **Less boilerplate** - write less code, get more functionality  
-✅ **Consistent styling** - reuse styles easily across your app  
+✅ **Consistent styling** - reuse styles easily across your app
 
 **When to use:**
+
 - Use `SKit.text()` for simple text (basic styling)
 - Use `SKit.textFull()` when you need advanced Text widget features
 - Use `SKit.textStyleFull()` when you need reusable comprehensive styles

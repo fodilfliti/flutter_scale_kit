@@ -952,7 +952,7 @@ class SKit {
   /// - [data] - The text to display (required)
   /// - Style parameters: [textSize], [fontSize], [fontWeight], [fontStyle], [color], etc.
   /// - Text layout: [textAlign], [textDirection], [softWrap], [overflow], [maxLines], [minFontSize]
-  /// - Accessibility: [semanticsLabel], [textScaleFactor], [textWidthBasis]
+  /// - Accessibility: [semanticsLabel], [textScaler], [textWidthBasis]
   /// - Localization: [locale]
   /// - Selection: [selectionColor]
   ///
@@ -986,7 +986,7 @@ class SKit {
     Locale? locale,
     bool? softWrap,
     TextOverflow? overflow,
-    double? textScaleFactor,
+    TextScaler? textScaler,
     int? maxLines,
     String? semanticsLabel,
     TextWidthBasis? textWidthBasis,
@@ -1034,7 +1034,7 @@ class SKit {
       locale: locale,
       softWrap: softWrap,
       overflow: overflow,
-      textScaleFactor: textScaleFactor,
+      textScaler: textScaler,
       maxLines: maxLines,
       semanticsLabel: semanticsLabel,
       textWidthBasis: textWidthBasis,
