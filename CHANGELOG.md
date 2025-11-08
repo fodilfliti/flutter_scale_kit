@@ -6,7 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation
 
-- Optimized the README quick start flow, clarified auto-configuration workflow, and refreshed navigation anchors for a smoother onboarding experience.
+#### Optimized
+- Streamlined README flow for beginners and advanced users, consolidating quick-start sections and clarifying FontConfig/ThemeData integration.
+- Ensured all Table of Contents links are accurate and point to explicit anchors.
+- Restored detailed content for Advanced Tuning, Reference, Optional Tools, and Community sections.
+- Removed redundant Pub Popularity badge.
 
 ---
 
