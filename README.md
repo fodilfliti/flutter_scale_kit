@@ -1405,14 +1405,6 @@ Notes:
 - Portrait: stable sizes by default; set `autoScalePortrait: true` if you want portrait boosts.
 - Size boosts only apply in landscape by default; portrait preserves your design intent.
 
-#### Comparison with flutter_screenutil
-
-## Package Size
-
-**Important:** When you add this package as a dependency using `flutter pub get`, you will **NOT** download the `example` folder. Pub.dev automatically excludes the example folder from the package distribution. The example folder is only available on the pub.dev website for documentation purposes.
-
-The package size is optimized and only includes the necessary library code (`lib/` folder).
-
 ## API Reference
 
 ### Extension Methods (on num)
