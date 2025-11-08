@@ -494,13 +494,13 @@ class HomePage extends StatelessWidget {
             _buildTextSizeSystemExample(),
             SizedBox(height: 24.h),
 
-            // SKitTheme - Centralized Design
+            // ScaleKitDesignValues - Centralized Design
             const SectionTitle(
-              title: '🎨 SKitTheme',
+              title: '🎨 ScaleKitDesignValues',
               subtitle: 'Define all values in one place',
             ),
             SizedBox(height: 12.h),
-            _buildSKitThemeExample(),
+            _buildDesignValuesExample(),
             SizedBox(height: 24.h),
 
             // Font Configuration
@@ -1742,18 +1742,18 @@ class HomePage extends StatelessWidget {
   // ============================================================================
   // SKITTHEME EXAMPLE
   // ============================================================================
-  Widget _buildSKitThemeExample() {
+  Widget _buildDesignValuesExample() {
     return SectionCard(
-      title: 'SKitTheme - Centralized Design System',
+      title: 'ScaleKitDesignValues - Centralized Design System',
       subtitle: 'Define all values in one place',
       description:
           'Define all your design tokens in one place, compute once per build, use everywhere with const widgets. This minimizes repeated calculations and improves performance.',
-      code: CodeSnippets.skitTheme,
+      code: CodeSnippets.designValues,
       codeLanguage: 'dart',
       result: Builder(
         builder: (context) {
           // Define all design tokens in one place
-          const theme = SKitTheme(
+          const design = ScaleKitDesignValues(
             // Text sizes
             textXs: 10,
             textSm: 12,
@@ -1787,7 +1787,7 @@ class HomePage extends StatelessWidget {
           );
 
           // Compute once - all values are now scaled
-          final values = theme.compute();
+          final values = design.compute();
 
           // Use const widgets everywhere with pre-computed values
           return Column(
@@ -1804,7 +1804,7 @@ class HomePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Using SKitTheme.compute()',
+                        'Using ScaleKitDesignValues.compute()',
                         style: values.textLg?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
@@ -2268,9 +2268,9 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const TipCard(
-            title: '1. Use SKitTheme for const widgets',
+            title: '1. Use ScaleKitDesignValues for const widgets',
             description:
-                'Define all design tokens once, compute once, use everywhere with const widgets for optimal performance.',
+                'Define all design values once, compute once, use everywhere with const widgets for optimal performance.',
           ),
           SizedBox(height: 12.h),
           const TipCard(

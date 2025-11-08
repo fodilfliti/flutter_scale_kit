@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_scale_kit/flutter_scale_kit.dart';
 
-/// Heavy page using Scale Kit with SKitTheme for performance comparison
+/// Heavy page using Scale Kit with ScaleKitDesignValues for performance comparison
 class HeavyScaleKitPage extends StatelessWidget {
   const HeavyScaleKitPage({super.key});
 
-  static const _theme = SKitTheme(
+  static const _designValues = ScaleKitDesignValues(
     textSm: 12,
     textMd: 14,
     textLg: 16,
@@ -19,7 +19,7 @@ class HeavyScaleKitPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final v = _theme.compute();
+    final v = _designValues.compute();
     return Scaffold(
       appBar: AppBar(title: const Text('Scale Kit Heavy Page')),
       body: ListView.builder(

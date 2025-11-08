@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import '../core/scale_value_factory.dart';
 
-/// Comprehensive theme configuration for defining all design tokens in one place.
+/// Comprehensive configuration for defining all responsive design values in one place.
 ///
-/// This class allows you to define all your design tokens (text sizes, padding,
+/// This class allows you to define your design values (text sizes, padding,
 /// margin, radius, spacing) in a single location. After computing once, you
-/// can use the returned [SKitThemeValues] with const widgets throughout your app
-/// for optimal performance.
+/// can use the returned [ScaleKitDesignValuesSet] with const widgets throughout
+/// your app for optimal performance.
 ///
 /// Example usage:
 /// ```dart
-/// // Define all your design tokens
-/// const theme = SKitTheme(
+/// // Define all your design values
+/// const design = ScaleKitDesignValues(
 ///   textXs: 10,
 ///   textSm: 12,
 ///   textMd: 14,
@@ -24,7 +24,7 @@ import '../core/scale_value_factory.dart';
 /// );
 ///
 /// // Compute once in your build method
-/// final values = theme.compute();
+/// final values = design.compute();
 ///
 /// // Use const widgets everywhere
 /// SKPadding(
@@ -37,7 +37,7 @@ import '../core/scale_value_factory.dart';
 ///   ),
 /// )
 /// ```
-class SKitTheme {
+class ScaleKitDesignValues {
   /// Extra small text size.
   final double? textXs;
 
@@ -149,8 +149,8 @@ class SKitTheme {
   /// Large height value.
   final double? heightLg;
 
-  /// Creates a [SKitTheme] with the specified design tokens.
-  const SKitTheme({
+  /// Creates a [ScaleKitDesignValues] with the specified design values.
+  const ScaleKitDesignValues({
     this.textXs,
     this.textSm,
     this.textMd,
@@ -190,17 +190,17 @@ class SKitTheme {
     this.heightLg,
   });
 
-  /// Computes all theme values once and returns [SKitThemeValues].
+  /// Computes all theme values once and returns [ScaleKitDesignValuesSet].
   ///
   /// Call this method in your build method to get all scaled values.
   /// All values are automatically scaled based on the current device's
   /// screen size and orientation.
   ///
-  /// Returns a [SKitThemeValues] object containing all computed and scaled values.
-  SKitThemeValues compute() {
+  /// Returns a [ScaleKitDesignValuesSet] object containing all computed and scaled values.
+  ScaleKitDesignValuesSet compute() {
     final f = ScaleValueFactory.instance;
 
-    return SKitThemeValues(
+    return ScaleKitDesignValuesSet(
       textXs:
           textXs != null
               ? TextStyle(fontSize: f.createFontSize(textXs!))
@@ -243,24 +243,24 @@ class SKitTheme {
           marginHorizontal ?? f.createMargin(horizontal: marginMd ?? 16),
       marginVertical:
           marginVertical ?? f.createMargin(vertical: marginMd ?? 16),
-      radiusXs: radiusXs != null ? f.createRadius(radiusXs!) : null,
-      radiusSm: radiusSm != null ? f.createRadius(radiusSm!) : null,
-      radiusMd: radiusMd != null ? f.createRadius(radiusMd!) : null,
-      radiusLg: radiusLg != null ? f.createRadius(radiusLg!) : null,
-      radiusXl: radiusXl != null ? f.createRadius(radiusXl!) : null,
+      radiusXs: radiusXs != null ? f.createRadiusSafe(radiusXs!) : null,
+      radiusSm: radiusSm != null ? f.createRadiusSafe(radiusSm!) : null,
+      radiusMd: radiusMd != null ? f.createRadiusSafe(radiusMd!) : null,
+      radiusLg: radiusLg != null ? f.createRadiusSafe(radiusLg!) : null,
+      radiusXl: radiusXl != null ? f.createRadiusSafe(radiusXl!) : null,
       radiusAll:
           radiusAll ??
-          (radiusMd != null ? f.createBorderRadius(all: radiusMd!) : null),
+          (radiusMd != null ? f.createBorderRadiusSafe(all: radiusMd!) : null),
       borderRadiusXs:
-          radiusXs != null ? f.createBorderRadius(all: radiusXs!) : null,
+          radiusXs != null ? f.createBorderRadiusSafe(all: radiusXs!) : null,
       borderRadiusSm:
-          radiusSm != null ? f.createBorderRadius(all: radiusSm!) : null,
+          radiusSm != null ? f.createBorderRadiusSafe(all: radiusSm!) : null,
       borderRadiusMd:
-          radiusMd != null ? f.createBorderRadius(all: radiusMd!) : null,
+          radiusMd != null ? f.createBorderRadiusSafe(all: radiusMd!) : null,
       borderRadiusLg:
-          radiusLg != null ? f.createBorderRadius(all: radiusLg!) : null,
+          radiusLg != null ? f.createBorderRadiusSafe(all: radiusLg!) : null,
       borderRadiusXl:
-          radiusXl != null ? f.createBorderRadius(all: radiusXl!) : null,
+          radiusXl != null ? f.createBorderRadiusSafe(all: radiusXl!) : null,
       spacingXs: spacingXs != null ? f.createWidth(spacingXs!) : null,
       spacingSm: spacingSm != null ? f.createWidth(spacingSm!) : null,
       spacingMd: spacingMd != null ? f.createWidth(spacingMd!) : null,
@@ -276,12 +276,12 @@ class SKitTheme {
   }
 }
 
-/// Computed theme values ready for use in const widgets.
+/// Computed design values ready for use in const widgets.
 ///
-/// This class contains all scaled values computed from [SKitTheme].
+/// This class contains all scaled values computed from [ScaleKitDesignValues].
 /// All values are already scaled and ready to use with const-compatible
 /// widgets throughout your app.
-class SKitThemeValues {
+class ScaleKitDesignValuesSet {
   /// Extra small text style.
   final TextStyle? textXs;
 
@@ -408,8 +408,8 @@ class SKitThemeValues {
   /// Large height value.
   final double? heightLg;
 
-  /// Creates a [SKitThemeValues] with computed and scaled values.
-  const SKitThemeValues({
+  /// Creates a [ScaleKitDesignValuesSet] with computed and scaled values.
+  const ScaleKitDesignValuesSet({
     this.textXs,
     this.textSm,
     this.textMd,
@@ -455,9 +455,15 @@ class SKitThemeValues {
   });
 }
 
+@Deprecated('Use ScaleKitDesignValues instead')
+typedef SKitTheme = ScaleKitDesignValues;
+
+@Deprecated('Use ScaleKitDesignValuesSet instead')
+typedef SKitThemeValues = ScaleKitDesignValuesSet;
+
 /// Legacy helper class for backward compatibility.
 ///
-/// Use [SKitTheme.compute] instead for comprehensive theme support.
+/// Use [ScaleKitDesignValues.compute] instead for comprehensive theme support.
 /// This class is kept for backward compatibility with existing code.
 class SKitValues {
   /// Padding [EdgeInsets].

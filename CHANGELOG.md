@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2025-11-08
+
+### ✨ Renamed & Enhanced Design Values
+
+#### Changed
+
+- Renamed `SKitTheme` to `ScaleKitDesignValues` for clearer intent (with deprecated typedefs to keep existing code compiling).
+- Renamed `SKitThemeValues` to `ScaleKitDesignValuesSet` and updated all docs/examples to use the new names.
+- `ScaleKitDesignValues.compute()` now returns safe-clamped radii by default via `createRadiusSafe` / `createBorderRadiusSafe`.
+- Example app and code snippets now showcase `ScaleKitDesignValues` usage, including responsive builder snippets and updated tip cards.
+
+#### Documentation
+
+- README “Recommended Building Blocks” now features `ScaleKitDesignValues`, runtime responsive builder snippet, and clarified `.rSafe` behavior.
+- Reorganized documentation so optional tooling appears later and cross-links point from quick-start to advanced tuning.
+
+---
+
 ## [1.0.13] - 2025-01-17
 
 ### ✨ New Radius Controls

@@ -157,9 +157,10 @@ SKit.text('Hello', textSize: SKTextSize.s48)
 // Or use fontSize directly
 SKit.text('Hello', fontSize: 16)''';
 
-  // SKitTheme
-  static const skitTheme = '''// Define your design tokens once (can be const)
-const theme = SKitTheme(
+  // ScaleKitDesignValues
+  static const designValues =
+      '''// Define your design values once (can be const)
+const design = ScaleKitDesignValues(
   textSm: 12,
   textMd: 14,
   textLg: 16,
@@ -174,7 +175,7 @@ const theme = SKitTheme(
 // Compute once per build
 @override
 Widget build(BuildContext context) {
-  final values = theme.compute();
+  final values = design.compute();
   
   return Container(
     padding: values.paddingMd,
@@ -354,13 +355,14 @@ double pixelRatio = scale.devicePixelRatio;
 Orientation orientation = scale.orientation;''';
 
   // Performance Tips
-  static const performanceTips = '''// 1. Use SKitTheme for const widgets
-const theme = SKitTheme(
+  static const performanceTips =
+      '''// 1. Use ScaleKitDesignValues for const widgets
+const design = ScaleKitDesignValues(
   textMd: 14,
   paddingMd: 16,
   radiusMd: 12,
 );
-final values = theme.compute(); // Compute once per build
+final values = design.compute(); // Compute once per build
 // Use values everywhere with const widgets
 
 // 2. Use size enums for consistency

@@ -110,6 +110,7 @@ Jump to any section:
 - [✨ Key Features](#-key-features)
 - [📦 Installation](#installation)
 - [⚡ Quick Start Guide](#quick-start)
+- [💡 Recommended Building Blocks](#-recommended-building-blocks)
 
 ### 📖 Core Concepts
 
@@ -122,7 +123,7 @@ Jump to any section:
 - [SKit Helper Class](#skit-helper-class)
 - [Comprehensive Text Widgets (textFull, textStyleFull)](#comprehensive-text-widgets-new-in-v1011)
 - [Size System Configuration](#size-system-configuration)
-- [SKitTheme - Centralized Design System](#skittheme---centralized-design-system)
+- [ScaleKitDesignValues - Centralized Design System](#scalekitdesignvalues---centralized-design-system)
 - [Context Extensions](#context-extensions)
 
 ### 🔧 Advanced Features
@@ -131,15 +132,19 @@ Jump to any section:
 - [Responsive Builder & Columns](#responsive-builder--columns)
 - [ThemeData Integration](#themedata-integration)
 - [Orientation Autoscale (Landscape vs Portrait)](#orientation-autoscale-landscape-vs-portrait)
+- [Font Configuration (Automatic Font Selection)](#font-configuration-automatic-font-selection)
+
+### 🧪 Optional Tools
+
 - [Enable/Disable Scaling (Runtime Toggle)](#enabledisable-scaling-runtime-toggle)
 - [Device Preview Integration](#device-preview-integration-optional)
-- [Font Configuration (Automatic Font Selection)](#font-configuration-automatic-font-selection)
 
 ### 📚 Reference
 
 - [API Reference](#api-reference)
 - [Performance](#performance)
 - [Architecture](#architecture)
+- [Advanced Tuning Reference](#-advanced-tuning-reference)
 - [Device-Specific Scaling](#device-specific-scaling)
 - [FAQ](#faq)
 
@@ -236,7 +241,7 @@ ScaleKitBuilder(
 - 🔧 **Const Widgets**: Generate const-compatible widgets for better performance
 - 🚀 **Extension Methods**: Use context extensions for cleaner code
 - 📐 **Size System**: Predefined size enums (xs, sm, md, lg, xl, xxl) for consistent design
-- 🎨 **Theme Support**: Centralized theme configuration with `SKitTheme`
+- 🎨 **Theme Support**: Centralized design values with `ScaleKitDesignValues`
 - 📱 **Device Detection**: Built-in tablet, mobile, and desktop detection
 - 🔄 **Smart Caching**: Flyweight pattern with automatic cache invalidation on size/orientation change
 - 🎨 **ThemeData Integration**: Use responsive scaling in Flutter's theme system
@@ -250,7 +255,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.0.13
+  flutter_scale_kit: ^1.1.0
 ```
 
 Then run:
@@ -336,229 +341,37 @@ The algorithm considers orientation changes, aspect ratios (narrow/standard/wide
 
 #### Understanding Scale Limits (minScale & maxScale)
 
-**⚙️ When to Manually Configure**
+Scale limits are the guard rails that keep responsive layouts feeling familiar as screens grow or shrink. In nearly every project you can leave them unset and let Scale Kit pick the right range for each device type and orientation.
 
-Only override the auto-detected limits if you have specific requirements:
-
-Scale limits control how much your UI can grow or shrink relative to your design dimensions. They're applied **after** the base scale calculation but **before** orientation boosts.
-
-**How it works:**
-
-Scale Kit first calculates raw scale factors:
-
-- `scaleWidth = screenWidth / designWidth`
-- `scaleHeight = screenHeight / designHeight`
-
-Then it clamps them:
-
-- `finalScaleWidth = clamp(scaleWidth, minScale, maxScale)`
-- `finalScaleHeight = clamp(scaleHeight, minScale, maxScale)`
-
-**Real-world example:**
-
-Suppose your design is `375×812` (iPhone 13 mini) and the user opens your app on an iPad Pro (1024×1366 portrait):
-
-```
-Without limits:
-  scaleWidth = 1024/375 = 2.73x  →  A 100px button becomes 273px (too huge!)
-  scaleHeight = 1366/812 = 1.68x
-
-With minScale: 0.8, maxScale: 1.2:
-  scaleWidth = clamp(2.73, 0.8, 1.2) = 1.2x  →  A 100px button becomes 120px ✓
-  scaleHeight = clamp(1.68, 0.8, 1.2) = 1.2x
-```
-
-**Manual Override Examples (Optional):**
-
-These settings are **only needed if you want different behavior** than the intelligent defaults:
-
-| Use Case                | minScale | maxScale | Why                                                                          |
-| ----------------------- | -------- | -------- | ---------------------------------------------------------------------------- |
-| **Strict Design Match** | `0.95`   | `1.05`   | Lock to design specs (overrides auto-detection); useful for brand compliance |
-| **Extra Accessibility** | `0.6`    | `2.0`    | Wider than defaults; lets system text-scaling dominate                       |
-| **Locked Tablet Range** | `0.9`    | `1.2`    | Override tablet auto-range to match mobile consistency                       |
-| **Desktop Max Limit**   | `0.7`    | `1.3`    | Cap desktop scaling lower than auto (2.0x) for specific design requirements  |
-
-💡 **Remember:** The package already auto-detects optimal values for mobile/tablet/desktop in both portrait and landscape. These manual overrides are for edge cases only!
-
-**How limits interact with `.w` / `.h` extensions:**
+- **Auto first:** the defaults protect small phones from feeling cramped and keep large monitors from blowing up every pixel.
+- **Optional overrides:** add limits only when you need a tighter (or looser) experience than the defaults provide.
 
 ```dart
-// Design: 375×812, Screen: 1024×1366, maxScale: 1.2
-200.w  // = 200 * 1.2 = 240  (clamped from 2.73)
-100.h  // = 100 * 1.2 = 120  (clamped from 1.68)
-16.sp  // Font: 16 * 1.2 * orientationBoost (e.g. 1.2 landscape) * textScaleFactor
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  minScale: 0.9, // Optional override
+  maxScale: 1.2, // Optional override
+  child: MaterialApp(home: HomePage()),
+);
 ```
 
-**Pro Tip:**  
-Set `minScale` close to `1.0` (e.g., `0.9`) if your design already uses small phones as a baseline—this prevents UI from shrinking too much on even smaller screens. Use a higher `maxScale` (e.g., `1.5`) if you want tablets to feel spacious without creating separate tablet layouts.
-
----
+Need the exact formulas or override recipes? Jump to the [Advanced Tuning Reference](#-advanced-tuning-reference).
 
 #### Understanding Orientation Boosts (Advanced)
 
-Orientation boosts are **multipliers applied AFTER scale clamping** to make UI elements more readable/usable when devices rotate. The intelligent defaults work great for most apps, but understanding the math helps with custom tuning.
+Orientation boosts are gentle multipliers that run **after** scale limits to keep content readable when a device rotates. Smart defaults already cover the common cases, so you only tweak them for specialized layouts.
 
-**📐 The Complete Scaling Formula:**
+| Device Type | Portrait | Landscape | Why it matters                            |
+| ----------- | -------- | --------- | ----------------------------------------- |
+| Mobile      | 1.0×     | 1.2×      | Wider view gets a bit more breathing room |
+| Tablet      | 1.0×     | 1.2×      | Big screens gain spacing when horizontal  |
+| Desktop     | 1.0×     | 1.0×      | Desktops rarely need extra boosts         |
 
-For **sizing** (width, height, padding, margin):
+- Boosts are split for fonts and sizes so text can scale differently from containers.
+- System text scaling (`.sp`) is respected on top of these multipliers.
 
-```
-finalSize = designValue × clampedScale × orientationSizeBoost
-```
-
-For **fonts** (text):
-
-```
-finalFontSize = designFontSize × clampedScale × orientationFontBoost × systemTextScale
-```
-
-**🔄 Default Orientation Boosts (Smart Defaults):**
-
-| Device Type | Orientation | Font Boost | Size Boost | Why                               |
-| ----------- | ----------- | ---------- | ---------- | --------------------------------- |
-| Mobile      | Portrait    | 1.0×       | 1.0×       | Normal, no adjustment needed      |
-| Mobile      | Landscape   | 1.2×       | 1.2×       | Wider screen = more readable text |
-| Tablet      | Portrait    | 1.0×       | 1.0×       | Spacious by default               |
-| Tablet      | Landscape   | 1.2×       | 1.2×       | Even more space for content       |
-| Desktop     | Portrait    | 1.0×       | 1.0×       | Rare case (rotated monitor)       |
-| Desktop     | Landscape   | 1.0×       | 1.0×       | Default desktop, no boost needed  |
-
-**📊 Real-World Math Example:**
-
-Design specs: `375×812` (mobile portrait)  
-Scenario: iPhone 14 rotated to landscape (852×390)
-
-**Step 1: Calculate raw scales**
-
-```
-scaleWidth = 852 / 375 = 2.27x
-scaleHeight = 390 / 812 = 0.48x
-```
-
-**Step 2: Apply intelligent scale limits** (mobile landscape: 0.85-1.25x)
-
-```
-clampedWidth = clamp(2.27, 0.85, 1.25) = 1.25x
-clampedHeight = clamp(0.48, 0.85, 1.25) = 0.85x
-```
-
-**Step 3: Apply orientation boost** (mobile landscape: 1.2x)
-
-```
-// For a 16px font:
-16.sp = 16 × 1.25 (clamped) × 1.2 (landscape boost) = 24px ✓ More readable!
-
-// For a 100px wide container:
-100.w = 100 × 1.25 (clamped) × 1.2 (landscape boost) = 150px ✓ Proportionally larger!
-
-// For a 50px tall element:
-50.h = 50 × 0.85 (clamped) × 1.2 (landscape boost) = 51px ✓ Adjusted for short screen!
-```
-
-**Without boost:**
-
-```
-16.sp = 16 × 1.25 = 20px (too small in landscape)
-100.w = 100 × 1.25 = 125px (cramped)
-```
-
-**🎯 When to Customize Boosts:**
-
-**Use Case 1: Dense Information Display**
-
-```dart
-ScaleKitBuilder(
-  designWidth: 375,
-  designHeight: 812,
-  // Reduce landscape boost for data-heavy apps (dashboards, spreadsheets)
-  mobileLandscapeFontBoost: 1.0,  // No font boost
-  mobileLandscapeSizeBoost: 1.0,  // No size boost
-  tabletLandscapeFontBoost: 1.0,
-  tabletLandscapeSizeBoost: 1.0,
-  child: MaterialApp(...),
-)
-```
-
-**Use Case 2: Extra Readable Text**
-
-```dart
-ScaleKitBuilder(
-  designWidth: 375,
-  designHeight: 812,
-  // Boost fonts more than sizes for reading apps (books, articles)
-  mobileLandscapeFontBoost: 1.4,   // 40% bigger text
-  mobileLandscapeSizeBoost: 1.1,   // 10% bigger containers
-  child: MaterialApp(...),
-)
-```
-
-**Use Case 3: Portrait-Optimized Tablet**
-
-```dart
-ScaleKitBuilder(
-  designWidth: 375,
-  designHeight: 812,
-  // Boost portrait mode for tablets used vertically (POS systems, kiosks)
-  tabletPortraitFontBoost: 1.3,
-  tabletPortraitSizeBoost: 1.3,
-  child: MaterialApp(...),
-)
-```
-
-**📱 Complete Example with All Parameters:**
-
-```dart
-// Design: 375×812
-// Device: iPad landscape (1024×768)
-// Custom: slight boost for readability
-
-ScaleKitBuilder(
-  designWidth: 375,
-  designHeight: 812,
-
-  // Let intelligent limits auto-detect (recommended)
-  // minScale: null, maxScale: null,
-
-  // Custom orientation boosts
-  tabletLandscapeFontBoost: 1.15,  // 15% bigger text
-  tabletLandscapeSizeBoost: 1.1,   // 10% bigger UI elements
-
-  child: MaterialApp(
-    home: Scaffold(
-      body: Column(
-        children: [
-          // Math breakdown:
-          // Raw scale: 1024/375 = 2.73x, clamped to 1.4x (tablet max)
-          // With boost: 1.4 × 1.1 = 1.54x for sizes, 1.4 × 1.15 = 1.61x for fonts
-
-          Text(
-            'Title',
-            style: TextStyle(
-              fontSize: 24.sp,  // 24 × 1.61 = 38.64px (readable on large tablet)
-            ),
-          ),
-
-          Container(
-            width: 200.w,   // 200 × 1.54 = 308px (well-proportioned)
-            height: 100.h,  // 100 × 1.54 = 154px
-            padding: EdgeInsets.all(16.w),  // 16 × 1.54 = 24.64px
-          ),
-        ],
-      ),
-    ),
-  ),
-)
-```
-
-**💡 Key Takeaways:**
-
-1. **Orientation boosts multiply AFTER scale clamping** — they fine-tune the final result
-2. **Separate font & size boosts** — text can scale differently from UI elements
-3. **Per-device configuration** — mobile, tablet, and desktop can have different boosts
-4. **Smart defaults work for 95% of cases** — only customize for specialized UIs
-5. **Portrait vs Landscape** — landscape typically gets boosts, portrait stays 1.0x
-6. **System text scaling respected** — `.sp` also multiplies by user's accessibility settings
+Curious about the math, per-device parameters, or real-world scenarios? See the [Advanced Tuning Reference](#-advanced-tuning-reference).
 
 ---
 
@@ -599,6 +412,139 @@ SKit.padding(
 ```
 
 **Note:** Most containers need both `borderRadius` and `border`. Use `borderColor` and `borderWidth` parameters to add borders to your rounded containers. You can also specify borders on individual sides (top, bottom, left, right) with different colors and widths. All border widths are automatically scaled based on screen size. You can further enhance the decoration with `gradient`, `backgroundImage`, `boxShadow`, `elevation`, `shadowColor`, and `shape` for Material-like cards or image-backed surfaces.
+
+---
+
+## 💡 Recommended Building Blocks
+
+Kick-start your layouts with the helpers teams reach for most. Each snippet keeps things simple up front and links to the deep-dive section when you’re ready.
+
+### `ScaleKitBuilder` + `.w/.h/.sp`
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  child: MaterialApp(
+    home: Scaffold(
+      body: Padding(
+        padding: EdgeInsets.all(20.w),
+        child: Text(
+          'Welcome!',
+          style: TextStyle(fontSize: 20.sp),
+        ),
+      ),
+    ),
+  ),
+);
+```
+
+- Place `ScaleKitBuilder` directly above your `MaterialApp` (or `CupertinoApp`) so every route inherits scaling.
+- `.w`, `.h`, and `.sp` keep spacing, components, and fonts proportional to the screen.  
+  ➜ Learn more in [Extension Methods](#extension-methods).
+
+### `SKit` helper widgets
+
+```dart
+SKit.roundedContainer(
+  all: 16,
+  color: Colors.white,
+  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+  borderColor: Colors.black12,
+  borderWidth: 1,
+  radiusMode: SKRadiusMode.safe, // uses rSafe clamp internally
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SKit.text(
+        'Dashboard',
+        textSize: SKTextSize.s20,
+        fontWeight: FontWeight.w600,
+      ),
+      SizedBox(height: 12.h),
+      SKit.text(
+        'All metrics auto-scale with the screen.',
+        textSize: SKTextSize.s16,
+        color: Colors.grey.shade600,
+      ),
+    ],
+  ),
+);
+```
+
+- One-liners for padding/margin: `SKit.padding(horizontal: 24, vertical: 12)`; use enums for presets (`SKit.paddingSize(horizontal: SKSize.lg)`).
+- Containers respect `.rSafe` by default via `SKRadiusMode.safe`, so borders stay natural on large screens.  
+  ➜ Explore the full API in [SKit Helper Class](#skit-helper-class).
+
+### `textFull` / `textStyleFull`
+
+```dart
+textFull(
+  'Headline',
+  fontSize: 24,
+  fontWeight: FontWeight.w600,
+  maxLines: 2,
+  textAlign: TextAlign.center,
+);
+```
+
+- One call sets typography, layout, and accessibility options—fonts auto-scale.
+- Ideal for marketing screens, dashboards, or anywhere text configuration repeats.  
+  ➜ Details in [Comprehensive Text Widgets](#comprehensive-text-widgets-new-in-v1011).
+
+### `ScaleKitDesignValues` design system
+
+```dart
+const design = ScaleKitDesignValues(
+  textMd: 16,
+  paddingMd: 16,
+  radiusMd: 12,
+  spacingMd: 16,
+);
+
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  child: MaterialApp(
+    home: Builder(
+      builder: (context) {
+        final values = design.compute();
+        return SKPadding(
+          padding: values.paddingMd!,
+          child: SKContainer(
+            margin: values.marginMd,
+            decoration: BoxDecoration(
+              borderRadius: values.borderRadiusMd,
+            ),
+            child: Text('Hello', style: values.textMd),
+          ),
+        );
+      },
+    ),
+  ),
+);
+```
+
+- Define tokens once, compute per screen, and reuse responsive values everywhere.
+- Works great with const widgets and reduces repetitive size/spacing code.  
+  ➜ Deep dive at [ScaleKitDesignValues - Centralized Design System](#scalekitdesignvalues---centralized-design-system).
+
+> Need device-aware layouts? `SKResponsiveBuilder` chooses the right builder for mobile, tablet, desktop, and landscape variants automatically. See [Responsive Builder & Columns](#responsive-builder--columns).
+
+### `SKResponsiveBuilder` layout switcher
+
+```dart
+SKResponsiveBuilder(
+  mobile: (_) => _CardsGrid(columns: 1),
+  tablet: (_) => _CardsGrid(columns: 2),
+  desktop: (_) => _CardsGrid(columns: 4),
+  mobileLandscape: (_) => _CardsGrid(columns: 2),
+);
+```
+
+- Supplies dedicated builders per device/orientation and falls back intelligently when one is missing.
+- Perfect for dashboards, catalog pages, or any layout that needs different density on phones vs tablets vs desktop.  
+  ➜ Details in [Responsive Builder & Columns](#responsive-builder--columns).
 
 ## Usage
 
@@ -982,13 +928,13 @@ SKit.rounded(
 - `borderTopColor`, `borderBottomColor`, `borderLeftColor`, `borderRightColor` - Individual side colors
 - `borderTopWidth`, `borderBottomWidth`, `borderLeftWidth`, `borderRightWidth` - Individual side widths (automatically scaled)
 
-### SKitTheme - Centralized Design System
+### ScaleKitDesignValues - Centralized Design System
 
 Define all your design tokens in one place:
 
 ```dart
 // Define theme
-const theme = SKitTheme(
+const design = ScaleKitDesignValues(
   textXs: 10,
   textSm: 12,
   textMd: 14,
@@ -1010,7 +956,7 @@ const theme = SKitTheme(
 );
 
 // Compute once
-final values = theme.compute();
+final values = design.compute();
 
 // Use everywhere with const widgets
 SKPadding(
@@ -1030,7 +976,7 @@ The compute pattern lets you pre-scale all your design tokens once per build and
 
 When to use compute:
 
-- Use `SKitTheme.compute()` in a widget's build method (or builder) when you need many scaled values together (text styles, paddings, margins, radii, spacing, sizes).
+- Use `ScaleKitDesignValues.compute()` in a widget's build method (or builder) when you need many scaled values together (text styles, paddings, margins, radii, spacing, sizes).
 - Prefer it for list/grid items and complex screens to avoid recalculating the same values per child.
 
 Benefits:
@@ -1043,7 +989,7 @@ Example: precompute many values and build with them
 
 ```dart
 // Define your design tokens once (can be const)
-const theme = SKitTheme(
+const design = ScaleKitDesignValues(
   textSm: 12,
   textMd: 14,
   textLg: 16,
@@ -1060,7 +1006,7 @@ const theme = SKitTheme(
 @override
 Widget build(BuildContext context) {
   // Compute once per build
-  final values = theme.compute();
+  final values = design.compute();
 
   return ListView.separated(
     padding: values.paddingHorizontal,
@@ -1105,7 +1051,7 @@ Widget build(BuildContext context) {
 
 Legacy compute helper (simple one-off values)
 
-If you only need a few values in places where defining a full theme is overkill, you can use the legacy `SKitValues.compute` factory. This is maintained for convenience but `SKitTheme.compute()` is recommended for larger UIs.
+If you only need a few values in places where defining a full theme is overkill, you can use the legacy `SKitValues.compute` factory. This is maintained for convenience but `ScaleKitDesignValues.compute()` is recommended for larger UIs.
 
 ```dart
 final v = SKitValues.compute(
@@ -1347,56 +1293,6 @@ Notes:
 
 #### Comparison with flutter_screenutil
 
-### Enable/Disable Scaling (Runtime Toggle)
-
-You can turn scaling off entirely to compare against raw Flutter sizes.
-
-```dart
-final enabled = ValueNotifier<bool>(true);
-
-ScaleKitBuilder(
-  designWidth: 375,
-  designHeight: 812,
-  enabledListenable: enabled, // runtime toggle
-  enabled: enabled.value,      // initial
-  child: MaterialApp(...),
-);
-
-// Toggle anywhere
-enabled.value = false; // disables scaling (values returned unmodified)
-```
-
-Notes:
-
-- When disabled, `.w/.h/.sp` and ScaleManager methods return the input value (no scaling).
-- Re-enable to restore responsive scaling.
-
-Tip: Use the example app’s settings (tune icon) to live-test autoscale flags and boosts, then Save to apply. You can Reset to defaults from the sheet.
-
-When resizing windows (desktop/web) or changing device sizes, `flutter_screenutil` often scales cards and paddings more aggressively, which can make components look oversized. Scale Kit clamps scale factors and applies orientation-aware boosts, keeping practical sizes and better visual balance during resizes and rotations.
-
-### Device Preview Integration (Optional)
-
-If you use [`device_preview`](https://pub.dev/packages/device_preview) during development, share its simulated platform with Scale Kit so that device detection remains accurate inside the preview surface:
-
-```dart
-import 'package:device_preview/device_preview.dart';
-
-void main() {
-  ScaleManager.setDevicePreviewPlatformGetter((context) {
-    try {
-      return DevicePreview.platformOf(context);
-    } catch (_) {
-      return null; // Fall back to default detection when preview is disabled
-    }
-  });
-
-  runApp(const MyApp());
-}
-```
-
-Wrap your app with `DevicePreview` as normal (e.g., `DevicePreview(builder: (_) => app)`). Returning `null` keeps the default logic when preview mode is turned off.
-
 ### Font Configuration (Automatic Font Selection)
 
 Configure fonts for different languages. All TextStyles automatically use the configured font for the current language:
@@ -1558,6 +1454,125 @@ The package uses design patterns for optimal performance:
 - **Factory**: `ScaleValueFactory` - Creates cached scaled values
 - **Flyweight**: `ScaleValueCache` - Reuses cached values
 
+## 🛠️ Advanced Tuning Reference
+
+Ready to go beyond the defaults? These notes expand on the core concepts above so you always know what will happen before you flip a switch.
+
+### Manual Scale Limit Overrides
+
+Scale limits clamp the raw width/height ratios that Flutter Scale Kit calculates:
+
+- `scaleWidth = screenWidth / designWidth`
+- `scaleHeight = screenHeight / designHeight`
+- `finalScaleWidth = clamp(scaleWidth, minScale, maxScale)`
+- `finalScaleHeight = clamp(scaleHeight, minScale, maxScale)`
+
+**Real-world example**
+
+Design: `375×812` (iPhone 13 mini) → Displayed on an iPad Pro portrait (`1024×1366`)
+
+```
+Without limits:
+  scaleWidth = 1024 / 375 = 2.73x  →  100px button → 273px (too huge)
+  scaleHeight = 1366 / 812 = 1.68x
+
+With minScale: 0.8, maxScale: 1.2:
+  clampedWidth = clamp(2.73, 0.8, 1.2) = 1.2x  →  100px button → 120px ✓
+  clampedHeight = clamp(1.68, 0.8, 1.2) = 1.2x
+```
+
+**Override recipes**
+
+| Use Case            | minScale | maxScale | Why                                         |
+| ------------------- | -------- | -------- | ------------------------------------------- |
+| Strict design match | `0.95`   | `1.05`   | Keeps UI locked to spec (brand/compliance)  |
+| Extra accessibility | `0.6`    | `2.0`    | Lets system text scaling dominate           |
+| Locked tablet range | `0.9`    | `1.2`    | Makes tablets feel like big phones          |
+| Desktop max limit   | `0.7`    | `1.3`    | Caps desktop scaling to avoid giant widgets |
+
+**Quick check**
+
+```dart
+// Design: 375×812, Screen: 1024×1366, maxScale: 1.2
+200.w; // 200 × 1.2 = 240  (instead of 546 without clamping)
+16.sp; // 16 × 1.2 × orientationBoost × systemTextScale
+```
+
+**Pro tip:** Start with `minScale ≈ 0.9` and `maxScale ≈ 1.4` if you just want a gentle clamp for tablets while keeping phones untouched.
+
+### Orientation Boost Deep Dive
+
+Orientation boosts multiply **after** clamping to adapt layouts when a device rotates:
+
+```
+finalSize      = designValue × clampedScale × orientationSizeBoost
+finalFontSize  = designFontSize × clampedScale × orientationFontBoost × systemTextScale
+```
+
+**Smart defaults**
+
+| Device Type | Orientation | Font Boost | Size Boost | Why                            |
+| ----------- | ----------- | ---------- | ---------- | ------------------------------ |
+| Mobile      | Portrait    | 1.0×       | 1.0×       | Baseline                       |
+| Mobile      | Landscape   | 1.2×       | 1.2×       | Landscape needs breathing room |
+| Tablet      | Portrait    | 1.0×       | 1.0×       | Already spacious               |
+| Tablet      | Landscape   | 1.2×       | 1.2×       | Horizontal layouts feel airy   |
+| Desktop     | Portrait    | 1.0×       | 1.0×       | Rare use                       |
+| Desktop     | Landscape   | 1.0×       | 1.0×       | Default desktop                |
+
+**Math in action**
+
+Design: `375×812` (mobile portrait) → iPhone 14 landscape (`852×390`)
+
+```
+Raw scales:
+  width  = 852 / 375 = 2.27x
+  height = 390 / 812 = 0.48x
+
+Auto limits applied (0.85 - 1.25):
+  width  = clamp(2.27, 0.85, 1.25) = 1.25x
+  height = clamp(0.48, 0.85, 1.25) = 0.85x
+
+Orientation boost (1.2× landscape):
+  16.sp = 16 × 1.25 × 1.2 = 24.0px
+ 100.w = 100 × 1.25 × 1.2 = 150.0px
+  50.h = 50 × 0.85 × 1.2 = 51.0px
+```
+
+**Customization patterns**
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  // Dashboards—stay dense in landscape
+  mobileLandscapeFontBoost: 1.0,
+  mobileLandscapeSizeBoost: 1.0,
+);
+
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  // Reading experience—text gets extra lift
+  mobileLandscapeFontBoost: 1.4,
+  mobileLandscapeSizeBoost: 1.1,
+);
+
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  // Portrait-first tablet (POS/kiosk)
+  tabletPortraitFontBoost: 1.3,
+  tabletPortraitSizeBoost: 1.3,
+);
+```
+
+**Key takeaways**
+
+1. Boosts run after clamping, so limits always win first.
+2. Fonts and sizes use separate multipliers—tune readability independently.
+3. System text scaling stacks on top of everything else.
+
 ## Device-Specific Scaling
 
 The package automatically adapts scaling strategies based on:
@@ -1566,6 +1581,55 @@ The package automatically adapts scaling strategies based on:
 - **Aspect Ratio**: Narrow, Wide, Standard
 - **Orientation**: Portrait, Landscape
 - **Foldable Devices**: Detects fold/unfold transitions
+
+## 🧪 Optional Tools
+
+### Enable/Disable Scaling (Runtime Toggle)
+
+Keep a runtime switch handy when you want to compare Scale Kit against vanilla Flutter sizing.
+
+```dart
+final enabled = ValueNotifier<bool>(true);
+
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  enabledListenable: enabled, // runtime toggle
+  enabled: enabled.value,      // initial
+  child: MaterialApp(...),
+);
+
+// Toggle anywhere
+enabled.value = false; // disables scaling (values returned unmodified)
+```
+
+Notes:
+
+- `.w/.h/.sp` and ScaleManager methods return raw values while disabled.
+- Reactivate to restore responsive scaling immediately.
+- The example app’s settings sheet (tune icon) exposes the same toggle for quick experiments.
+
+### Device Preview Integration (Optional)
+
+If you use [`device_preview`](https://pub.dev/packages/device_preview) during development, share its simulated platform with Scale Kit so detection stays accurate inside the preview surface:
+
+```dart
+import 'package:device_preview/device_preview.dart';
+
+void main() {
+  ScaleManager.setDevicePreviewPlatformGetter((context) {
+    try {
+      return DevicePreview.platformOf(context);
+    } catch (_) {
+      return null; // Fall back to default detection when preview is disabled
+    }
+  });
+
+  runApp(const MyApp());
+}
+```
+
+Wrap your app with `DevicePreview` as normal (e.g., `DevicePreview(builder: (_) => app)`). Returning `null` keeps the default logic when preview mode is turned off. Skip this helper if you prefer—the package works fine without it; this just keeps platform detection perfect when you hop between simulated devices.
 
 ## Contributing
 
