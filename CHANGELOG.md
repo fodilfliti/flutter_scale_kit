@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2025-11-08
+
+### 📚 Documentation
+
+- Optimized the README quick start flow, clarified auto-configuration workflow, and refreshed navigation anchors for a smoother onboarding experience.
+
+---
+
 ## [1.1.0] - 2025-11-08
 
 ### ✨ Renamed & Enhanced Design Values

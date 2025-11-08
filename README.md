@@ -6,34 +6,29 @@
 [![Popularity](https://img.shields.io/pub/popularity/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit/score)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20Me-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/fodilfliti)
 
----
-
-<div align="center">
-
-### 🚀 [**👉 Try Live Demo - Interactive Web App 👈**](https://fodilfliti.github.io/flutter_scale_kit/) 🚀
-
-**[Test all features in your browser!](https://fodilfliti.github.io/flutter_scale_kit/)** • Responsive • Interactive • No Installation Required
-
-</div>
-
----
-
 A high-performance responsive design package for Flutter that helps you create adaptive UIs across different screen sizes with easy-to-use scaling utilities.
+
+<a id="key-features"></a>
 
 ## ✨ Key Features
 
-- **🧠 Intelligent Auto-Configuration**: Automatically detects optimal scale limits based on device type, screen size, orientation, and aspect ratio — **works perfectly out-of-the-box in 95% of cases without manual configuration**
-- **📱 Universal Platform Support**: Seamlessly handles mobile phones, tablets, desktop, and web with platform-specific optimizations
-- **🔄 Orientation-Aware**: Automatically adjusts scaling factors when device rotates between portrait and landscape
-- **🎯 Design Fidelity**: Keeps your UI proportional to design mockups while adapting to any screen size
-- **⚡ High Performance**: Cached calculations and threshold-based updates minimize overhead
-- **🛠️ Developer-Friendly**: Simple API similar to `flutter_screenutil` with powerful customization when needed
+- **🧠 Intelligent Auto-Configuration**: Automatically detects optimal scale limits based on device type, screen size, orientation, and aspect ratio—**works out of the box in 95% of cases**
+- **📱 Universal Platform Support**: Handles phones, tablets, desktop, and web with platform-specific optimizations and built-in device detection helpers
+- **🔄 Orientation-Aware Scaling**: Adjusts scaling factors on rotation with per-orientation boosts and optional overrides
+- **🎯 Design Fidelity**: Keeps UI proportional to design mockups via size enums (`SKSize`), design tokens, and centralized `ScaleKitDesignValues`
+- **⚡ High Performance**: Cached calculations, flyweight factories, and threshold-based updates minimize rebuild overhead
+- **🛠️ Developer-Friendly API**: Familiar `.w`, `.h`, `.sp`, `.rSafe` extensions plus `SKit` helpers, responsive builders, and ThemeData integration
+- **🔤 Font Intelligence**: Language-aware font configuration with Google Fonts/custom families applied automatically across Text and themes
+- **🧪 Runtime Controls & Tooling**: Enable/disable scaling at runtime, integrate with `device_preview`, and compare raw Flutter vs scaled behavior instantly
+- **📚 Comprehensive Docs & Examples**: Live web demo, screenshots, and step-by-step guides covering quick start through advanced tuning
 
 > If this package helps you, please click "Like" on the pub.dev page — it improves discoverability and ranking.
 
 > 💝 **Support this project**: If you find Flutter Scale Kit useful, consider [buying me a coffee](https://ko-fi.com/fodilfliti) to help me continue developing and maintaining open-source packages. Your support means a lot! 🙏
 
 ---
+
+<a id="demo"></a>
 
 <div align="center">
 
@@ -47,6 +42,68 @@ A high-performance responsive design package for Flutter that helps you create a
 </div>
 
 ---
+
+<a id="table-of-contents"></a>
+
+## 📑 Table of Contents
+
+Jump to any section:
+
+- [📸 Screenshots](#screenshots)
+
+### 🚀 Quick Start
+
+- [🧠 Intelligent Auto-Configuration](#intelligent-auto-configuration)
+- [✨ Key Features](#key-features)
+- [📦 Installation](#installation)
+- [⚡ Quick Start Guide](#quick-start-guide)
+- [💡 Recommended Building Blocks](#recommended-building-blocks)
+
+### 📖 Core Concepts
+
+- [Understanding Scale Limits (minScale & maxScale)](#understanding-scale-limits)
+- [Understanding Orientation Boosts (Advanced)](#understanding-orientation-boosts)
+
+### 🎨 Usage & Widgets
+
+- [Extension Methods (.w, .h, .sp, .rSafe)](#extension-methods)
+- [SKit Helper Class](#skit-helper-class)
+- [Comprehensive Text Widgets (textFull, textStyleFull)](#comprehensive-text-widgets)
+- [Size System Configuration](#size-system-configuration)
+- [ScaleKitDesignValues - Centralized Design System](#scalekitdesignvalues)
+- [Context Extensions](#context-extensions)
+
+### 🔧 Advanced Features
+
+- [ScaleManager Direct API](#scalemanager-direct-api)
+- [Responsive Builder & Columns](#responsive-builder-columns)
+- [ThemeData Integration](#themedata-integration)
+- [Orientation Autoscale (Landscape vs Portrait)](#orientation-autoscale)
+- [Font Configuration (Automatic Font Selection)](#font-configuration)
+
+### 🧪 Optional Tools
+
+- [Enable/Disable Scaling (Runtime Toggle)](#enable-disable-scaling)
+- [Device Preview Integration (Optional)](#device-preview-integration)
+
+### 📚 Reference
+
+- [API Reference](#api-reference)
+- [Performance](#performance)
+- [Architecture](#architecture)
+- [Advanced Tuning Reference](#advanced-tuning-reference)
+- [Device-Specific Scaling](#device-specific-scaling)
+- [FAQ](#faq)
+
+### 🤝 Community
+
+- [Contributing](#contributing)
+- [Support](#support)
+- [License](#license)
+
+---
+
+<a id="screenshots"></a>
 
 ## Screenshots
 
@@ -98,63 +155,7 @@ A high-performance responsive design package for Flutter that helps you create a
   
 </table>
 
----
-
-## 📑 Table of Contents
-
-Jump to any section:
-
-### 🚀 Quick Start
-
-- [🧠 Intelligent Auto-Configuration](#-intelligent-auto-configuration)
-- [✨ Key Features](#-key-features)
-- [📦 Installation](#installation)
-- [⚡ Quick Start Guide](#quick-start)
-- [💡 Recommended Building Blocks](#-recommended-building-blocks)
-
-### 📖 Core Concepts
-
-- [Understanding Scale Limits (minScale & maxScale)](#understanding-scale-limits-minscale--maxscale)
-- [Understanding Orientation Boosts (Advanced)](#understanding-orientation-boosts-advanced)
-
-### 🎨 Usage & Widgets
-
-- [Extension Methods (.w, .h, .sp, .rSafe)](#extension-methods)
-- [SKit Helper Class](#skit-helper-class)
-- [Comprehensive Text Widgets (textFull, textStyleFull)](#comprehensive-text-widgets-new-in-v1011)
-- [Size System Configuration](#size-system-configuration)
-- [ScaleKitDesignValues - Centralized Design System](#scalekitdesignvalues---centralized-design-system)
-- [Context Extensions](#context-extensions)
-
-### 🔧 Advanced Features
-
-- [ScaleManager Direct API](#scalemanager-direct-api)
-- [Responsive Builder & Columns](#responsive-builder--columns)
-- [ThemeData Integration](#themedata-integration)
-- [Orientation Autoscale (Landscape vs Portrait)](#orientation-autoscale-landscape-vs-portrait)
-- [Font Configuration (Automatic Font Selection)](#font-configuration-automatic-font-selection)
-
-### 🧪 Optional Tools
-
-- [Enable/Disable Scaling (Runtime Toggle)](#enabledisable-scaling-runtime-toggle)
-- [Device Preview Integration](#device-preview-integration-optional)
-
-### 📚 Reference
-
-- [API Reference](#api-reference)
-- [Performance](#performance)
-- [Architecture](#architecture)
-- [Advanced Tuning Reference](#-advanced-tuning-reference)
-- [Device-Specific Scaling](#device-specific-scaling)
-- [FAQ](#faq)
-
-### 🤝 Community
-
-- [Contributing](#contributing)
-- [Support](#support)
-- [License](#license)
-
----
+<a id="intelligent-auto-configuration"></a>
 
 ## 🧠 Intelligent Auto-Configuration
 
@@ -215,39 +216,27 @@ Jump to any section:
 </tr>
 </table>
 
-### 🚀 **Zero Configuration Required**
+### 🚀 Plug-and-play workflow
+
+1. Wrap your root app with `ScaleKitBuilder`.
+2. Pass the design width/height you used in your mockups.
+3. Let Scale Kit infer device type, scale limits, orientation boosts, and font choices automatically.
 
 ```dart
 ScaleKitBuilder(
   designWidth: 375,
   designHeight: 812,
-  // That's it! Everything else is automatic ✨
   child: MaterialApp(home: HomePage()),
 )
 ```
 
-**No need to set** `minScale`, `maxScale`, or orientation boosts — the package intelligently handles everything based on your device and screen!
+That’s all—no `minScale`, `maxScale`, or boost knobs required. The limits and boosts you saw above activate automatically so 95% of projects ship with zero manual tuning.
 
-> 💡 **When to manually configure?** Only if you have specific requirements like strict design compliance (±5%) or need different values than the intelligent defaults. See [Manual Override Examples](#understanding-scale-limits-minscale--maxscale) below.
+> 💡 **When to tweak manually?** Only when you need tighter compliance (e.g., ±5% variance for brand-critical screens) or a custom scaling feel. Jump to [Manual Override Examples](#understanding-scale-limits) for recipes, and follow the [Quick Start Guide](#quick-start-guide) for the full setup flow.
 
 ---
 
-## Features
-
-- 🎯 **Easy Scaling**: Simple API similar to `flutter_screenutil` (`.w`, `.sw`, `.sh`, `.rSafe`, `.r`, `.sp`, `.h`)
-- 🧠 **Intelligent Auto-Configuration**: Zero-config setup with smart device/orientation detection (95% use cases)
-- 📱 **Responsive Design**: Automatic scaling based on screen dimensions and aspect ratios
-- ⚡ **High Performance**: Intelligent caching system prevents recalculation on every rebuild
-- 🔧 **Const Widgets**: Generate const-compatible widgets for better performance
-- 🚀 **Extension Methods**: Use context extensions for cleaner code
-- 📐 **Size System**: Predefined size enums (xs, sm, md, lg, xl, xxl) for consistent design
-- 🎨 **Theme Support**: Centralized design values with `ScaleKitDesignValues`
-- 📱 **Device Detection**: Built-in tablet, mobile, and desktop detection
-- 🔄 **Smart Caching**: Flyweight pattern with automatic cache invalidation on size/orientation change
-- 🎨 **ThemeData Integration**: Use responsive scaling in Flutter's theme system
-- 🔤 **Font Configuration**: Automatic font selection per language with Google Fonts support
-- 🧭 **Orientation Autoscale**: Configurable autoscale behavior for landscape vs portrait
-- 🔁 **Runtime Toggle**: Enable/disable scaling globally to compare with raw Flutter sizes
+<a id="installation"></a>
 
 ## Installation
 
@@ -255,7 +244,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.1.0
+  flutter_scale_kit: ^1.1.1
 ```
 
 Then run:
@@ -264,7 +253,9 @@ Then run:
 flutter pub get
 ```
 
-## Quick Start
+<a id="quick-start-guide"></a>
+
+## ⚡ Quick Start Guide
 
 ### 1. Configure Size Values (Optional but Recommended)
 
@@ -284,6 +275,10 @@ void main() {
   setDefaultRadius(12);
   setDefaultSpacing(8);
 
+  // Optionally cache the defaults for reuse (e.g., wrap in your own widget)
+  final defaults = SKitValues.defaults(); // returns padding/margin/radius/spacing with current config
+  debugPrint('Default padding: ${defaults.padding}');
+
   runApp(const MyApp());
 }
 ```
@@ -292,7 +287,7 @@ void main() {
 
 ### 2. Wrap Your App
 
-Wrap your `MaterialApp` with `ScaleKitBuilder` at the top level:
+Drop `ScaleKitBuilder` above your root app and pass the design size you targeted in Figma/Sketch. Everything else rides on the smart defaults described in [Intelligent Auto-Configuration](#intelligent-auto-configuration): per-device min/max clamps, landscape boosts, font selection, and responsive caches.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -303,14 +298,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 👇 Wrap your app so every route inherits responsive scaling
     return ScaleKitBuilder(
       designWidth: 375,
       designHeight: 812,
       designType: DeviceType.mobile,
-      // That's it! Scale limits are automatically configured ✨
-      // minScale & maxScale are optional - only set if you need custom behavior
       child: MaterialApp(
         title: 'My App',
+        // Optional: create a responsive theme once ScaleKitBuilder is in place
+        theme: ResponsiveThemeData.create(
+          context: context,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
         home: HomePage(),
       ),
     );
@@ -318,26 +318,13 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-**🎯 Intelligent Auto-Configuration**
+- **Phones** hold between 0.85–1.25×, even on foldables.
+- **Tablets** expand comfortably without blowing out typography.
+- **Desktop & web** respect tiny windows and ultrawide monitors.
 
-Scale Kit automatically determines optimal scale limits based on your device, screen size, orientation, and design dimensions. **In 95% of cases, you don't need to set `minScale` or `maxScale` manually** — the package intelligently adapts:
+Need a different feel? Head to [Manual Override Examples](#understanding-scale-limits) for tighter or looser ranges.
 
-- **📱 Mobile phones** (Portrait: 0.85-1.15x, Landscape: 0.85-1.25x)
-
-  - Tight bounds keep UI consistent across iPhone SE to iPhone Pro Max
-  - Detects extreme aspect ratios (foldables, notched screens) and adjusts automatically
-
-- **📲 Tablets** (Portrait: 0.8-1.3x, Landscape: 0.75-1.4x)
-
-  - Comfortable scaling for iPad Mini to iPad Pro
-  - Increases range if your mobile design runs on large tablets
-
-- **💻 Desktop & Web** (Landscape: 0.6-2.0x, Portrait: 0.7-1.8x)
-  - Widest range for resizable windows (800px to ultrawide 3440px monitors)
-  - Detects small windows vs ultrawide displays and adjusts limits
-  - Caps upscaling when mobile designs run on large desktop screens
-
-The algorithm considers orientation changes, aspect ratios (narrow/standard/wide), and the relationship between your design dimensions and actual screen size — **so your app looks great everywhere without configuration**.
+<a id="understanding-scale-limits"></a>
 
 #### Understanding Scale Limits (minScale & maxScale)
 
@@ -356,7 +343,9 @@ ScaleKitBuilder(
 );
 ```
 
-Need the exact formulas or override recipes? Jump to the [Advanced Tuning Reference](#-advanced-tuning-reference).
+Need the exact formulas or override recipes? Jump to the [Advanced Tuning Reference](#advanced-tuning-reference).
+
+<a id="understanding-orientation-boosts"></a>
 
 #### Understanding Orientation Boosts (Advanced)
 
@@ -371,7 +360,7 @@ Orientation boosts are gentle multipliers that run **after** scale limits to kee
 - Boosts are split for fonts and sizes so text can scale differently from containers.
 - System text scaling (`.sp`) is respected on top of these multipliers.
 
-Curious about the math, per-device parameters, or real-world scenarios? See the [Advanced Tuning Reference](#-advanced-tuning-reference).
+Curious about the math, per-device parameters, or real-world scenarios? See the [Advanced Tuning Reference](#advanced-tuning-reference).
 
 ---
 
@@ -415,7 +404,9 @@ SKit.padding(
 
 ---
 
-## 💡 Recommended Building Blocks
+<a id="recommended-building-blocks"></a>
+
+### 5. Recommended Building Blocks
 
 Kick-start your layouts with the helpers teams reach for most. Each snippet keeps things simple up front and links to the deep-dive section when you’re ready.
 
@@ -704,6 +695,8 @@ final style = SKit.textStyleFull(
 )
 ```
 
+<a id="comprehensive-text-widgets"></a>
+
 ### Comprehensive Text Widgets (New in v1.0.11)
 
 **Problem:** Manually creating Text widgets with all attributes is verbose and repetitive.
@@ -928,6 +921,8 @@ SKit.rounded(
 - `borderTopColor`, `borderBottomColor`, `borderLeftColor`, `borderRightColor` - Individual side colors
 - `borderTopWidth`, `borderBottomWidth`, `borderLeftWidth`, `borderRightWidth` - Individual side widths (automatically scaled)
 
+<a id="scalekitdesignvalues"></a>
+
 ### ScaleKitDesignValues - Centralized Design System
 
 Define all your design tokens in one place:
@@ -1105,6 +1100,8 @@ if (context.isMobile) {
 
 ### ScaleManager Direct API
 
+<a id="responsive-builder-columns"></a>
+
 ### Responsive Builder & Columns
 
 Build different widgets per device/orientation with sensible fallbacks, and resolve responsive integers (e.g., Grid columns) quickly.
@@ -1268,6 +1265,8 @@ ScaleKitBuilder(
 )
 ```
 
+<a id="orientation-autoscale"></a>
+
 ### Orientation Autoscale (Landscape vs Portrait)
 
 Scale Kit lets you control autoscale behavior per orientation. Defaults are tuned for comfort: landscape boosts are enabled, portrait boosts are disabled.
@@ -1292,6 +1291,8 @@ Notes:
 - Size boosts only apply in landscape by default; portrait preserves your design intent.
 
 #### Comparison with flutter_screenutil
+
+<a id="font-configuration"></a>
 
 ### Font Configuration (Automatic Font Selection)
 
@@ -1454,6 +1455,8 @@ The package uses design patterns for optimal performance:
 - **Factory**: `ScaleValueFactory` - Creates cached scaled values
 - **Flyweight**: `ScaleValueCache` - Reuses cached values
 
+<a id="advanced-tuning-reference"></a>
+
 ## 🛠️ Advanced Tuning Reference
 
 Ready to go beyond the defaults? These notes expand on the core concepts above so you always know what will happen before you flip a switch.
@@ -1584,6 +1587,8 @@ The package automatically adapts scaling strategies based on:
 
 ## 🧪 Optional Tools
 
+<a id="enable-disable-scaling"></a>
+
 ### Enable/Disable Scaling (Runtime Toggle)
 
 Keep a runtime switch handy when you want to compare Scale Kit against vanilla Flutter sizing.
@@ -1608,6 +1613,8 @@ Notes:
 - `.w/.h/.sp` and ScaleManager methods return raw values while disabled.
 - Reactivate to restore responsive scaling immediately.
 - The example app’s settings sheet (tune icon) exposes the same toggle for quick experiments.
+
+<a id="device-preview-integration"></a>
 
 ### Device Preview Integration (Optional)
 
