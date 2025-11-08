@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2025-11-08
+
+### 📚 Documentation
+
+#### Fixed
+- Added missing navigation anchor for ScaleManager Direct API section to ensure proper table of contents linking.
+
+---
+
 ## [1.1.1] - 2025-11-08
 
 ### 📚 Documentation
