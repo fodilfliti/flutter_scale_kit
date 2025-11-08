@@ -26,7 +26,9 @@ class CodeSnippets {
 16.sp           // Scaled font size
 
 // Border radius scaling
-12.r            // Scaled radius
+12.r            // Scaled radius (best for circles)
+12.rSafe        // Clamped radius (default for corners)
+12.rFixed       // Cached, stays at design value
 
 // Screen percentage
 0.5.sw          // 50% of screen width
@@ -128,12 +130,16 @@ SKit.roundedContainerSize(all: SKSize.lg, color: Colors.blue)
 // Set default values for methods without parameters
 setDefaultPadding(16);
 setDefaultMargin(8);
-setDefaultRadius(12);
+setDefaultRadius(12);              // Scaled by default
 
 // Then use without parameters
-SKit.pad()              // Uses default padding (16)
-SKit.margin()           // Uses default margin (8)
-SKit.rounded()         // Uses default radius (12)''';
+SKit.pad()                         // Uses default padding (16)
+SKit.margin()                      // Uses default margin (8)
+SKit.rounded()                     // Uses default safe radius (12)
+SKit.roundedContainerSize(
+  all: SKSize.lg,
+  radiusMode: SKRadiusMode.fixed,
+)                                  // Keeps corners constant''';
 
   // Text Size System
   static const textSizeSystem = '''// Use SKTextSize enum
@@ -248,6 +254,7 @@ SKit.roundedContainer(
   color: Colors.blue.shade50,
   borderColor: Colors.blue,
   borderWidth: 2,
+  // radiusMode defaults to SKRadiusMode.safe
 )
 
 // Spacing

@@ -118,7 +118,7 @@ Jump to any section:
 
 ### 🎨 Usage & Widgets
 
-- [Extension Methods (.w, .h, .sp, .r)](#extension-methods)
+- [Extension Methods (.w, .h, .sp, .rSafe)](#extension-methods)
 - [SKit Helper Class](#skit-helper-class)
 - [Comprehensive Text Widgets (textFull, textStyleFull)](#comprehensive-text-widgets-new-in-v1011)
 - [Size System Configuration](#size-system-configuration)
@@ -229,7 +229,7 @@ ScaleKitBuilder(
 
 ## Features
 
-- 🎯 **Easy Scaling**: Simple API similar to `flutter_screenutil` (`.w`, `.sw`, `.sh`, `.r`, `.sp`, `.h`)
+- 🎯 **Easy Scaling**: Simple API similar to `flutter_screenutil` (`.w`, `.sw`, `.sh`, `.rSafe`, `.r`, `.sp`, `.h`)
 - 🧠 **Intelligent Auto-Configuration**: Zero-config setup with smart device/orientation detection (95% use cases)
 - 📱 **Responsive Design**: Automatic scaling based on screen dimensions and aspect ratios
 - ⚡ **High Performance**: Intelligent caching system prevents recalculation on every rebuild
@@ -250,7 +250,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.0.12
+  flutter_scale_kit: ^1.0.13
 ```
 
 Then run:
@@ -572,7 +572,7 @@ Container(
   height: 100.h,     // Scaled height
   padding: EdgeInsets.all(16.w),
   decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(12.r),
+    borderRadius: BorderRadius.circular(12.rSafe),
   ),
   child: Text(
     'Hello World',
@@ -617,7 +617,9 @@ All extension methods work similar to `flutter_screenutil`:
 16.sp           // Scaled font size
 
 // Border radius scaling
-12.r            // Scaled radius
+12.r            // Full responsive radius (great for circles/avatars)
+12.rSafe        // Stable radius (clamped, default for corners)
+12.rFixed       // Constant radius (no scaling)
 
 // Screen percentage
 0.5.sw          // 50% of screen width
@@ -649,6 +651,22 @@ SKit.roundedContainer(
   borderColor: Colors.blue,
   borderWidth: 2,
 )
+
+// Lock the radius to design value (no scaling)
+SKit.roundedContainer(
+  all: 12,
+  radiusMode: SKRadiusMode.fixed,
+  color: Colors.orange.shade50,
+)
+
+// Force fully responsive radius (useful for pills/avatars)
+SKit.roundedContainer(
+  all: 50,
+  radiusMode: SKRadiusMode.scaled,
+  color: Colors.purple.shade50,
+)
+
+> By default, all `SKit.rounded*` helpers use `SKRadiusMode.safe`, which gently clamps the radius to keep corners natural on large displays.
 
 // Rounded container with border on specific sides
 SKit.roundedContainer(
@@ -891,7 +909,7 @@ When you've set default values, you can use methods without parameters:
 ```dart
 SKit.pad()              // Uses default padding (16)
 SKit.margin()           // Uses default margin (8)
-SKit.rounded()         // Uses default radius (12)
+SKit.rounded()         // Uses default safe radius (12)
 SKit.h()                // Uses default spacing (8)
 SKit.v()                // Uses default spacing (8)
 ```
@@ -1463,7 +1481,9 @@ The package size is optimized and only includes the necessary library code (`lib
 - `.w` - Scaled width (e.g., `200.w`)
 - `.sw` - Screen width percentage (e.g., `0.5.sw` = 50% width)
 - `.sh` - Screen height percentage (e.g., `0.25.sh` = 25% height)
-- `.r` - Scaled radius/border radius (e.g., `12.r`)
+- `.rSafe` - Stable radius with gentle clamping (e.g., `12.rSafe`)
+- `.r` - Fully responsive radius/border radius (e.g., `12.r`)
+- `.rFixed` - Constant radius (no scaling, e.g., `12.rFixed`)
 - `.sp` - Scaled font size (e.g., `16.sp`)
 - `.h` - Scaled height (e.g., `100.h`)
 - `.spf` - Font size with system text scale factor (e.g., `16.spf`)

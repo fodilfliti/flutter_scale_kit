@@ -18,11 +18,15 @@ class ScaleValueCache {
   final Map<CacheKey, double> _fontSizeCache = {};
   final Map<CacheKey, double> _fontSizeWithFactorCache = {};
   final Map<CacheKey, double> _radiusCache = {};
+  final Map<CacheKey, double> _safeRadiusCache = {};
+  final Map<CacheKey, double> _fixedRadiusCache = {};
   final Map<CacheKey, double> _screenWidthCache = {};
   final Map<CacheKey, double> _screenHeightCache = {};
   final Map<CacheKey, EdgeInsets> _paddingCache = {};
   final Map<CacheKey, EdgeInsets> _marginCache = {};
   final Map<CacheKey, BorderRadius> _borderRadiusCache = {};
+  final Map<CacheKey, BorderRadius> _borderRadiusSafeCache = {};
+  final Map<CacheKey, BorderRadius> _borderRadiusFixedCache = {};
   final Map<CacheKey, TextStyle> _textStyleCache = {};
 
   /// Get device ID string for cache key
@@ -104,6 +108,34 @@ class ScaleValueCache {
     return _radiusCache.putIfAbsent(
       key,
       () => ScaleManager.instance.getRadius(value),
+    );
+  }
+
+  /// Get cached safe radius (scaled with gentle clamps) or calculate and cache
+  double getRadiusSafe(double value) {
+    final key = CacheKey(
+      value: value,
+      scaleType: ScaleType.radiusSafe,
+      deviceId: _getDeviceId(),
+    );
+
+    return _safeRadiusCache.putIfAbsent(
+      key,
+      () => ScaleManager.instance.getRadiusSafe(value),
+    );
+  }
+
+  /// Get cached fixed radius (no scaling) or cache the raw value.
+  double getFixedRadius(double value) {
+    final key = CacheKey(
+      value: value,
+      scaleType: ScaleType.radiusFixed,
+      deviceId: _getDeviceId(),
+    );
+
+    return _fixedRadiusCache.putIfAbsent(
+      key,
+      () => ScaleManager.instance.getFixedRadius(value),
     );
   }
 
@@ -245,6 +277,82 @@ class ScaleValueCache {
     });
   }
 
+  /// Get cached border radius using safe radius scaling.
+  BorderRadius getBorderRadiusSafe({
+    double? all,
+    double? topLeft,
+    double? topRight,
+    double? bottomLeft,
+    double? bottomRight,
+  }) {
+    final value =
+        (all ?? 0) +
+        (topLeft ?? 0) * 10 +
+        (topRight ?? 0) * 100 +
+        (bottomLeft ?? 0) * 1000 +
+        (bottomRight ?? 0) * 10000;
+
+    final manager = ScaleManager.instance;
+    final key = CacheKey(
+      value: value,
+      scaleType: ScaleType.borderRadiusSafe,
+      deviceId: _getDeviceId(),
+    );
+
+    return _borderRadiusSafeCache.putIfAbsent(key, () {
+      if (!manager.isEnabled) {
+        return BorderRadius.only(
+          topLeft: Radius.circular(topLeft ?? all ?? 0),
+          topRight: Radius.circular(topRight ?? all ?? 0),
+          bottomLeft: Radius.circular(bottomLeft ?? all ?? 0),
+          bottomRight: Radius.circular(bottomRight ?? all ?? 0),
+        );
+      }
+
+      return BorderRadius.only(
+        topLeft: Radius.circular(manager.getRadiusSafe(topLeft ?? all ?? 0)),
+        topRight: Radius.circular(manager.getRadiusSafe(topRight ?? all ?? 0)),
+        bottomLeft: Radius.circular(
+          manager.getRadiusSafe(bottomLeft ?? all ?? 0),
+        ),
+        bottomRight: Radius.circular(
+          manager.getRadiusSafe(bottomRight ?? all ?? 0),
+        ),
+      );
+    });
+  }
+
+  /// Get cached border radius without scaling.
+  BorderRadius getBorderRadiusFixed({
+    double? all,
+    double? topLeft,
+    double? topRight,
+    double? bottomLeft,
+    double? bottomRight,
+  }) {
+    final value =
+        (all ?? 0) +
+        (topLeft ?? 0) * 10 +
+        (topRight ?? 0) * 100 +
+        (bottomLeft ?? 0) * 1000 +
+        (bottomRight ?? 0) * 10000;
+
+    final key = CacheKey(
+      value: value,
+      scaleType: ScaleType.borderRadiusFixed,
+      deviceId: _getDeviceId(),
+    );
+
+    return _borderRadiusFixedCache.putIfAbsent(key, () {
+      return BorderRadius.only(
+        topLeft: Radius.circular(topLeft ?? all ?? 0),
+        topRight: Radius.circular(topRight ?? all ?? 0),
+        bottomLeft: Radius.circular(bottomLeft ?? all ?? 0),
+        bottomRight: Radius.circular(bottomRight ?? all ?? 0),
+      );
+    });
+  }
+
   /// Get cached TextStyle or calculate and cache
   TextStyle getTextStyle({
     required double fontSize,
@@ -319,11 +427,15 @@ class ScaleValueCache {
     _fontSizeCache.clear();
     _fontSizeWithFactorCache.clear();
     _radiusCache.clear();
+    _safeRadiusCache.clear();
+    _fixedRadiusCache.clear();
     _screenWidthCache.clear();
     _screenHeightCache.clear();
     _paddingCache.clear();
     _marginCache.clear();
     _borderRadiusCache.clear();
+    _borderRadiusSafeCache.clear();
+    _borderRadiusFixedCache.clear();
     _textStyleCache.clear();
   }
 }

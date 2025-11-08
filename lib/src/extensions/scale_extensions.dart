@@ -15,8 +15,14 @@ extension ScaleExtension on num {
   /// Screen height percentage (e.g., 1.sh = full screen height)
   double get sh => _f.createScreenHeight(toDouble());
 
-  /// Scaled radius/border radius
+  /// Fully responsive radius/border radius (best for pills, avatars, circles).
   double get r => _f.createRadius(toDouble());
+
+  /// Scaled radius with gentle clamping to avoid overly round corners (recommended default).
+  double get rSafe => _f.createRadiusSafe(toDouble());
+
+  /// Fixed radius (no scaling, still cached)
+  double get rFixed => _f.createFixedRadius(toDouble());
 
   /// Scaled font size
   double get sp => _f.createFontSize(toDouble());

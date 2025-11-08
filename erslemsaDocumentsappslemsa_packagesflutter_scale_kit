@@ -1,0 +1,336 @@
+warning: in the working copy of 'CHANGELOG.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'example/lib/data/code_snippets.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'example/lib/main.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/src/core/scale_manager.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/src/core/scale_value_factory.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/src/extensions/scale_extensions.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/src/widgets/skit.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'pubspec.yaml', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/CHANGELOG.md b/CHANGELOG.md[m
+[1mindex 9ca8879..44589a4 100644[m
+[1m--- a/CHANGELOG.md[m
+[1m+++ b/CHANGELOG.md[m
+[36m@@ -2,6 +2,38 @@[m
+ [m
+ All notable changes to this project will be documented in this file.[m
+ [m
+[32m+[m[32m## [1.0.13] - 2025-01-17[m
+[32m+[m
+[32m+[m[32m### ✨ New Radius Controls[m
+[32m+[m
+[32m+[m[32m#### Added[m
+[32m+[m
+[32m+[m[32m- **`.rSafe` extension** – gently clamped radius scaling that keeps corners natural across devices.[m
+[32m+[m[32m- **`SKRadiusMode`** – configure radius behavior (`safe`, `scaled`, `fixed`) for all `SKit.rounded*` helpers.[m
+[32m+[m[32m- **`ScaleValueFactory.createRadiusSafe()` / `createBorderRadiusSafe()`** – cached safe radius computations.[m
+[32m+[m[32m- **`ScaleManager.getRadiusSafe()`** – configurable clamp bounds with `setRadiusSafeBounds()`.[m
+[32m+[m
+[32m+[m[32m#### Changed[m
+[32m+[m
+[32m+[m[32m- `SKit.rounded`, `roundedContainer`, and `roundedContainerSize` now default to `SKRadiusMode.safe`.[m
+[32m+[m[32m- Numeric radius size helpers now avoid auto-scaling raw doubles, keeping design intent intact.[m
+[32m+[m[32m- Example app updated to demonstrate `.rSafe`, `.r`, and `.rFixed` usage, with new guidance cards.[m
+[32m+[m[32m- README extension section expanded with radius helper comparison and new code samples.[m
+[32m+[m[32m- Added `radiusMode` documentation across helper methods.[m
+[32m+[m
+[32m+[m[32m#### Fixed[m
+[32m+[m
+[32m+[m[32m- Prevented oversized corner rounding on wide desktop/tablet layouts when using design radii (e.g., 12 now clamps to 15 max).[m
+[32m+[m[32m- Ensured border-radius caching respects new safe/fixed behaviors without recomputation.[m
+[32m+[m
+[32m+[m[32m### 📚 Documentation[m
+[32m+[m
+[32m+[m[32m- Installation instructions updated to `^1.0.13`.[m
+[32m+[m[32m- New README guidance on choosing `.rSafe`, `.r`, or `.rFixed`.[m
+[32m+[m[32m- Example snippets highlight `radiusMode` usage and stable radius tips.[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+ ## [1.0.12] - 2025-01-16[m
+ [m
+ ### 🔧 Fixes & Improvements[m
+[1mdiff --git a/README.md b/README.md[m
+[1mindex d5282e5..eb69264 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -118,7 +118,7 @@[m [mJump to any section:[m
+ [m
+ ### 🎨 Usage & Widgets[m
+ [m
+[31m-- [Extension Methods (.w, .h, .sp, .r)](#extension-methods)[m
+[32m+[m[32m- [Extension Methods (.w, .h, .sp, .rSafe)](#extension-methods)[m
+ - [SKit Helper Class](#skit-helper-class)[m
+ - [Comprehensive Text Widgets (textFull, textStyleFull)](#comprehensive-text-widgets-new-in-v1011)[m
+ - [Size System Configuration](#size-system-configuration)[m
+[36m@@ -229,7 +229,7 @@[m [mScaleKitBuilder([m
+ [m
+ ## Features[m
+ [m
+[31m-- 🎯 **Easy Scaling**: Simple API similar to `flutter_screenutil` (`.w`, `.sw`, `.sh`, `.r`, `.sp`, `.h`)[m
+[32m+[m[32m- 🎯 **Easy Scaling**: Simple API similar to `flutter_screenutil` (`.w`, `.sw`, `.sh`, `.rSafe`, `.r`, `.sp`, `.h`)[m
+ - 🧠 **Intelligent Auto-Configuration**: Zero-config setup with smart device/orientation detection (95% use cases)[m
+ - 📱 **Responsive Design**: Automatic scaling based on screen dimensions and aspect ratios[m
+ - ⚡ **High Performance**: Intelligent caching system prevents recalculation on every rebuild[m
+[36m@@ -250,7 +250,7 @@[m [mAdd this to your package's `pubspec.yaml` file:[m
+ [m
+ ```yaml[m
+ dependencies:[m
+[31m-  flutter_scale_kit: ^1.0.12[m
+[32m+[m[32m  flutter_scale_kit: ^1.0.13[m
+ ```[m
+ [m
+ Then run:[m
+[36m@@ -572,7 +572,7 @@[m [mContainer([m
+   height: 100.h,     // Scaled height[m
+   padding: EdgeInsets.all(16.w),[m
+   decoration: BoxDecoration([m
+[31m-    borderRadius: BorderRadius.circular(12.r),[m
+[32m+[m[32m    borderRadius: BorderRadius.circular(12.rSafe),[m
+   ),[m
+   child: Text([m
+     'Hello World',[m
+[36m@@ -617,7 +617,9 @@[m [mAll extension methods work similar to `flutter_screenutil`:[m
+ 16.sp           // Scaled font size[m
+ [m
+ // Border radius scaling[m
+[31m-12.r            // Scaled radius[m
+[32m+[m[32m12.r            // Full responsive radius (great for circles/avatars)[m
+[32m+[m[32m12.rSafe        // Stable radius (clamped, default for corners)[m
+[32m+[m[32m12.rFixed       // Constant radius (no scaling)[m
+ [m
+ // Screen percentage[m
+ 0.5.sw          // 50% of screen width[m
+[36m@@ -627,6 +629,13 @@[m [mAll extension methods work similar to `flutter_screenutil`:[m
+ 16.spf          // Scaled font size with system text scale factor[m
+ ```[m
+ [m
+[32m+[m[32m**Choosing the right radius helper**[m
+[32m+[m
+[32m+[m[32m- Use `.rSafe` for most cards, containers, and components — it adapts gently without turning corners into circles.[m
+[32m+[m[32m- Use `.r` when you need aggressive scaling (avatars, pills, circular buttons) so the radius grows with the element.[m
+[32m+[m[32m- Use `.rFixed` when you need a hard pixel radius (badges, icon chips) that should never scale.[m
+[32m+[m[32m- Need to tighten or loosen the clamp? Call `ScaleManager.instance.setRadiusSafeBounds(minMultiplier: 0.9, maxMultiplier: 1.2);`.[m
+[32m+[m
+ ### SKit Helper Class[m
+ [m
+ The `SKit` class provides convenient methods for creating widgets:[m
+[36m@@ -650,6 +659,22 @@[m [mSKit.roundedContainer([m
+   borderWidth: 2,[m
+ )[m
+ [m
+[32m+[m[32m// Lock the radius to design value (no scaling)[m
+[32m+[m[32mSKit.roundedContainer([m
+[32m+[m[32m  all: 12,[m
+[32m+[m[32m  radiusMode: SKRadiusMode.fixed,[m
+[32m+[m[32m  color: Colors.orange.shade50,[m
+[32m+[m[32m)[m
+[32m+[m
+[32m+[m[32m// Force fully responsive radius (useful for pills/avatars)[m
+[32m+[m[32mSKit.roundedContainer([m
+[32m+[m[32m  all: 50,[m
+[32m+[m[32m  radiusMode: SKRadiusMode.scaled,[m
+[32m+[m[32m  color: Colors.purple.shade50,[m
+[32m+[m[32m)[m
+[32m+[m
+[32m+[m[32m> By default, all `SKit.rounded*` helpers use `SKRadiusMode.safe`, which gently clamps the radius to keep corners natural on large displays.[m
+[32m+[m
+ // Rounded container with border on specific sides[m
+ SKit.roundedContainer([m
+   all: 12,[m
+[36m@@ -891,7 +916,7 @@[m [mWhen you've set default values, you can use methods without parameters:[m
+ ```dart[m
+ SKit.pad()              // Uses default padding (16)[m
+ SKit.margin()           // Uses default margin (8)[m
+[31m-SKit.rounded()         // Uses default radius (12)[m
+[32m+[m[32mSKit.rounded()         // Uses default safe radius (12)[m
+ SKit.h()                // Uses default spacing (8)[m
+ SKit.v()                // Uses default spacing (8)[m
+ ```[m
+[36m@@ -1463,7 +1488,9 @@[m [mThe package size is optimized and only includes the necessary library code (`lib[m
+ - `.w` - Scaled width (e.g., `200.w`)[m
+ - `.sw` - Screen width percentage (e.g., `0.5.sw` = 50% width)[m
+ - `.sh` - Screen height percentage (e.g., `0.25.sh` = 25% height)[m
+[31m-- `.r` - Scaled radius/border radius (e.g., `12.r`)[m
+[32m+[m[32m- `.rSafe` - Stable radius with gentle clamping (e.g., `12.rSafe`)[m
+[32m+[m[32m- `.r` - Fully responsive radius/border radius (e.g., `12.r`)[m
+[32m+[m[32m- `.rFixed` - Constant radius (no scaling, e.g., `12.rFixed`)[m
+ - `.sp` - Scaled font size (e.g., `16.sp`)[m
+ - `.h` - Scaled height (e.g., `100.h`)[m
+ - `.spf` - Font size with system text scale factor (e.g., `16.spf`)[m
+[1mdiff --git a/example/lib/data/code_snippets.dart b/example/lib/data/code_snippets.dart[m
+[1mindex b523229..ba5a1e8 100644[m
+[1m--- a/example/lib/data/code_snippets.dart[m
+[1m+++ b/example/lib/data/code_snippets.dart[m
+[36m@@ -26,7 +26,9 @@[m [mclass CodeSnippets {[m
+ 16.sp           // Scaled font size[m
+ [m
+ // Border radius scaling[m
+[31m-12.r            // Scaled radius[m
+[32m+[m[32m12.r            // Scaled radius (best for circles)[m
+[32m+[m[32m12.rSafe        // Clamped radius (default for corners)[m
+[32m+[m[32m12.rFixed       // Cached, stays at design value[m
+ [m
+ // Screen percentage[m
+ 0.5.sw          // 50% of screen width[m
+[36m@@ -128,12 +130,16 @@[m [mSKit.roundedContainerSize(all: SKSize.lg, color: Colors.blue)[m
+ // Set default values for methods without parameters[m
+ setDefaultPadding(16);[m
+ setDefaultMargin(8);[m
+[31m-setDefaultRadius(12);[m
+[32m+[m[32msetDefaultRadius(12);              // Scaled by default[m
+ [m
+ // Then use without parameters[m
+[31m-SKit.pad()              // Uses default padding (16)[m
+[31m-SKit.margin()           // Uses default margin (8)[m
+[31m-SKit.rounded()         // Uses default radius (12)''';[m
+[32m+[m[32mSKit.pad()                         // Uses default padding (16)[m
+[32m+[m[32mSKit.margin()                      // Uses default margin (8)[m
+[32m+[m[32mSKit.rounded()                     // Uses default safe radius (12)[m
+[32m+[m[32mSKit.roundedContainerSize([m
+[32m+[m[32m  all: SKSize.lg,[m
+[32m+[m[32m  radiusMode: SKRadiusMode.fixed,[m
+[32m+[m[32m)                                  // Keeps corners constant''';[m
+ [m
+   // Text Size System[m
+   static const textSizeSystem = '''// Use SKTextSize enum[m
+[36m@@ -248,6 +254,7 @@[m [mSKit.roundedContainer([m
+   color: Colors.blue.shade50,[m
+   borderColor: Colors.blue,[m
+   borderWidth: 2,[m
+[32m+[m[32m  // radiusMode defaults to SKRadiusMode.safe[m
+ )[m
+ [m
+ // Spacing[m
+[1mdiff --git a/example/lib/main.dart b/example/lib/main.dart[m
+[1mindex 1fa7451..6414868 100644[m
+[1m--- a/example/lib/main.dart[m
+[1m+++ b/example/lib/main.dart[m
+[36m@@ -602,7 +602,7 @@[m [mclass HomePage extends StatelessWidget {[m
+             padding: EdgeInsets.all(12.w),[m
+             decoration: BoxDecoration([m
+               color: Colors.orange.shade50,[m
+[31m-              borderRadius: BorderRadius.circular(8.r),[m
+[32m+[m[32m              borderRadius: BorderRadius.circular(8.rSafe),[m
+               border: Border.all(color: Colors.orange.shade200, width: 1),[m
+             ),[m
+             child: Row([m
+[36m@@ -647,7 +647,7 @@[m [mclass HomePage extends StatelessWidget {[m
+             padding: EdgeInsets.all(12.w),[m
+             decoration: BoxDecoration([m
+               color: Colors.green.shade50,[m
+[31m-              borderRadius: BorderRadius.circular(8.r),[m
+[32m+[m[32m              borderRadius: BorderRadius.circular(8.rSafe),[m
+               border: Border.all(color: Colors.green.shade200, width: 1),[m
+             ),[m
+             child: Row([m
+[36m@@ -697,12 +697,12 @@[m [mclass HomePage extends StatelessWidget {[m
+           begin: Alignment.topLeft,[m
+           end: Alignment.bottomRight,[m
+         ),[m
+[31m-        borderRadius: BorderRadius.circular(16.r),[m
+[32m+[m[32m        borderRadius: BorderRadius.circular(16.rSafe),[m
+         border: Border.all(color: Colors.orange.shade300, width: 2.w),[m
+         boxShadow: [[m
+           BoxShadow([m
+             color: Colors.orange.shade200.withOpacity(0.3),[m
+[31m-            blurRadius: 8.r,[m
+[32m+[m[32m            blurRadius: 8.rSafe,[m
+             offset: Offset(0, 4.h),[m
+           ),[m
+         ],[m
+[36m@@ -720,7 +720,7 @@[m [mclass HomePage extends StatelessWidget {[m
+                   padding: EdgeInsets.all(12.w),[m
+                   decoration: BoxDecoration([m
+                     color: Colors.orange.shade100,[m
+[31m-                    borderRadius: BorderRadius.circular(12.r),[m
+[32m+[m[32m                    borderRadius: BorderRadius.circular(12.rSafe),[m
+                   ),[m
+                   child: Icon([m
+                     Icons.phone_android,[m
+[36m@@ -804,7 +804,7 @@[m [mclass HomePage extends StatelessWidget {[m
+                       vertical: 12.h,[m
+                     ),[m
+                     shape: RoundedRectangleBorder([m
+[31m-                      borderRadius: BorderRadius.circular(12.r),[m
+[32m+[m[32m                      borderRadius: BorderRadius.circular(12.rSafe),[m
+                     ),[m
+                     elevation: 2,[m
+                   ),[m
+[36m@@ -823,7 +823,7 @@[m [mclass HomePage extends StatelessWidget {[m
+                       padding: EdgeInsets.all(12.w),[m
+                       decoration: BoxDecoration([m
+                         color: Colors.orange.shade100,[m
+[31m-                        borderRadius: BorderRadius.circular(12.r),[m
+[32m+[m[32m                        borderRadius: BorderRadius.circular(12.rSafe),[m
+                       ),[m
+                       child: Icon([m
+                         Icons.phone_android,[m
+[36m@@ -909,7 +909,7 @@[m [mclass HomePage extends StatelessWidget {[m
+                         vertical: 12.h,[m
+                       ),[m
+                       shape: RoundedRectangleBorder([m
+[31m-                        borderRadius: BorderRadius.circular(12.r),[m
+[32m+[m[32m                        borderRadius: BorderRadius.circular(12.rSafe),[m
+                       ),[m
+                       elevation: 2,[m
+                     ),[m
+[36m@@ -930,7 +930,7 @@[m [mclass HomePage extends StatelessWidget {[m
+     return SectionCard([m
+       title: 'Basic Usage (Like flutter_screenutil)',[m
+       description:[m
+[31m-          'Use extension methods (.w, .h, .sp, .r) to scale your UI elements. The syntax is similar to flutter_screenutil, making migration easy.',[m
+[32m+[m[32m          'Use extension methods (.w, .h, .sp, .rSafe, .r, .rFixed) to scale or lock your UI elements. The syntax is similar to flutter_screenutil, making migration easy.',[m
+       code: CodeSnippets.quickStart,[m
+       codeLanguage: 'dart',[m
+       result: Container([m
+[36m@@ -938,7 +938,7 @@[m [mclass HomePage extends StatelessWidget {[m
+         height: 100.h,[m
+         decoration: BoxDecoration([m
+           color: Colors.blue.shade100,[m
+[31m-          borderRadius: BorderRadius.circular(12.r),[m
+[32m+[m[32m          borderRadius: BorderRadius.circular(12.rSafe),[m
+         ),[m
+         padding: EdgeInsets.all(16.w),[m
+         child: Center([m
+[36m@@ -960,7 +960,7 @@[m [mclass HomePage extends StatelessWidget {[m
+         SectionCard([m
+           title: 'All Extension Methods',[m
+           description:[m
+[31m-              'All extension methods work similar to flutter_screenutil. Use them to scale widths, heights, fonts, and radii.',[m
+[32m+[m[32m              'All extension methods work similar to flutter_screenutil. Use them to scale widths, heights, fonts, radii—with .rSafe for stable corners, .r for fully responsive, and .rFixed for hard constants.',[m
+           code: CodeSnippets.extensionMethods,[m
+           codeLanguage: 'dart',[m
+           result: Column([m
+[36m@@ -982,10 +982,20 @@[m [mclass HomePage extends StatelessWidget {[m
+                 value: 16.sp,[m
+               ),[m
+               ExtensionRow([m
+[31m-                label: '.r - Border radius',[m
+[32m+[m[32m                label: '.rSafe - Stable radius',[m
+[32m+[m[32m                code: '12.rSafe',[m
+[32m+[m[32m                value: 12.rSafe,[m
+[32m+[m[32m              ),[m
+[32m+[m[32m              ExtensionRow([m
+[32m+[m[32m                label: '.r - Full responsive radius',[m
+                 code: '12.r',[m
+                 value: 12.r,[m
+               ),[m
+[32m+[m[32m              ExtensionRow([m
+[32m+[m[32m                label: '.rFixed - Constant radius',[m
+[32m+[m[32m                code: '12.rFixed',[m
+[32m+[m[32m                value: 12.rFixed,[m
+[32m+[m[32m              ),[m
+               ExtensionRow([m
+                 label: '.sw - Screen width %',[m
+                 code: '0.5.sw',[m
+[36m@@ -1007,11 +1017,11 @@[m [mclass HomePage extends StatelessWidget {[m
+                 height: 80.h,[m
+                 decoration: BoxDecoration([m
+                   color: Colors.orange.shade100,[m
+[31m-                  borderRadius: BorderRadius.circular(12.r),[m
+[32m+[m[32m                  borderRadius: BorderRadius.circular(12.rSafe),[m
+                 ),[m
+                 child: Center([m
+                   child: Text([m
+[31m-                    '50% Scree

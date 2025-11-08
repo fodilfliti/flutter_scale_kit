@@ -30,9 +30,13 @@ enum ScaleType {
   fontSize,
   fontSizeWithFactor,
   radius,
+  radiusSafe,
+  radiusFixed,
   screenWidth,
   screenHeight,
   padding,
   margin,
   borderRadius,
+  borderRadiusSafe,
+  borderRadiusFixed,
 }

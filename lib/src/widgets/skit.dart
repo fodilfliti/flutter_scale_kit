@@ -22,6 +22,18 @@ import 'spacing_widgets.dart';
 import '../core/scale_manager.dart';
 import '../core/responsive_enums.dart';
 
+/// Defines how radius values should be resolved.
+enum SKRadiusMode {
+  /// Fully responsive radius (uses the width scale factor).
+  scaled,
+
+  /// Responsive radius with gentle clamping to avoid extreme rounding.
+  safe,
+
+  /// Raw design radius with no scaling.
+  fixed,
+}
+
 /// ScaleKit helper class providing convenient methods for creating
 /// responsive widgets and scaled values.
 ///
@@ -90,7 +102,7 @@ class SKit {
   }) {
     final values = paddingSizes;
     return padding(
-      all: all != null ? _getSizeValue(all, values) : null,
+      all: all != null ? _getRadiusSizeValue(all, values) : null,
       horizontal: horizontal != null ? _getSizeValue(horizontal, values) : null,
       vertical: vertical != null ? _getSizeValue(vertical, values) : null,
       top: top != null ? _getSizeValue(top, values) : null,
@@ -106,6 +118,15 @@ class SKit {
       return values.get(size);
     } else if (size is num) {
       return _f.createWidth(size.toDouble());
+    }
+    throw ArgumentError('Size must be SKSize enum or numeric value');
+  }
+
+  static double _getRadiusSizeValue(dynamic size, SizeValues values) {
+    if (size is SKSize) {
+      return values.get(size);
+    } else if (size is num) {
+      return size.toDouble();
     }
     throw ArgumentError('Size must be SKSize enum or numeric value');
   }
@@ -178,7 +199,7 @@ class SKit {
   }) {
     final values = marginSizes;
     return _margin(
-      all: all != null ? _getSizeValue(all, values) : null,
+      all: all != null ? _getRadiusSizeValue(all, values) : null,
       horizontal: horizontal != null ? _getSizeValue(horizontal, values) : null,
       vertical: vertical != null ? _getSizeValue(vertical, values) : null,
       top: top != null ? _getSizeValue(top, values) : null,
@@ -197,6 +218,7 @@ class SKit {
   /// - [color] - Optional background color
   /// - [borderColor] - Optional border color
   /// - [borderWidth] - Optional border width (thickness)
+  /// - [radiusMode] - Controls how the radius scales (defaults to [SKRadiusMode.safe])
   ///
   /// For advanced decoration options (gradient, shadows, background images), use
   /// [roundedContainer] or [roundedContainerSize].
@@ -208,10 +230,11 @@ class SKit {
     Color? color,
     Color? borderColor,
     double? borderWidth,
+    SKRadiusMode radiusMode = SKRadiusMode.safe,
   ]) {
     double allValue;
     if (size != null && size is! Widget && size is! Color) {
-      allValue = _getSizeValue(size, radiusSizes);
+      allValue = _getRadiusSizeValue(size, radiusSizes);
     } else if (size is Widget) {
       allValue = defaultRadiusValue;
       child = size;
@@ -224,6 +247,7 @@ class SKit {
       borderColor: borderColor,
       borderWidth: borderWidth,
       child: child,
+      radiusMode: radiusMode,
     );
   }
 
@@ -247,9 +271,11 @@ class SKit {
   /// - [elevation] - Optional elevation helper that generates Material-like shadows when [boxShadow] is not provided
   /// - [shadowColor] - Optional color applied to generated elevation shadows or to override [boxShadow] colors
   /// - [shape] - Optional box shape (defaults to [BoxShape.rectangle])
+  /// - [radiusMode] - Controls how radius values are scaled (safe by default)
   /// - [child] - Optional child widget
   /// - [padding] - Optional padding
   /// - [margin] - Optional margin
+  /// - [radiusMode] - Controls how radius values are resolved (safe by default)
   ///
   /// Returns a [SKContainer] widget with scaled border radius, border, and advanced decoration options.
   static SKContainer roundedContainerSize({
@@ -283,15 +309,17 @@ class SKit {
     double? elevation,
     Color? shadowColor,
     BoxShape? shape,
+    SKRadiusMode radiusMode = SKRadiusMode.safe,
   }) {
     final values = radiusSizes;
     return roundedContainer(
       all: all != null ? _getSizeValue(all, values) : null,
-      topLeft: topLeft != null ? _getSizeValue(topLeft, values) : null,
-      topRight: topRight != null ? _getSizeValue(topRight, values) : null,
-      bottomLeft: bottomLeft != null ? _getSizeValue(bottomLeft, values) : null,
+      topLeft: topLeft != null ? _getRadiusSizeValue(topLeft, values) : null,
+      topRight: topRight != null ? _getRadiusSizeValue(topRight, values) : null,
+      bottomLeft:
+          bottomLeft != null ? _getRadiusSizeValue(bottomLeft, values) : null,
       bottomRight:
-          bottomRight != null ? _getSizeValue(bottomRight, values) : null,
+          bottomRight != null ? _getRadiusSizeValue(bottomRight, values) : null,
       color: color,
       borderColor: borderColor,
       borderWidth: borderWidth,
@@ -317,6 +345,7 @@ class SKit {
       elevation: elevation,
       shadowColor: shadowColor,
       shape: shape,
+      radiusMode: radiusMode,
     );
   }
 
@@ -325,14 +354,71 @@ class SKit {
   /// Parameters:
   /// - [size] - Optional size value (SKSize enum or double)
   ///
-  /// Returns a scaled radius value.
-  static double radius([dynamic size]) {
+  /// Returns a radius value resolved with the provided [mode].
+  static double radius([dynamic size, SKRadiusMode mode = SKRadiusMode.safe]) {
     final value =
-        size != null ? _getSizeValue(size, radiusSizes) : defaultRadiusValue;
-    return _radius(value);
+        size != null
+            ? _getRadiusSizeValue(size, radiusSizes)
+            : defaultRadiusValue;
+    return _resolveRadius(value, mode: mode);
   }
 
-  static double _radius(double radius) => _f.createRadius(radius);
+  /// Returns a fully responsive radius (same as `.r`).
+  static double radiusScaled([dynamic size]) =>
+      radius(size, SKRadiusMode.scaled);
+
+  /// Returns a gently clamped responsive radius (default behavior).
+  static double radiusSafe([dynamic size]) => radius(size, SKRadiusMode.safe);
+
+  /// Returns a raw design radius without scaling.
+  static double radiusFixed([dynamic size]) => radius(size, SKRadiusMode.fixed);
+
+  static double _resolveRadius(double radius, {required SKRadiusMode mode}) {
+    switch (mode) {
+      case SKRadiusMode.scaled:
+        return _f.createRadius(radius);
+      case SKRadiusMode.safe:
+        return _f.createRadiusSafe(radius);
+      case SKRadiusMode.fixed:
+        return _f.createFixedRadius(radius);
+    }
+  }
+
+  static BorderRadius _resolveBorderRadius({
+    double? all,
+    double? topLeft,
+    double? topRight,
+    double? bottomLeft,
+    double? bottomRight,
+    required SKRadiusMode mode,
+  }) {
+    switch (mode) {
+      case SKRadiusMode.scaled:
+        return _f.createBorderRadius(
+          all: all,
+          topLeft: topLeft,
+          topRight: topRight,
+          bottomLeft: bottomLeft,
+          bottomRight: bottomRight,
+        );
+      case SKRadiusMode.safe:
+        return _f.createBorderRadiusSafe(
+          all: all,
+          topLeft: topLeft,
+          topRight: topRight,
+          bottomLeft: bottomLeft,
+          bottomRight: bottomRight,
+        );
+      case SKRadiusMode.fixed:
+        return _f.createBorderRadiusFixed(
+          all: all,
+          topLeft: topLeft,
+          topRight: topRight,
+          bottomLeft: bottomLeft,
+          bottomRight: bottomRight,
+        );
+    }
+  }
 
   /// Creates a [BorderRadius] using size enum or numeric values.
   ///
@@ -341,6 +427,7 @@ class SKit {
   /// Parameters:
   /// - [all] - Border radius applied to all corners
   /// - [topLeft], [topRight], [bottomLeft], [bottomRight] - Individual corner radius
+  /// - [mode] - Controls how radius values are scaled (safe by default)
   ///
   /// Returns a [BorderRadius] with scaled values.
   static BorderRadius borderRadiusSize({
@@ -349,15 +436,18 @@ class SKit {
     dynamic topRight,
     dynamic bottomLeft,
     dynamic bottomRight,
+    SKRadiusMode mode = SKRadiusMode.safe,
   }) {
     final values = radiusSizes;
     return borderRadius(
-      all: all != null ? _getSizeValue(all, values) : null,
-      topLeft: topLeft != null ? _getSizeValue(topLeft, values) : null,
-      topRight: topRight != null ? _getSizeValue(topRight, values) : null,
-      bottomLeft: bottomLeft != null ? _getSizeValue(bottomLeft, values) : null,
+      all: all != null ? _getRadiusSizeValue(all, values) : null,
+      topLeft: topLeft != null ? _getRadiusSizeValue(topLeft, values) : null,
+      topRight: topRight != null ? _getRadiusSizeValue(topRight, values) : null,
+      bottomLeft:
+          bottomLeft != null ? _getRadiusSizeValue(bottomLeft, values) : null,
       bottomRight:
-          bottomRight != null ? _getSizeValue(bottomRight, values) : null,
+          bottomRight != null ? _getRadiusSizeValue(bottomRight, values) : null,
+      mode: mode,
     );
   }
 
@@ -603,13 +693,15 @@ class SKit {
     double? elevation,
     Color? shadowColor,
     BoxShape? shape,
+    SKRadiusMode radiusMode = SKRadiusMode.safe,
   }) {
-    final borderRadius = _f.createBorderRadius(
+    final borderRadius = _resolveBorderRadius(
       all: all,
       topLeft: topLeft,
       topRight: topRight,
       bottomLeft: bottomLeft,
       bottomRight: bottomRight,
+      mode: radiusMode,
     );
 
     final scaledBorderWidth =
@@ -1214,9 +1306,13 @@ class SKit {
   ///
   /// Parameters:
   /// - [radius] - The radius value to scale
+  /// - [mode] - Controls how the radius is resolved (safe by default)
   ///
   /// Returns the scaled radius.
-  static double radiusValue(double radius) => _radius(radius);
+  static double radiusValue(
+    double radius, {
+    SKRadiusMode mode = SKRadiusMode.safe,
+  }) => _resolveRadius(radius, mode: mode);
 
   /// Creates a screen width percentage value.
   ///
@@ -1301,6 +1397,7 @@ class SKit {
   /// Parameters:
   /// - [all] - Border radius applied to all corners
   /// - [topLeft], [topRight], [bottomLeft], [bottomRight] - Individual corner radius
+  /// - [mode] - Controls how radius values are scaled (safe by default)
   ///
   /// Returns a [BorderRadius] with scaled values.
   static BorderRadius borderRadius({
@@ -1309,12 +1406,14 @@ class SKit {
     double? topRight,
     double? bottomLeft,
     double? bottomRight,
-  }) => _f.createBorderRadius(
+    SKRadiusMode mode = SKRadiusMode.safe,
+  }) => _resolveBorderRadius(
     all: all,
     topLeft: topLeft,
     topRight: topRight,
     bottomLeft: bottomLeft,
     bottomRight: bottomRight,
+    mode: mode,
   );
 
   /// Resolves a responsive integer (e.g., grid columns) based on device and orientation.

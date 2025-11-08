@@ -75,6 +75,24 @@ class ScaleValueFactory {
     return _cache.getRadius(radius);
   }
 
+  /// Creates a gently clamped radius value (cached).
+  ///
+  /// This keeps rounded corners from becoming too circular on large screens
+  /// while still adapting slightly to scale changes.
+  double createRadiusSafe(double radius) {
+    return _cache.getRadiusSafe(radius);
+  }
+
+  /// Creates an unscaled radius value (cached).
+  ///
+  /// Parameters:
+  /// - [radius] - Raw radius value that should remain consistent
+  ///
+  /// Returns the original radius while leveraging cache for reuse.
+  double createFixedRadius(double radius) {
+    return _cache.getFixedRadius(radius);
+  }
+
   /// Creates a screen width percentage value.
   ///
   /// Parameters:
@@ -174,6 +192,42 @@ class ScaleValueFactory {
     double? bottomRight,
   }) {
     return _cache.getBorderRadius(
+      all: all,
+      topLeft: topLeft,
+      topRight: topRight,
+      bottomLeft: bottomLeft,
+      bottomRight: bottomRight,
+    );
+  }
+
+  /// Creates a [BorderRadius] using the gently clamped radius scaling.
+  BorderRadius createBorderRadiusSafe({
+    double? all,
+    double? topLeft,
+    double? topRight,
+    double? bottomLeft,
+    double? bottomRight,
+  }) {
+    return _cache.getBorderRadiusSafe(
+      all: all,
+      topLeft: topLeft,
+      topRight: topRight,
+      bottomLeft: bottomLeft,
+      bottomRight: bottomRight,
+    );
+  }
+
+  /// Creates a [BorderRadius] without scaling any values.
+  ///
+  /// Useful when you want consistent curvature regardless of device scale.
+  BorderRadius createBorderRadiusFixed({
+    double? all,
+    double? topLeft,
+    double? topRight,
+    double? bottomLeft,
+    double? bottomRight,
+  }) {
+    return _cache.getBorderRadiusFixed(
       all: all,
       topLeft: topLeft,
       topRight: topRight,

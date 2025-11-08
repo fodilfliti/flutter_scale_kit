@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.13] - 2025-01-17
+
+### ✨ New Radius Controls
+
+#### Added
+
+- **`.rSafe` extension** – gently clamped radius scaling that keeps corners natural across devices.
+- **`SKRadiusMode`** – configure radius behavior (`safe`, `scaled`, `fixed`) for all `SKit.rounded*` helpers.
+- **`ScaleValueFactory.createRadiusSafe()` / `createBorderRadiusSafe()`** – cached safe radius computations.
+- **`ScaleManager.getRadiusSafe()`** – configurable clamp bounds with `setRadiusSafeBounds()`.
+
+#### Changed
+
+- `SKit.rounded`, `roundedContainer`, and `roundedContainerSize` now default to `SKRadiusMode.safe`.
+- Numeric radius size helpers now avoid auto-scaling raw doubles, keeping design intent intact.
+- Example app updated to demonstrate `.rSafe`, `.r`, and `.rFixed` usage, with new guidance cards.
+- README extension section expanded with radius helper comparison and new code samples.
+- Added `radiusMode` documentation across helper methods.
+
+#### Fixed
+
+- Prevented oversized corner rounding on wide desktop/tablet layouts when using design radii (e.g., 12 now clamps to 15 max).
+- Ensured border-radius caching respects new safe/fixed behaviors without recomputation.
+
+### 📚 Documentation
+
+- Installation instructions updated to `^1.0.13`.
+- New README guidance on choosing `.rSafe`, `.r`, or `.rFixed`.
+- Example snippets highlight `radiusMode` usage and stable radius tips.
+
+---
+
 ## [1.0.12] - 2025-01-16
 
 ### 🔧 Fixes & Improvements

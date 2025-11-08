@@ -602,7 +602,7 @@ class HomePage extends StatelessWidget {
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
               color: Colors.orange.shade50,
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(8.rSafe),
               border: Border.all(color: Colors.orange.shade200, width: 1),
             ),
             child: Row(
@@ -647,7 +647,7 @@ class HomePage extends StatelessWidget {
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
               color: Colors.green.shade50,
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(8.rSafe),
               border: Border.all(color: Colors.green.shade200, width: 1),
             ),
             child: Row(
@@ -697,12 +697,12 @@ class HomePage extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(16.rSafe),
         border: Border.all(color: Colors.orange.shade300, width: 2.w),
         boxShadow: [
           BoxShadow(
             color: Colors.orange.shade200.withOpacity(0.3),
-            blurRadius: 8.r,
+            blurRadius: 8.rSafe,
             offset: Offset(0, 4.h),
           ),
         ],
@@ -720,7 +720,7 @@ class HomePage extends StatelessWidget {
                   padding: EdgeInsets.all(12.w),
                   decoration: BoxDecoration(
                     color: Colors.orange.shade100,
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(12.rSafe),
                   ),
                   child: Icon(
                     Icons.phone_android,
@@ -804,7 +804,7 @@ class HomePage extends StatelessWidget {
                       vertical: 12.h,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(12.rSafe),
                     ),
                     elevation: 2,
                   ),
@@ -823,7 +823,7 @@ class HomePage extends StatelessWidget {
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
                         color: Colors.orange.shade100,
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(12.rSafe),
                       ),
                       child: Icon(
                         Icons.phone_android,
@@ -909,7 +909,7 @@ class HomePage extends StatelessWidget {
                         vertical: 12.h,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(12.rSafe),
                       ),
                       elevation: 2,
                     ),
@@ -930,7 +930,7 @@ class HomePage extends StatelessWidget {
     return SectionCard(
       title: 'Basic Usage (Like flutter_screenutil)',
       description:
-          'Use extension methods (.w, .h, .sp, .r) to scale your UI elements. The syntax is similar to flutter_screenutil, making migration easy.',
+          'Use extension methods (.w, .h, .sp, .rSafe, .r, .rFixed) to scale or lock your UI elements. The syntax is similar to flutter_screenutil, making migration easy.',
       code: CodeSnippets.quickStart,
       codeLanguage: 'dart',
       result: Container(
@@ -938,7 +938,7 @@ class HomePage extends StatelessWidget {
         height: 100.h,
         decoration: BoxDecoration(
           color: Colors.blue.shade100,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12.rSafe),
         ),
         padding: EdgeInsets.all(16.w),
         child: Center(
@@ -960,7 +960,7 @@ class HomePage extends StatelessWidget {
         SectionCard(
           title: 'All Extension Methods',
           description:
-              'All extension methods work similar to flutter_screenutil. Use them to scale widths, heights, fonts, and radii.',
+              'All extension methods work similar to flutter_screenutil. Use them to scale widths, heights, fonts, radii—with .rSafe for stable corners, .r for fully responsive, and .rFixed for hard constants.',
           code: CodeSnippets.extensionMethods,
           codeLanguage: 'dart',
           result: Column(
@@ -982,9 +982,19 @@ class HomePage extends StatelessWidget {
                 value: 16.sp,
               ),
               ExtensionRow(
-                label: '.r - Border radius',
+                label: '.rSafe - Stable radius',
+                code: '12.rSafe',
+                value: 12.rSafe,
+              ),
+              ExtensionRow(
+                label: '.r - Full responsive radius',
                 code: '12.r',
                 value: 12.r,
+              ),
+              ExtensionRow(
+                label: '.rFixed - Constant radius',
+                code: '12.rFixed',
+                value: 12.rFixed,
               ),
               ExtensionRow(
                 label: '.sw - Screen width %',
@@ -1007,11 +1017,11 @@ class HomePage extends StatelessWidget {
                 height: 80.h,
                 decoration: BoxDecoration(
                   color: Colors.orange.shade100,
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(12.rSafe),
                 ),
                 child: Center(
                   child: Text(
-                    '50% Screen Width',
+                    '50% Screen Width (.rSafe corners)',
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
@@ -1037,7 +1047,7 @@ class HomePage extends StatelessWidget {
                 height: 100.h,
                 decoration: BoxDecoration(
                   color: Colors.purple.shade100,
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(8.rSafe),
                 ),
                 child: Center(
                   child: Text(
@@ -1112,7 +1122,7 @@ class HomePage extends StatelessWidget {
           result: Container(
             decoration: BoxDecoration(
               color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(8.rSafe),
             ),
             padding: EdgeInsets.all(12.w),
             child: SKResponsive(
@@ -1154,7 +1164,7 @@ class HomePage extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(8.rSafe),
                 ),
                 padding: EdgeInsets.all(12.w),
                 child: SKResponsiveBuilder(
@@ -1221,7 +1231,7 @@ class HomePage extends StatelessWidget {
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(8.rSafe),
                 ),
                 child: GridView.count(
                   crossAxisCount: SKit.responsiveInt(
@@ -1601,7 +1611,7 @@ class HomePage extends StatelessWidget {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            'SKit.rounded() - uses default (15)',
+                            'SKit.rounded() - uses default safe radius (15)',
                             style: TextStyle(fontSize: 12.sp),
                           ),
                         ],
@@ -1842,7 +1852,7 @@ class HomePage extends StatelessWidget {
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
           color: Colors.blue.shade50,
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(8.rSafe),
           border: Border.all(color: Colors.blue.shade200, width: 1),
         ),
         child: Row(
@@ -1880,7 +1890,7 @@ class HomePage extends StatelessWidget {
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
           color: Colors.blue.shade50,
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(8.rSafe),
           border: Border.all(color: Colors.blue.shade200, width: 1),
         ),
         child: Column(
@@ -2102,7 +2112,7 @@ class HomePage extends StatelessWidget {
                   color: Colors.purple.shade200,
                   borderRadius: BorderRadius.circular(scale.getRadius(12)),
                 ),
-                padding: EdgeInsets.all(16.r),
+                padding: EdgeInsets.all(16.w),
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Column(
@@ -2148,7 +2158,7 @@ class HomePage extends StatelessWidget {
                 height: 60.h,
                 decoration: BoxDecoration(
                   color: Colors.blue.shade200,
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(8.rSafe),
                 ),
                 child: Center(
                   child: Text(
@@ -2290,7 +2300,7 @@ class HomePage extends StatelessWidget {
           const TipCard(
             title: '6. Extension methods are convenient',
             description:
-                'Use .w, .h, .sp, .r, .sw, .sh for quick scaling - they\'re cached and optimized.',
+                'Use .w, .h, .sp, .rSafe, .r, .rFixed, .sw, .sh for quick scaling or fixed radii - they\'re cached and optimized.',
           ),
         ],
       ),

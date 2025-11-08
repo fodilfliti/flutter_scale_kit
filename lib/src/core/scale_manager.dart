@@ -580,6 +580,81 @@ class ScaleManager {
     return radius * _scaleWidth;
   }
 
+  double _radiusSafePortraitMinMultiplier = 0.85;
+  double _radiusSafePortraitMaxMultiplier = 1.25;
+  double _radiusSafeLandscapeMinMultiplier = 0.75;
+  double _radiusSafeLandscapeMaxMultiplier = 1.15;
+
+  /// Configure the clamping multipliers used by [getRadiusSafe].
+  ///
+  /// [minMultiplier] and [maxMultiplier] represent the minimum and maximum
+  /// scaling allowed relative to the design radius. Values must be greater
+  /// than zero and [minMultiplier] should be <= [maxMultiplier].
+  void setRadiusSafeBounds({
+    double? portraitMin,
+    double? portraitMax,
+    double? landscapeMin,
+    double? landscapeMax,
+  }) {
+    if (portraitMin != null) {
+      assert(portraitMin > 0, 'portraitMin must be > 0');
+      _radiusSafePortraitMinMultiplier = portraitMin;
+    }
+    if (portraitMax != null) {
+      assert(portraitMax > 0, 'portraitMax must be > 0');
+      _radiusSafePortraitMaxMultiplier = portraitMax;
+    }
+    if (landscapeMin != null) {
+      assert(landscapeMin > 0, 'landscapeMin must be > 0');
+      _radiusSafeLandscapeMinMultiplier = landscapeMin;
+    }
+    if (landscapeMax != null) {
+      assert(landscapeMax > 0, 'landscapeMax must be > 0');
+      _radiusSafeLandscapeMaxMultiplier = landscapeMax;
+    }
+
+    assert(
+      _radiusSafePortraitMinMultiplier <= _radiusSafePortraitMaxMultiplier,
+      'portraitMin must be <= portraitMax',
+    );
+    assert(
+      _radiusSafeLandscapeMinMultiplier <= _radiusSafeLandscapeMaxMultiplier,
+      'landscapeMin must be <= landscapeMax',
+    );
+  }
+
+  /// Gets a scaled radius value with gentle clamping to avoid exaggerated rounding.
+  ///
+  /// The value is scaled using the responsive width multiplier and then clamped
+  /// within [_radiusSafeMinMultiplier] and [_radiusSafeMaxMultiplier] of the
+  /// original radius to keep corners looking consistent across devices.
+  double getRadiusSafe(double radius) {
+    if (!_enabled) return radius;
+    final scaled = radius * _scaleWidth;
+    final isLandscape = _orientation == Orientation.landscape;
+    final minMultiplier =
+        isLandscape
+            ? _radiusSafeLandscapeMinMultiplier
+            : _radiusSafePortraitMinMultiplier;
+    final maxMultiplier =
+        isLandscape
+            ? _radiusSafeLandscapeMaxMultiplier
+            : _radiusSafePortraitMaxMultiplier;
+    final min = radius * minMultiplier;
+    final max = radius * maxMultiplier;
+    if (scaled < min) return min;
+    if (scaled > max) return max;
+    return scaled;
+  }
+
+  /// Returns the raw radius without applying responsive scaling.
+  ///
+  /// This is useful when you need consistent corner radii across all devices
+  /// regardless of scale or orientation.
+  double getFixedRadius(double radius) {
+    return radius;
+  }
+
   /// Gets a screen width percentage value.
   ///
   /// Parameters:
