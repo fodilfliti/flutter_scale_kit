@@ -48,7 +48,7 @@ A high-performance responsive design package for Flutter that helps you create a
 
 Jump to any section:
 
-- [🎯 Live Demo](#demo)
+- [📸 Screenshots](#screenshots)
 
 ### 🚀 Quick Start
 
@@ -1232,6 +1232,8 @@ if (context.isMobile) {
   // Tablet layout
 }
 ```
+
+<a id="scalemanager-direct-api"></a>
 
 ### ScaleManager Direct API
 
