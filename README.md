@@ -3,7 +3,6 @@
 [![Pub Version](https://img.shields.io/pub/v/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit)
 [![Pub Likes](https://img.shields.io/pub/likes/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit)
 [![Pub Points](https://img.shields.io/pub/points/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit/score)
-[![Popularity](https://img.shields.io/pub/popularity/flutter_scale_kit)](https://pub.dev/packages/flutter_scale_kit/score)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20Me-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/fodilfliti)
 
 A high-performance responsive design package for Flutter that helps you create adaptive UIs across different screen sizes with easy-to-use scaling utilities.
@@ -49,7 +48,7 @@ A high-performance responsive design package for Flutter that helps you create a
 
 Jump to any section:
 
-- [📸 Screenshots](#screenshots)
+- [🎯 Live Demo](#demo)
 
 ### 🚀 Quick Start
 
@@ -66,9 +65,9 @@ Jump to any section:
 
 ### 🎨 Usage & Widgets
 
+- [Layout & Container Helpers (SKit)](#layout-container-helpers)
 - [Extension Methods (.w, .h, .sp, .rSafe)](#extension-methods)
-- [SKit Helper Class](#skit-helper-class)
-- [Comprehensive Text Widgets (textFull, textStyleFull)](#comprehensive-text-widgets)
+- [Typography & Theme](#typography-and-theme)
 - [Size System Configuration](#size-system-configuration)
 - [ScaleKitDesignValues - Centralized Design System](#scalekitdesignvalues)
 - [Context Extensions](#context-extensions)
@@ -216,20 +215,6 @@ Jump to any section:
 </tr>
 </table>
 
-### 🚀 Plug-and-play workflow
-
-1. Wrap your root app with `ScaleKitBuilder`.
-2. Pass the design width/height you used in your mockups.
-3. Let Scale Kit infer device type, scale limits, orientation boosts, and font choices automatically.
-
-```dart
-ScaleKitBuilder(
-  designWidth: 375,
-  designHeight: 812,
-  child: MaterialApp(home: HomePage()),
-)
-```
-
 That’s all—no `minScale`, `maxScale`, or boost knobs required. The limits and boosts you saw above activate automatically so 95% of projects ship with zero manual tuning.
 
 > 💡 **When to tweak manually?** Only when you need tighter compliance (e.g., ±5% variance for brand-critical screens) or a custom scaling feel. Jump to [Manual Override Examples](#understanding-scale-limits) for recipes, and follow the [Quick Start Guide](#quick-start-guide) for the full setup flow.
@@ -257,23 +242,41 @@ flutter pub get
 
 ## ⚡ Quick Start Guide
 
-### 1. Configure Size Values (Optional but Recommended)
+### 1. Configure Size Values & Fonts (Optional but Recommended)
 
-Set up your size configurations at app startup. This is where you define what values `SKSize.md`, `SKSize.lg`, etc. represent for padding, margin, radius, and spacing:
+Set up your size configurations and optional font setup at app startup. This defines what values `SKSize.md`, `SKSize.lg`, etc. represent for padding, margin, radius, and spacing. FontConfig is optional but recommended for a full design system.
 
 ```dart
 void main() {
-  // Configure size values before runApp
+  // Configure sizes at app startup (before runApp)
   setPaddingSizes(SizeValues.custom(xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48));
   setMarginSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
   setRadiusSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
   setSpacingSizes(SizeValues.custom(xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24));
+  setTextSizes(TextSizeValues.custom(s14: 15, s16: 17, s18: 20, s24: 26));
 
   // Set default values for methods without parameters
   setDefaultPadding(16);
   setDefaultMargin(8);
   setDefaultRadius(12);
   setDefaultSpacing(8);
+  setDefaultTextSize(14);
+
+  // Optional: apply FontConfig during app bootstrap
+  FontConfig.instance
+    ..setDefaultFont(googleFont: GoogleFonts.inter)
+    ..setLanguageFont(
+      const LanguageFontConfig(
+        languageCode: 'ja',
+        googleFont: GoogleFonts.notoSansJp,
+      ),
+    )
+    ..setLanguageGroupFont(
+      const LanguageGroupFontConfig(
+        languageCodes: ['ar', 'fa', 'ur'],
+        googleFont: GoogleFonts.almarai,
+      ),
+    );
 
   // Optionally cache the defaults for reuse (e.g., wrap in your own widget)
   final defaults = SKitValues.defaults(); // returns padding/margin/radius/spacing with current config
@@ -283,7 +286,7 @@ void main() {
 }
 ```
 
-**Note:** If you don't configure sizes, default values will be used (xs=2, sm=4, md=8, lg=12, xl=16, xxl=24).
+**Note:** If you don't configure sizes, default values will be used (xs=2, sm=4, md=8, lg=12, xl=16, xxl=24). FontConfig is optional—see [Typography & Theme](#typography-and-theme) for details.
 
 ### 2. Wrap Your App
 
@@ -292,6 +295,7 @@ Drop `ScaleKitBuilder` above your root app and pass the design size you targeted
 ```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_scale_kit/flutter_scale_kit.dart';
+import 'package:google_fonts/google_fonts.dart'; // Import for FontConfig example
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -321,6 +325,8 @@ class MyApp extends StatelessWidget {
 - **Phones** hold between 0.85–1.25×, even on foldables.
 - **Tablets** expand comfortably without blowing out typography.
 - **Desktop & web** respect tiny windows and ultrawide monitors.
+
+> 📝 **FontConfig & responsive theme are optional:** if you never call `FontConfig` or `ResponsiveThemeData`, everything renders with Flutter’s defaults. Configure them later for a complete design system (see [Typography & Theme](#typography-and-theme))—all SKit text helpers and cached styles will pick up your fonts automatically.
 
 Need a different feel? Head to [Manual Override Examples](#understanding-scale-limits) for tighter or looser ranges.
 
@@ -539,7 +545,49 @@ SKResponsiveBuilder(
 
 ## Usage
 
-### Extension Methods
+Flutter Scale Kit provides multiple ways to create responsive UIs. Whether you prefer extension methods like `.w` and `.sp`, helper widgets like `SKit.roundedContainer()`, or comprehensive text styling with `SKit.textFull()`, there's an API that fits your workflow.
+
+All text-related APIs (extensions, `SKit.text*`, responsive themes) automatically apply your `FontConfig` when one is registered—otherwise they fall back to Flutter's default fonts so you can adopt the system gradually.
+
+### Quick Examples
+
+```dart
+// Extension methods - Simple and familiar
+Container(
+  width: 200.w,      // Scaled width
+  height: 100.h,     // Scaled height
+  child: Text(
+    'Hello World',
+    style: TextStyle(fontSize: 16.sp),  // Scaled font size
+  ),
+)
+
+// SKit helpers - Pre-built responsive widgets
+SKit.roundedContainer(
+  all: 16,           // Responsive padding
+  color: Colors.blue.shade50,
+  child: Text('Content'),
+)
+
+// Comprehensive text widgets - All attributes in one place
+SKit.textFull(
+  'Styled Text',
+  fontSize: 18,      // Automatically scaled
+  fontWeight: FontWeight.bold,
+  color: Colors.blue,
+  textAlign: TextAlign.center,
+)
+```
+
+<a id="layout-container-helpers"></a>
+
+### Layout & Container Helpers (SKit)
+
+The `SKit` class provides convenient methods for creating widgets:
+
+<a id="extension-methods"></a>
+
+### Extension Methods (.w, .h, .sp, .rSafe)
 
 All extension methods work similar to `flutter_screenutil`:
 
@@ -566,7 +614,7 @@ All extension methods work similar to `flutter_screenutil`:
 16.spf          // Scaled font size with system text scale factor
 ```
 
-### SKit Helper Class
+### Layout & Container Helpers (SKit)
 
 The `SKit` class provides convenient methods for creating widgets:
 
@@ -695,13 +743,19 @@ final style = SKit.textStyleFull(
 )
 ```
 
+<a id="typography-and-theme"></a>
+
+### Typography & Theme
+
 <a id="comprehensive-text-widgets"></a>
 
-### Comprehensive Text Widgets (New in v1.0.11)
+#### Comprehensive Text Widgets (New in v1.0.11)
 
 **Problem:** Manually creating Text widgets with all attributes is verbose and repetitive.
 
 **Solution:** Use `SKit.textFull()` and `SKit.textStyleFull()` with **ALL** Flutter Text/TextStyle attributes pre-configured!
+
+> ✅ These helpers respect your `FontConfig` automatically (or default platform fonts when none is configured), so typography stays consistent across languages without extra work.
 
 #### SKit.textFull() - Complete Text Widget
 
@@ -792,6 +846,87 @@ Text('Header', style: headerStyle)
 - Use `SKit.text()` for simple text (basic styling)
 - Use `SKit.textFull()` when you need advanced Text widget features
 - Use `SKit.textStyleFull()` when you need reusable comprehensive styles
+
+<a id="themedata-integration"></a>
+
+#### ThemeData Integration
+
+Use responsive scaling in your theme:
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  designType: DeviceType.mobile,
+  child: MaterialApp(
+    theme: ResponsiveThemeData.create(
+      context: context,
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      useMaterial3: true,
+    ),
+    home: HomePage(),
+  ),
+)
+```
+
+<a id="font-configuration"></a>
+
+#### Font Configuration (Automatic Font Selection)
+
+Configure fonts for different languages. All TextStyles automatically use the configured font for the current language:
+
+```dart
+import 'package:google_fonts/google_fonts.dart';
+
+void main() {
+  // Configure font for specific language (optional)
+  // If not configured, Flutter's default font will be used
+  FontConfig.instance.setLanguageFont(
+    LanguageFontConfig(
+      languageCode: 'ar',
+      googleFont: GoogleFonts.almarai,  // Pass GoogleFonts function
+    ),
+  );
+
+  FontConfig.instance.setLanguageFont(
+    LanguageFontConfig(
+      languageCode: 'en',
+      googleFont: GoogleFonts.inter,
+    ),
+  );
+
+  // Configure font for language group
+  FontConfig.instance.setLanguageGroupFont(
+    LanguageGroupFontConfig(
+      languageCodes: ['ar', 'fa', 'ur'],
+      googleFont: GoogleFonts.almarai,
+    ),
+  );
+
+  // Set default font (used when no specific language config exists)
+  FontConfig.instance.setDefaultFont(
+    googleFont: GoogleFonts.inter,
+  );
+
+  runApp(const MyApp());
+}
+```
+
+**Usage:**
+
+Once configured, all TextStyles automatically use the configured font:
+
+```dart
+// Automatic font application - no manual configuration needed
+Text('Hello', style: TextStyle(fontSize: 16.sp))  // ✅ Uses FontConfig automatically
+
+// Or via theme - all theme text styles get the font automatically
+ResponsiveThemeData.create(
+  context: context,
+  colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+  useMaterial3: true,
+)
+```
 
 ### Size System Configuration
 
@@ -1245,26 +1380,6 @@ double scaleHeight = scaleKit.scaleHeight;
 Orientation orientation = scaleKit.orientation;
 ```
 
-### ThemeData Integration
-
-Use responsive scaling in your theme:
-
-```dart
-ScaleKitBuilder(
-  designWidth: 375,
-  designHeight: 812,
-  designType: DeviceType.mobile,
-  child: MaterialApp(
-    theme: ResponsiveThemeData.create(
-      context: context,
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      useMaterial3: true,
-    ),
-    home: HomePage(),
-  ),
-)
-```
-
 <a id="orientation-autoscale"></a>
 
 ### Orientation Autoscale (Landscape vs Portrait)
@@ -1291,79 +1406,6 @@ Notes:
 - Size boosts only apply in landscape by default; portrait preserves your design intent.
 
 #### Comparison with flutter_screenutil
-
-<a id="font-configuration"></a>
-
-### Font Configuration (Automatic Font Selection)
-
-Configure fonts for different languages. All TextStyles automatically use the configured font for the current language:
-
-```dart
-import 'package:google_fonts/google_fonts.dart';
-
-void main() {
-  // Configure font for specific language (optional)
-  // If not configured, Flutter's default font will be used
-  FontConfig.instance.setLanguageFont(
-    LanguageFontConfig(
-      languageCode: 'ar',
-      googleFont: GoogleFonts.almarai,  // Pass GoogleFonts function
-    ),
-  );
-
-  FontConfig.instance.setLanguageFont(
-    LanguageFontConfig(
-      languageCode: 'en',
-      googleFont: GoogleFonts.inter,
-    ),
-  );
-
-  // Configure font for language group
-  FontConfig.instance.setLanguageGroupFont(
-    LanguageGroupFontConfig(
-      languageCodes: ['ar', 'fa', 'ur'],
-      googleFont: GoogleFonts.almarai,
-    ),
-  );
-
-  // Set default font (used when no specific language config exists)
-  FontConfig.instance.setDefaultFont(
-    googleFont: GoogleFonts.inter,
-  );
-
-  runApp(const MyApp());
-}
-```
-
-**Usage:**
-
-Once configured, all TextStyles automatically use the configured font:
-
-```dart
-// Automatic font application - no manual configuration needed
-Text('Hello', style: TextStyle(fontSize: 16.sp))  // ✅ Uses FontConfig automatically
-
-// Or via theme - all theme text styles get the font automatically
-ResponsiveThemeData.create(
-  context: context,
-  textTheme: ThemeData.light().textTheme,  // ✅ All styles get font automatically
-)
-```
-
-**Custom Font Family:**
-
-You can also use custom font families (fonts loaded in `pubspec.yaml`):
-
-```dart
-FontConfig.instance.setLanguageFont(
-  LanguageFontConfig(
-    languageCode: 'ar',
-    customFontFamily: 'CustomArabicFont',  // From pubspec.yaml
-  ),
-);
-```
-
-**Note:** If no font is configured, Flutter's default font (Roboto on Android, San Francisco on iOS) will be used. The font configuration is completely optional.
 
 ## Package Size
 
@@ -1576,15 +1618,6 @@ ScaleKitBuilder(
 2. Fonts and sizes use separate multipliers—tune readability independently.
 3. System text scaling stacks on top of everything else.
 
-## Device-Specific Scaling
-
-The package automatically adapts scaling strategies based on:
-
-- **Device Type**: Mobile, Tablet, Desktop, Web
-- **Aspect Ratio**: Narrow, Wide, Standard
-- **Orientation**: Portrait, Landscape
-- **Foldable Devices**: Detects fold/unfold transitions
-
 ## 🧪 Optional Tools
 
 <a id="enable-disable-scaling"></a>
@@ -1612,7 +1645,7 @@ Notes:
 
 - `.w/.h/.sp` and ScaleManager methods return raw values while disabled.
 - Reactivate to restore responsive scaling immediately.
-- The example app’s settings sheet (tune icon) exposes the same toggle for quick experiments.
+- The example app's settings sheet (tune icon) exposes the same toggle for quick experiments.
 
 <a id="device-preview-integration"></a>
 
@@ -1637,6 +1670,15 @@ void main() {
 ```
 
 Wrap your app with `DevicePreview` as normal (e.g., `DevicePreview(builder: (_) => app)`). Returning `null` keeps the default logic when preview mode is turned off. Skip this helper if you prefer—the package works fine without it; this just keeps platform detection perfect when you hop between simulated devices.
+
+## Device-Specific Scaling
+
+The package automatically adapts scaling strategies based on:
+
+- **Device Type**: Mobile, Tablet, Desktop, Web
+- **Aspect Ratio**: Narrow, Wide, Standard
+- **Orientation**: Portrait, Landscape
+- **Foldable Devices**: Detects fold/unfold transitions
 
 ## Contributing
 
