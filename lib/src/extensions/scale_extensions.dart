@@ -1,4 +1,7 @@
+import 'package:flutter/widgets.dart';
+
 import '../core/scale_value_factory.dart';
+import '../widgets/spacing_widgets.dart';
 
 /// Extension methods for easy scaling operations
 /// Similar to flutter_screenutil API
@@ -32,4 +35,14 @@ extension ScaleExtension on num {
 
   /// Font size with system text scale factor applied
   double get spf => _f.createFontSizeWithFactor(toDouble());
+
+  /// Horizontal space widget using scaled width.
+  ///
+  /// Mirrors `horizontalSpace` from flutter_screenutil.
+  Widget get horizontalSpace => HSpace(w);
+
+  /// Vertical space widget using scaled height.
+  ///
+  /// Mirrors `verticalSpace` from flutter_screenutil.
+  Widget get verticalSpace => VSpace(h);
 }

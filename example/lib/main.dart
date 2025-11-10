@@ -1029,6 +1029,78 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
+              SizedBox(height: 16.h),
+              Text(
+                'Spacing extensions (.horizontalSpace, .verticalSpace):',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepPurple,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Row(
+                children: [
+                  Container(
+                    width: 28.w,
+                    height: 28.w,
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple.shade100,
+                      borderRadius: BorderRadius.circular(8.rSafe),
+                    ),
+                  ),
+                  12.horizontalSpace,
+                  Container(
+                    width: 28.w,
+                    height: 28.w,
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade200,
+                      borderRadius: BorderRadius.circular(8.rSafe),
+                    ),
+                  ),
+                  20.horizontalSpace,
+                  Container(
+                    width: 28.w,
+                    height: 28.w,
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade200,
+                      borderRadius: BorderRadius.circular(8.rSafe),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.h),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 24.h,
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade100,
+                      borderRadius: BorderRadius.circular(6.rSafe),
+                    ),
+                  ),
+                  12.verticalSpace,
+                  Container(
+                    width: double.infinity,
+                    height: 24.h,
+                    decoration: BoxDecoration(
+                      color: Colors.pink.shade100,
+                      borderRadius: BorderRadius.circular(6.rSafe),
+                    ),
+                  ),
+                  16.verticalSpace,
+                  Container(
+                    width: double.infinity,
+                    height: 24.h,
+                    decoration: BoxDecoration(
+                      color: Colors.teal.shade100,
+                      borderRadius: BorderRadius.circular(6.rSafe),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

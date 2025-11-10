@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.4] - 2025-11-10
+
+### ✨ Added
+
+- `horizontalSpace` and `verticalSpace` numeric extensions to mirror flutter_screenutil spacing helpers.
+- Example app now showcases the new spacing extensions alongside `HSpace`/`VSpace` usage.
+
+### 📚 Documentation
+
+- Documented spacing widgets (`SKSizedBox`, `HSpace`, `VSpace`, `SSpace`) and numeric spacing extensions in the README.
+- Added usage snippets for spacing helpers to the Extension Methods section and code snippets library.
+
+---
+
 ## [1.1.3] - 2025-11-08
 
 ### 📚 Documentation

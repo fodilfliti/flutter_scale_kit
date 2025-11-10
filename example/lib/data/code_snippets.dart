@@ -35,7 +35,11 @@ class CodeSnippets {
 0.25.sh         // 25% of screen height
 
 // Font size with system factor
-16.spf          // Scaled font size with system text scale factor''';
+16.spf          // Scaled font size with system text scale factor
+
+// Spacing widgets (return SizedBox with scaled dimensions)
+12.horizontalSpace        // SizedBox(width: 12.w)
+16.verticalSpace          // SizedBox(height: 16.h)''';
 
   // ScaleKitBuilder
   static const scaleKitBuilder = '''ScaleKitBuilder(

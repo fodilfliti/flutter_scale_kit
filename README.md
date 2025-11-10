@@ -69,6 +69,7 @@ Jump to any section:
 - [Extension Methods (.w, .h, .sp, .rSafe)](#extension-methods)
 - [Typography & Theme](#typography-and-theme)
 - [Layout & Container Helpers (SKit)](#layout-container-helpers)
+- [Spacing Widgets & Const Helpers](#spacing-widgets)
 
 #### 🛠️ Configuration & Advanced
 
@@ -228,7 +229,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.1.3
+  flutter_scale_kit: ^1.1.4
 ```
 
 Then run:
@@ -611,6 +612,10 @@ All extension methods work similar to `flutter_screenutil`:
 
 // Font size with system factor
 16.spf          // Scaled font size with system text scale factor
+
+// Spacing helpers (return SizedBox for gaps)
+12.horizontalSpace        // SizedBox(width: 12.w)
+16.verticalSpace          // SizedBox(height: 16.h)
 ```
 
 ---
@@ -902,6 +907,73 @@ final rawPadding = SKit.paddingEdgeInsets(all: 12); // accepts doubles when you 
 SKit.hSpace(8)           // Horizontal spacing
 SKit.vSpace(8)           // Vertical spacing
 SKit.sSpace(8)           // Square spacing
+```
+
+<a id="spacing-widgets"></a>
+
+### Spacing Widgets & Const Helpers
+
+Enjoy fluent numeric spacing like `20.horizontalSpace` alongside dedicated const widgets when you need absolute control.
+
+**Const-friendly widgets**
+
+- `SKSizedBox({width, height})` — thin wrapper around `SizedBox` for const usage with precomputed values
+- `HSpace(double width)` — horizontal gap
+- `VSpace(double height)` — vertical gap
+- `SSpace(double size)` — square gap in both axes
+
+**Numeric extensions (scaled automatically)**
+
+- `12.horizontalSpace` → `HSpace(12.w)`
+- `16.verticalSpace` → `VSpace(16.h)`
+
+These helpers are cached by the same `ScaleValueFactory` used by `.w`/`.h`, so they stay fast even when reused inside lists.
+
+```dart
+Row(
+  children: [
+    Container(width: 32.w, height: 32.w, color: Colors.purple),
+    12.horizontalSpace,
+    Container(width: 32.w, height: 32.w, color: Colors.green),
+    20.horizontalSpace,
+    Container(width: 32.w, height: 32.w, color: Colors.orange),
+  ],
+);
+
+Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Container(height: 12.h, color: Colors.blue),
+    12.verticalSpace,
+    Container(height: 12.h, color: Colors.pink),
+    16.verticalSpace,
+    Container(height: 12.h, color: Colors.teal),
+  ],
+);
+```
+
+### Optimized Layout Widgets (`SKPadding`, `SKMargin`, `SKContainer`)
+
+Minimize rebuild work with lightweight wrappers while keeping everything scaled:
+
+```dart
+SKPadding(
+  padding: EdgeInsets.all(16.w),
+  child: SKMargin(
+    margin: EdgeInsets.only(bottom: 12.h),
+    child: SKContainer(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12.rSafe),
+      ),
+      child: Text(
+        'Scaled padding, margin, and container in one line',
+        style: TextStyle(fontSize: 14.sp),
+      ),
+    ),
+  ),
+);
 ```
 
 ---
