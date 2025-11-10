@@ -2,11 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.3] - 2025-11-08
+
+### 📚 Documentation
+
+#### Fixed
+
+- Fixed all navigation links and anchors to ensure proper table of contents linking
+- Removed orphaned section references from table of contents
+- Added missing anchors for Context Extensions, Device-Specific Scaling, and FAQ sections
+- Cleaned up version references in documentation
+
+#### Optimized
+
+- Completely reorganized documentation structure for better user flow
+- Merged redundant sections and eliminated duplication
+- Improved section hierarchy with clear main sections and subsections
+- Enhanced readability with better transitions between concepts
+
+#### Added
+
+- New hierarchical table of contents with clear section groupings
+- Better separation between core concepts, APIs, configuration, and advanced features
+- Improved navigation with consistent anchor naming
+
+---
+
 ## [1.1.2] - 2025-11-08
 
 ### 📚 Documentation
 
 #### Fixed
+
 - Added missing navigation anchor for ScaleManager Direct API section to ensure proper table of contents linking.
 
 ---
@@ -16,6 +43,7 @@ All notable changes to this project will be documented in this file.
 ### 📚 Documentation
 
 #### Optimized
+
 - Streamlined README flow for beginners and advanced users, consolidating quick-start sections and clarifying FontConfig/ThemeData integration.
 - Ensured all Table of Contents links are accurate and point to explicit anchors.
 - Restored detailed content for Advanced Tuning, Reference, Optional Tools, and Community sections.

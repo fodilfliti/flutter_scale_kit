@@ -50,35 +50,35 @@ Jump to any section:
 
 - [📸 Screenshots](#screenshots)
 
-### 🚀 Quick Start
+### 🚀 Getting Started
 
 - [🧠 Intelligent Auto-Configuration](#intelligent-auto-configuration)
 - [✨ Key Features](#key-features)
 - [📦 Installation](#installation)
-- [⚡ Quick Start Guide](#quick-start-guide)
-- [💡 Recommended Building Blocks](#recommended-building-blocks)
+- [🚀 Getting Started](#quick-start-guide)
 
-### 📖 Core Concepts
+### 📚 Complete API Reference
+
+#### 📖 Core Concepts
 
 - [Understanding Scale Limits (minScale & maxScale)](#understanding-scale-limits)
 - [Understanding Orientation Boosts (Advanced)](#understanding-orientation-boosts)
 
-### 🎨 Usage & Widgets
+#### 🎨 Core APIs
 
-- [Layout & Container Helpers (SKit)](#layout-container-helpers)
 - [Extension Methods (.w, .h, .sp, .rSafe)](#extension-methods)
 - [Typography & Theme](#typography-and-theme)
+- [Layout & Container Helpers (SKit)](#layout-container-helpers)
+
+#### 🛠️ Configuration & Advanced
+
 - [Size System Configuration](#size-system-configuration)
 - [ScaleKitDesignValues - Centralized Design System](#scalekitdesignvalues)
 - [Context Extensions](#context-extensions)
 
-### 🔧 Advanced Features
+#### ⚙️ Advanced Features
 
 - [ScaleManager Direct API](#scalemanager-direct-api)
-- [Responsive Builder & Columns](#responsive-builder-columns)
-- [ThemeData Integration](#themedata-integration)
-- [Orientation Autoscale (Landscape vs Portrait)](#orientation-autoscale)
-- [Font Configuration (Automatic Font Selection)](#font-configuration)
 
 ### 🧪 Optional Tools
 
@@ -87,7 +87,6 @@ Jump to any section:
 
 ### 📚 Reference
 
-- [API Reference](#api-reference)
 - [Performance](#performance)
 - [Architecture](#architecture)
 - [Advanced Tuning Reference](#advanced-tuning-reference)
@@ -217,7 +216,7 @@ Jump to any section:
 
 That’s all—no `minScale`, `maxScale`, or boost knobs required. The limits and boosts you saw above activate automatically so 95% of projects ship with zero manual tuning.
 
-> 💡 **When to tweak manually?** Only when you need tighter compliance (e.g., ±5% variance for brand-critical screens) or a custom scaling feel. Jump to [Manual Override Examples](#understanding-scale-limits) for recipes, and follow the [Quick Start Guide](#quick-start-guide) for the full setup flow.
+> 💡 **When to tweak manually?** Only when you need tighter compliance (e.g., ±5% variance for brand-critical screens) or a custom scaling feel. Jump to [Understanding Scale Limits](#understanding-scale-limits) for recipes, and follow the [Quick Start Guide](#quick-start-guide) for the full setup flow.
 
 ---
 
@@ -229,7 +228,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^1.1.2
+  flutter_scale_kit: ^1.1.3
 ```
 
 Then run:
@@ -240,11 +239,17 @@ flutter pub get
 
 <a id="quick-start-guide"></a>
 
-## ⚡ Quick Start Guide
+## 🚀 Getting Started
 
-### 1. Configure Size Values & Fonts (Optional but Recommended)
+Flutter Scale Kit provides multiple ways to create responsive UIs. Whether you prefer extension methods like `.w` and `.sp`, helper widgets like `SKit.roundedContainer()`, or comprehensive text styling with `SKit.textFull()`, there's an API that fits your workflow.
 
-Set up your size configurations and optional font setup at app startup. This defines what values `SKSize.md`, `SKSize.lg`, etc. represent for padding, margin, radius, and spacing. FontConfig is optional but recommended for a full design system.
+All text-related APIs (extensions, `SKit.text*`, responsive themes) automatically apply your `FontConfig` when one is registered—otherwise they fall back to Flutter's default fonts so you can adopt the system gradually.
+
+### Quick Setup (2 minutes)
+
+**Step 1: Configure sizes & fonts (optional but recommended)**
+
+Set up your design system values at app startup:
 
 ```dart
 void main() {
@@ -288,9 +293,9 @@ void main() {
 
 **Note:** If you don't configure sizes, default values will be used (xs=2, sm=4, md=8, lg=12, xl=16, xxl=24). FontConfig is optional—see [Typography & Theme](#typography-and-theme) for details.
 
-### 2. Wrap Your App
+**Step 2: Wrap your app**
 
-Drop `ScaleKitBuilder` above your root app and pass the design size you targeted in Figma/Sketch. Everything else rides on the smart defaults described in [Intelligent Auto-Configuration](#intelligent-auto-configuration): per-device min/max clamps, landscape boosts, font selection, and responsive caches.
+Drop `ScaleKitBuilder` above your root app and pass the design size you targeted in Figma/Sketch:
 
 ```dart
 import 'package:flutter/material.dart';
@@ -326,9 +331,218 @@ class MyApp extends StatelessWidget {
 - **Tablets** expand comfortably without blowing out typography.
 - **Desktop & web** respect tiny windows and ultrawide monitors.
 
-> 📝 **FontConfig & responsive theme are optional:** if you never call `FontConfig` or `ResponsiveThemeData`, everything renders with Flutter’s defaults. Configure them later for a complete design system (see [Typography & Theme](#typography-and-theme))—all SKit text helpers and cached styles will pick up your fonts automatically.
+> 📝 **FontConfig & responsive theme are optional:** if you never call `FontConfig` or `ResponsiveThemeData`, everything renders with Flutter's defaults. Configure them later for a complete design system (see [Typography & Theme](#typography-and-theme))—all SKit text helpers and cached styles will pick up your fonts automatically.
 
-Need a different feel? Head to [Manual Override Examples](#understanding-scale-limits) for tighter or looser ranges.
+Need a different feel? Head to [Understanding Scale Limits](#understanding-scale-limits) for tighter or looser ranges.
+
+### Core APIs - Pick Your Style
+
+Once your app is wrapped with `ScaleKitBuilder`, you can start using Scale Kit in three ways:
+
+#### 1. Extension Methods (Quick & Familiar)
+
+```dart
+Container(
+  width: 200.w,      // Scaled width
+  height: 100.h,     // Scaled height
+  padding: EdgeInsets.all(16.w),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(12.rSafe),
+  ),
+  child: Text(
+    'Hello World',
+    style: TextStyle(fontSize: 16.sp),  // Scaled font size
+  ),
+)
+```
+
+#### 2. SKit Helper Widgets (Pre-built & Convenient)
+
+```dart
+SKit.padding(
+  all: 16,
+  child: SKit.roundedContainer(
+    all: 12,
+    color: Colors.blue.shade50,
+    borderColor: Colors.blue,
+    borderWidth: 2,
+    child: Text('Hello'),
+  ),
+)
+```
+
+#### 3. Comprehensive Text Widgets (All-in-One)
+
+```dart
+SKit.textFull(
+  'Styled Text',
+  fontSize: 18,      // Automatically scaled
+  fontWeight: FontWeight.bold,
+  color: Colors.blue,
+  textAlign: TextAlign.center,
+  maxLines: 2,
+  overflow: TextOverflow.ellipsis,
+)
+```
+
+**Note:** Most containers need both `borderRadius` and `border`. Use `borderColor` and `borderWidth` parameters to add borders to your rounded containers. All border widths are automatically scaled based on screen size.
+
+### Popular Patterns & Building Blocks
+
+#### Basic Responsive Layout
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  child: MaterialApp(
+    home: Scaffold(
+      body: Padding(
+        padding: EdgeInsets.all(20.w),
+        child: Text(
+          'Welcome!',
+          style: TextStyle(fontSize: 20.sp),
+        ),
+      ),
+    ),
+  ),
+);
+```
+
+- Place `ScaleKitBuilder` directly above your `MaterialApp` (or `CupertinoApp`) so every route inherits scaling.
+- `.w`, `.h`, and `.sp` keep spacing, components, and fonts proportional to the screen.
+
+#### Responsive Containers & Cards
+
+```dart
+SKit.roundedContainer(
+  all: 16,
+  color: Colors.white,
+  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+  borderColor: Colors.black12,
+  borderWidth: 1,
+  radiusMode: SKRadiusMode.safe, // uses rSafe clamp internally
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SKit.text(
+        'Dashboard',
+        textSize: SKTextSize.s20,
+        fontWeight: FontWeight.w600,
+      ),
+      SizedBox(height: 12.h),
+      SKit.text(
+        'All metrics auto-scale with the screen.',
+        textSize: SKTextSize.s16,
+        color: Colors.grey.shade600,
+      ),
+    ],
+  ),
+);
+```
+
+- One-liners for padding/margin: `SKit.padding(horizontal: 24, vertical: 12)`; use enums for presets (`SKit.paddingSize(horizontal: SKSize.lg)`).
+- Containers respect `.rSafe` by default via `SKRadiusMode.safe`, so borders stay natural on large screens.
+
+#### Advanced Layout Switcher
+
+```dart
+SKResponsiveBuilder(
+  mobile: (_) => _CardsGrid(columns: 1),
+  tablet: (_) => _CardsGrid(columns: 2),
+  desktop: (_) => _CardsGrid(columns: 4),
+  mobileLandscape: (_) => _CardsGrid(columns: 2),
+);
+```
+
+- Supplies dedicated builders per device/orientation and falls back intelligently when one is missing.
+- Perfect for dashboards, catalog pages, or any layout that needs different density on phones vs tablets vs desktop.
+
+#### Responsive Int/Double Values
+
+For simple responsive values like grid columns, spacing, or counts, use responsive integers and doubles:
+
+```dart
+// Responsive grid columns
+final columns = SKit.responsiveInt(
+  mobile: 2,           // required base value
+  tablet: 4,           // optional - falls back to mobile if null
+  desktop: 6,          // optional - falls back to tablet → mobile if null
+  mobileLandscape: 3,  // optional override for mobile landscape
+);
+
+// Use in GridView
+GridView.count(
+  crossAxisCount: columns,
+  children: [...],
+)
+
+// Responsive spacing values
+final spacing = SKit.responsiveDouble(
+  mobile: 8.0,
+  tablet: 16.0,
+  desktop: 24.0,
+);
+
+// Responsive item counts
+final maxItems = SKit.responsiveInt(
+  mobile: 10,
+  tablet: 20,
+  desktop: 50,
+);
+```
+
+- Define responsive values once and use them throughout your UI
+- Automatic fallback: desktop → tablet → mobile
+- Works with both integers and doubles
+
+#### Design System Tokens
+
+```dart
+const design = ScaleKitDesignValues(
+  textMd: 16,
+  paddingMd: 16,
+  radiusMd: 12,
+  spacingMd: 16,
+);
+
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  child: MaterialApp(
+    home: Builder(
+      builder: (context) {
+        final values = design.compute();
+        return SKPadding(
+          padding: values.paddingMd!,
+          child: SKContainer(
+            margin: values.marginMd,
+            decoration: BoxDecoration(
+              borderRadius: values.borderRadiusMd,
+            ),
+            child: Text('Hello', style: values.textMd),
+          ),
+        );
+      },
+    ),
+  ),
+);
+```
+
+- Define tokens once, compute per screen, and reuse responsive values everywhere.
+- Works great with const widgets and reduces repetitive size/spacing code.
+
+---
+
+## 📚 Complete API Reference
+
+**🎯 Quick Start Complete!** Above, you learned the essentials: setup, core APIs, and popular patterns.
+
+**📖 Now: Deep Dive** - Below you'll find comprehensive documentation for every method, advanced tuning options, and implementation details. Use this as your complete reference guide.
+
+---
+
+## 📖 Core Concepts
 
 <a id="understanding-scale-limits"></a>
 
@@ -370,221 +584,6 @@ Curious about the math, per-device parameters, or real-world scenarios? See the 
 
 ---
 
-### 3. Use Extension Methods
-
-Use extension methods for quick scaling:
-
-```dart
-Container(
-  width: 200.w,      // Scaled width
-  height: 100.h,     // Scaled height
-  padding: EdgeInsets.all(16.w),
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(12.rSafe),
-  ),
-  child: Text(
-    'Hello World',
-    style: TextStyle(fontSize: 16.sp),
-  ),
-)
-```
-
-### 4. Use SKit Helper Methods
-
-Use `SKit` helper methods for convenient widget creation:
-
-```dart
-SKit.padding(
-  all: 16,
-  child: SKit.roundedContainer(
-    all: 12,
-    color: Colors.blue.shade50,
-    borderColor: Colors.blue,
-    borderWidth: 2,
-    child: Text('Hello'),
-  ),
-)
-```
-
-**Note:** Most containers need both `borderRadius` and `border`. Use `borderColor` and `borderWidth` parameters to add borders to your rounded containers. You can also specify borders on individual sides (top, bottom, left, right) with different colors and widths. All border widths are automatically scaled based on screen size. You can further enhance the decoration with `gradient`, `backgroundImage`, `boxShadow`, `elevation`, `shadowColor`, and `shape` for Material-like cards or image-backed surfaces.
-
----
-
-<a id="recommended-building-blocks"></a>
-
-### 5. Recommended Building Blocks
-
-Kick-start your layouts with the helpers teams reach for most. Each snippet keeps things simple up front and links to the deep-dive section when you’re ready.
-
-### `ScaleKitBuilder` + `.w/.h/.sp`
-
-```dart
-ScaleKitBuilder(
-  designWidth: 375,
-  designHeight: 812,
-  child: MaterialApp(
-    home: Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(20.w),
-        child: Text(
-          'Welcome!',
-          style: TextStyle(fontSize: 20.sp),
-        ),
-      ),
-    ),
-  ),
-);
-```
-
-- Place `ScaleKitBuilder` directly above your `MaterialApp` (or `CupertinoApp`) so every route inherits scaling.
-- `.w`, `.h`, and `.sp` keep spacing, components, and fonts proportional to the screen.  
-  ➜ Learn more in [Extension Methods](#extension-methods).
-
-### `SKit` helper widgets
-
-```dart
-SKit.roundedContainer(
-  all: 16,
-  color: Colors.white,
-  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-  borderColor: Colors.black12,
-  borderWidth: 1,
-  radiusMode: SKRadiusMode.safe, // uses rSafe clamp internally
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      SKit.text(
-        'Dashboard',
-        textSize: SKTextSize.s20,
-        fontWeight: FontWeight.w600,
-      ),
-      SizedBox(height: 12.h),
-      SKit.text(
-        'All metrics auto-scale with the screen.',
-        textSize: SKTextSize.s16,
-        color: Colors.grey.shade600,
-      ),
-    ],
-  ),
-);
-```
-
-- One-liners for padding/margin: `SKit.padding(horizontal: 24, vertical: 12)`; use enums for presets (`SKit.paddingSize(horizontal: SKSize.lg)`).
-- Containers respect `.rSafe` by default via `SKRadiusMode.safe`, so borders stay natural on large screens.  
-  ➜ Explore the full API in [SKit Helper Class](#skit-helper-class).
-
-### `textFull` / `textStyleFull`
-
-```dart
-textFull(
-  'Headline',
-  fontSize: 24,
-  fontWeight: FontWeight.w600,
-  maxLines: 2,
-  textAlign: TextAlign.center,
-);
-```
-
-- One call sets typography, layout, and accessibility options—fonts auto-scale.
-- Ideal for marketing screens, dashboards, or anywhere text configuration repeats.  
-  ➜ Details in [Comprehensive Text Widgets](#comprehensive-text-widgets-new-in-v1011).
-
-### `ScaleKitDesignValues` design system
-
-```dart
-const design = ScaleKitDesignValues(
-  textMd: 16,
-  paddingMd: 16,
-  radiusMd: 12,
-  spacingMd: 16,
-);
-
-ScaleKitBuilder(
-  designWidth: 375,
-  designHeight: 812,
-  child: MaterialApp(
-    home: Builder(
-      builder: (context) {
-        final values = design.compute();
-        return SKPadding(
-          padding: values.paddingMd!,
-          child: SKContainer(
-            margin: values.marginMd,
-            decoration: BoxDecoration(
-              borderRadius: values.borderRadiusMd,
-            ),
-            child: Text('Hello', style: values.textMd),
-          ),
-        );
-      },
-    ),
-  ),
-);
-```
-
-- Define tokens once, compute per screen, and reuse responsive values everywhere.
-- Works great with const widgets and reduces repetitive size/spacing code.  
-  ➜ Deep dive at [ScaleKitDesignValues - Centralized Design System](#scalekitdesignvalues---centralized-design-system).
-
-> Need device-aware layouts? `SKResponsiveBuilder` chooses the right builder for mobile, tablet, desktop, and landscape variants automatically. See [Responsive Builder & Columns](#responsive-builder--columns).
-
-### `SKResponsiveBuilder` layout switcher
-
-```dart
-SKResponsiveBuilder(
-  mobile: (_) => _CardsGrid(columns: 1),
-  tablet: (_) => _CardsGrid(columns: 2),
-  desktop: (_) => _CardsGrid(columns: 4),
-  mobileLandscape: (_) => _CardsGrid(columns: 2),
-);
-```
-
-- Supplies dedicated builders per device/orientation and falls back intelligently when one is missing.
-- Perfect for dashboards, catalog pages, or any layout that needs different density on phones vs tablets vs desktop.  
-  ➜ Details in [Responsive Builder & Columns](#responsive-builder--columns).
-
-## Usage
-
-Flutter Scale Kit provides multiple ways to create responsive UIs. Whether you prefer extension methods like `.w` and `.sp`, helper widgets like `SKit.roundedContainer()`, or comprehensive text styling with `SKit.textFull()`, there's an API that fits your workflow.
-
-All text-related APIs (extensions, `SKit.text*`, responsive themes) automatically apply your `FontConfig` when one is registered—otherwise they fall back to Flutter's default fonts so you can adopt the system gradually.
-
-### Quick Examples
-
-```dart
-// Extension methods - Simple and familiar
-Container(
-  width: 200.w,      // Scaled width
-  height: 100.h,     // Scaled height
-  child: Text(
-    'Hello World',
-    style: TextStyle(fontSize: 16.sp),  // Scaled font size
-  ),
-)
-
-// SKit helpers - Pre-built responsive widgets
-SKit.roundedContainer(
-  all: 16,           // Responsive padding
-  color: Colors.blue.shade50,
-  child: Text('Content'),
-)
-
-// Comprehensive text widgets - All attributes in one place
-SKit.textFull(
-  'Styled Text',
-  fontSize: 18,      // Automatically scaled
-  fontWeight: FontWeight.bold,
-  color: Colors.blue,
-  textAlign: TextAlign.center,
-)
-```
-
-<a id="layout-container-helpers"></a>
-
-### Layout & Container Helpers (SKit)
-
-The `SKit` class provides convenient methods for creating widgets:
-
 <a id="extension-methods"></a>
 
 ### Extension Methods (.w, .h, .sp, .rSafe)
@@ -613,6 +612,199 @@ All extension methods work similar to `flutter_screenutil`:
 // Font size with system factor
 16.spf          // Scaled font size with system text scale factor
 ```
+
+---
+
+## 🎨 Core APIs
+
+<a id="typography-and-theme"></a>
+
+### Typography & Theme
+
+<a id="comprehensive-text-widgets"></a>
+
+#### Comprehensive Text Widgets
+
+**Problem:** Manually creating Text widgets with all attributes is verbose and repetitive.
+
+**Solution:** Use `SKit.textFull()` and `SKit.textStyleFull()` with **ALL** Flutter Text/TextStyle attributes pre-configured!
+
+> ✅ These helpers respect your `FontConfig` automatically (or default platform fonts when none is configured), so typography stays consistent across languages without extra work.
+
+#### SKit.textFull() - Complete Text Widget
+
+Instead of writing this:
+
+```dart
+Text(
+  'Hello World',
+  style: TextStyle(
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w600,
+    color: Colors.blue,
+    letterSpacing: 0.5,
+    decoration: TextDecoration.underline,
+    shadows: [Shadow(color: Colors.black26, offset: Offset(1, 1))],
+  ),
+  textAlign: TextAlign.center,
+  maxLines: 2,
+  overflow: TextOverflow.ellipsis,
+  softWrap: true,
+  textDirection: TextDirection.ltr,
+)
+```
+
+Simply write this:
+
+```dart
+SKit.textFull(
+  'Hello World',
+  fontSize: 18,  // Automatically scaled!
+  fontWeight: FontWeight.w600,
+  color: Colors.blue,
+  letterSpacing: 0.5,
+  decoration: TextDecoration.underline,
+  shadows: [Shadow(color: Colors.black26, offset: Offset(1, 1))],
+  textAlign: TextAlign.center,
+  maxLines: 2,
+  overflow: TextOverflow.ellipsis,
+  softWrap: true,
+  textDirection: TextDirection.ltr,
+)
+```
+
+**Available Parameters (30+ attributes):**
+
+- **Style**: fontSize, fontWeight, fontStyle, color, backgroundColor, fontFamily, fontFamilyFallback
+- **Spacing**: letterSpacing, wordSpacing, height
+- **Decoration**: decoration, decorationColor, decorationStyle, decorationThickness
+- **Effects**: shadows, foreground, background
+- **Layout**: textAlign, textDirection, textBaseline, leadingDistribution
+- **Behavior**: softWrap, overflow, maxLines, textScaler
+- **Accessibility**: semanticsLabel, textWidthBasis, textHeightBehavior, selectionColor
+- **Advanced**: locale, fontFeatures, fontVariations
+
+#### SKit.textStyleFull() - Complete TextStyle
+
+Create comprehensive TextStyles with all Flutter attributes:
+
+```dart
+final headerStyle = SKit.textStyleFull(
+  fontSize: 24,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+  backgroundColor: Colors.blue,
+  letterSpacing: 1.2,
+  wordSpacing: 2.0,
+  height: 1.5,
+  decoration: TextDecoration.none,
+  shadows: [
+    Shadow(color: Colors.black38, offset: Offset(2, 2), blurRadius: 4),
+  ],
+  textBaseline: TextBaseline.alphabetic,
+  leadingDistribution: TextLeadingDistribution.even,
+);
+
+Text('Header', style: headerStyle)
+```
+
+**Why use these?**
+✅ **All attributes in one place** - no need to remember which parameters go where
+✅ **Automatic scaling** - fontSize automatically scaled with `.sp`
+✅ **Type-safe** - all Flutter Text/TextStyle parameters available with autocomplete
+✅ **Less boilerplate** - write less code, get more functionality
+✅ **Consistent styling** - reuse styles easily across your app
+
+**When to use:**
+
+- Use `SKit.text()` for simple text (basic styling)
+- Use `SKit.textFull()` when you need advanced Text widget features
+- Use `SKit.textStyleFull()` when you need reusable comprehensive styles
+
+<a id="themedata-integration"></a>
+
+#### ThemeData Integration
+
+Use responsive scaling in your theme:
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  designType: DeviceType.mobile,
+  child: MaterialApp(
+    theme: ResponsiveThemeData.create(
+      context: context,
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      useMaterial3: true,
+    ),
+    home: HomePage(),
+  ),
+)
+```
+
+<a id="font-configuration"></a>
+
+#### Font Configuration (Automatic Font Selection)
+
+Configure fonts for different languages. All TextStyles automatically use the configured font for the current language:
+
+```dart
+import 'package:google_fonts/google_fonts.dart';
+
+void main() {
+  // Configure font for specific language (optional)
+  // If not configured, Flutter's default font will be used
+  FontConfig.instance.setLanguageFont(
+    LanguageFontConfig(
+      languageCode: 'ar',
+      googleFont: GoogleFonts.almarai,  // Pass GoogleFonts function
+    ),
+  );
+
+  FontConfig.instance.setLanguageFont(
+    LanguageFontConfig(
+      languageCode: 'en',
+      googleFont: GoogleFonts.inter,
+    ),
+  );
+
+  // Configure font for language group
+  FontConfig.instance.setLanguageGroupFont(
+    LanguageGroupFontConfig(
+      languageCodes: ['ar', 'fa', 'ur'],
+      googleFont: GoogleFonts.almarai,
+    ),
+  );
+
+  // Set default font (used when no specific language config exists)
+  FontConfig.instance.setDefaultFont(
+    googleFont: GoogleFonts.inter,
+  );
+
+  runApp(const MyApp());
+}
+```
+
+**Usage:**
+
+Once configured, all TextStyles automatically use the configured font:
+
+```dart
+// Automatic font application - no manual configuration needed
+Text('Hello', style: TextStyle(fontSize: 16.sp))  // ✅ Uses FontConfig automatically
+
+// Or via theme - all theme text styles get the font automatically
+ResponsiveThemeData.create(
+  context: context,
+  colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+  useMaterial3: true,
+)
+```
+
+---
+
+<a id="layout-container-helpers"></a>
 
 ### Layout & Container Helpers (SKit)
 
@@ -710,223 +902,11 @@ final rawPadding = SKit.paddingEdgeInsets(all: 12); // accepts doubles when you 
 SKit.hSpace(8)           // Horizontal spacing
 SKit.vSpace(8)           // Vertical spacing
 SKit.sSpace(8)           // Square spacing
-
-// Text - Simple version (common use)
-SKit.text('Hello', textSize: SKTextSize.s16)
-SKit.text('Hello', fontSize: 16, fontWeight: FontWeight.bold)
-
-// Text - Full version (ALL attributes available)
-SKit.textFull(
-  'Hello World',
-  fontSize: 18,
-  fontWeight: FontWeight.w600,
-  color: Colors.blue,
-  letterSpacing: 0.5,
-  textAlign: TextAlign.center,
-  maxLines: 2,
-  overflow: TextOverflow.ellipsis,
-  shadows: [Shadow(color: Colors.black26, offset: Offset(1, 1))],
-  // + 20 more attributes available!
-)
-
-// TextStyle - Full version (ALL attributes)
-final style = SKit.textStyleFull(
-  fontSize: 16,
-  fontWeight: FontWeight.bold,
-  color: Colors.white,
-  backgroundColor: Colors.blue,
-  letterSpacing: 1.0,
-  height: 1.5,
-  decoration: TextDecoration.underline,
-  shadows: [Shadow(...)],
-  // + more attributes!
-)
 ```
 
-<a id="typography-and-theme"></a>
+---
 
-### Typography & Theme
-
-<a id="comprehensive-text-widgets"></a>
-
-#### Comprehensive Text Widgets (New in v1.0.11)
-
-**Problem:** Manually creating Text widgets with all attributes is verbose and repetitive.
-
-**Solution:** Use `SKit.textFull()` and `SKit.textStyleFull()` with **ALL** Flutter Text/TextStyle attributes pre-configured!
-
-> ✅ These helpers respect your `FontConfig` automatically (or default platform fonts when none is configured), so typography stays consistent across languages without extra work.
-
-#### SKit.textFull() - Complete Text Widget
-
-Instead of writing this:
-
-```dart
-Text(
-  'Hello World',
-  style: TextStyle(
-    fontSize: 18.sp,
-    fontWeight: FontWeight.w600,
-    color: Colors.blue,
-    letterSpacing: 0.5,
-    decoration: TextDecoration.underline,
-    shadows: [Shadow(color: Colors.black26, offset: Offset(1, 1))],
-  ),
-  textAlign: TextAlign.center,
-  maxLines: 2,
-  overflow: TextOverflow.ellipsis,
-  softWrap: true,
-  textDirection: TextDirection.ltr,
-)
-```
-
-Simply write this:
-
-```dart
-SKit.textFull(
-  'Hello World',
-  fontSize: 18,  // Automatically scaled!
-  fontWeight: FontWeight.w600,
-  color: Colors.blue,
-  letterSpacing: 0.5,
-  decoration: TextDecoration.underline,
-  shadows: [Shadow(color: Colors.black26, offset: Offset(1, 1))],
-  textAlign: TextAlign.center,
-  maxLines: 2,
-  overflow: TextOverflow.ellipsis,
-  softWrap: true,
-  textDirection: TextDirection.ltr,
-)
-```
-
-**Available Parameters (30+ attributes):**
-
-- **Style**: fontSize, fontWeight, fontStyle, color, backgroundColor, fontFamily, fontFamilyFallback
-- **Spacing**: letterSpacing, wordSpacing, height
-- **Decoration**: decoration, decorationColor, decorationStyle, decorationThickness
-- **Effects**: shadows, foreground, background
-- **Layout**: textAlign, textDirection, textBaseline, leadingDistribution
-- **Behavior**: softWrap, overflow, maxLines, textScaler
-- **Accessibility**: semanticsLabel, textWidthBasis, textHeightBehavior, selectionColor
-- **Advanced**: locale, fontFeatures, fontVariations
-
-#### SKit.textStyleFull() - Complete TextStyle
-
-Create comprehensive TextStyles with all Flutter attributes:
-
-```dart
-final headerStyle = SKit.textStyleFull(
-  fontSize: 24,
-  fontWeight: FontWeight.bold,
-  color: Colors.white,
-  backgroundColor: Colors.blue,
-  letterSpacing: 1.2,
-  wordSpacing: 2.0,
-  height: 1.5,
-  decoration: TextDecoration.none,
-  shadows: [
-    Shadow(color: Colors.black38, offset: Offset(2, 2), blurRadius: 4),
-  ],
-  textBaseline: TextBaseline.alphabetic,
-  leadingDistribution: TextLeadingDistribution.even,
-);
-
-Text('Header', style: headerStyle)
-```
-
-**Why use these?**
-✅ **All attributes in one place** - no need to remember which parameters go where  
-✅ **Automatic scaling** - fontSize automatically scaled with `.sp`  
-✅ **Type-safe** - all Flutter Text/TextStyle parameters available with autocomplete  
-✅ **Less boilerplate** - write less code, get more functionality  
-✅ **Consistent styling** - reuse styles easily across your app
-
-**When to use:**
-
-- Use `SKit.text()` for simple text (basic styling)
-- Use `SKit.textFull()` when you need advanced Text widget features
-- Use `SKit.textStyleFull()` when you need reusable comprehensive styles
-
-<a id="themedata-integration"></a>
-
-#### ThemeData Integration
-
-Use responsive scaling in your theme:
-
-```dart
-ScaleKitBuilder(
-  designWidth: 375,
-  designHeight: 812,
-  designType: DeviceType.mobile,
-  child: MaterialApp(
-    theme: ResponsiveThemeData.create(
-      context: context,
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      useMaterial3: true,
-    ),
-    home: HomePage(),
-  ),
-)
-```
-
-<a id="font-configuration"></a>
-
-#### Font Configuration (Automatic Font Selection)
-
-Configure fonts for different languages. All TextStyles automatically use the configured font for the current language:
-
-```dart
-import 'package:google_fonts/google_fonts.dart';
-
-void main() {
-  // Configure font for specific language (optional)
-  // If not configured, Flutter's default font will be used
-  FontConfig.instance.setLanguageFont(
-    LanguageFontConfig(
-      languageCode: 'ar',
-      googleFont: GoogleFonts.almarai,  // Pass GoogleFonts function
-    ),
-  );
-
-  FontConfig.instance.setLanguageFont(
-    LanguageFontConfig(
-      languageCode: 'en',
-      googleFont: GoogleFonts.inter,
-    ),
-  );
-
-  // Configure font for language group
-  FontConfig.instance.setLanguageGroupFont(
-    LanguageGroupFontConfig(
-      languageCodes: ['ar', 'fa', 'ur'],
-      googleFont: GoogleFonts.almarai,
-    ),
-  );
-
-  // Set default font (used when no specific language config exists)
-  FontConfig.instance.setDefaultFont(
-    googleFont: GoogleFonts.inter,
-  );
-
-  runApp(const MyApp());
-}
-```
-
-**Usage:**
-
-Once configured, all TextStyles automatically use the configured font:
-
-```dart
-// Automatic font application - no manual configuration needed
-Text('Hello', style: TextStyle(fontSize: 16.sp))  // ✅ Uses FontConfig automatically
-
-// Or via theme - all theme text styles get the font automatically
-ResponsiveThemeData.create(
-  context: context,
-  colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-  useMaterial3: true,
-)
-```
+## 🛠️ Configuration & Advanced
 
 ### Size System Configuration
 
@@ -1060,39 +1040,26 @@ SKit.rounded(
 
 ### ScaleKitDesignValues - Centralized Design System
 
-Define all your design tokens in one place:
+Define your design tokens once, compute everywhere:
 
 ```dart
-// Define theme
+// 1. Define your design system (can be const)
 const design = ScaleKitDesignValues(
-  textXs: 10,
-  textSm: 12,
-  textMd: 14,
-  textLg: 16,
-  textXl: 18,
-  textXxl: 24,
-  paddingXs: 4,
-  paddingSm: 8,
-  paddingMd: 16,
-  paddingLg: 24,
-  paddingXl: 32,
-  radiusSm: 4,
-  radiusMd: 8,
-  radiusLg: 12,
-  spacingXs: 4,
-  spacingSm: 8,
-  spacingMd: 16,
-  spacingLg: 24,
+  textSm: 12, textMd: 14, textLg: 16,
+  paddingSm: 8, paddingMd: 16, paddingLg: 24,
+  spacingSm: 8, spacingMd: 16, spacingLg: 24,
+  radiusSm: 6, radiusMd: 12, radiusLg: 16,
 );
 
-// Compute once
+// 2. Compute once per build/screen
 final values = design.compute();
 
-// Use everywhere with const widgets
+// 3. Use everywhere - all values auto-scaled
 SKPadding(
   padding: values.paddingMd!,
   child: SKContainer(
     decoration: BoxDecoration(
+      color: Colors.white,
       borderRadius: values.borderRadiusMd,
     ),
     child: Text('Hello', style: values.textMd),
@@ -1100,22 +1067,16 @@ SKPadding(
 )
 ```
 
-### Compute once, use everywhere (performance best practice)
+**Why ScaleKitDesignValues?**
 
-The compute pattern lets you pre-scale all your design tokens once per build and reuse them across your widget tree. This minimizes repeated calculations, enables more const-friendly widgets, and improves frame-time stability.
+- **Performance**: One computation for all design tokens
+- **Consistency**: Centralized design system with automatic scaling
+- **Clean code**: No scattered size/spacing values throughout your app
+- **Type-safe**: Compile-time verification of design tokens
 
-When to use compute:
+**Pattern**: Define once → Compute once → Use everywhere
 
-- Use `ScaleKitDesignValues.compute()` in a widget's build method (or builder) when you need many scaled values together (text styles, paddings, margins, radii, spacing, sizes).
-- Prefer it for list/grid items and complex screens to avoid recalculating the same values per child.
-
-Benefits:
-
-- All values are scaled together with one factory access.
-- Fewer object allocations and repeated calculations.
-- Cleaner code: one place defines your tokens, one object provides them.
-
-Example: precompute many values and build with them
+**Pro tip**: For simple cases, use `SKitValues.compute(padding: 16, margin: 8, borderRadius: 12)` instead.
 
 ```dart
 // Define your design tokens once (can be const)
@@ -1205,11 +1166,7 @@ return SKPadding(
 );
 ```
 
-Tips:
-
-- Compute close to where values are used to respect current device metrics and orientation.
-- Recompute automatically when `MediaQuery` or locale changes (ScaleKitBuilder handles this); do not store across frames.
-- Pair with `FontConfig`: precomputed `TextStyle`s automatically apply the selected font per language.
+<a id="context-extensions"></a>
 
 ### Context Extensions
 
@@ -1236,6 +1193,43 @@ if (context.isMobile) {
 <a id="scalemanager-direct-api"></a>
 
 ### ScaleManager Direct API
+
+Access scale values directly:
+
+```dart
+final scale = ScaleManager.instance;
+
+Container(
+  width: scale.getWidth(200),
+  height: scale.getHeight(100),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(scale.getRadius(12)),
+  ),
+  child: Text(
+    'Hello',
+    style: TextStyle(fontSize: scale.getFontSize(16)),
+  ),
+)
+```
+
+### Helper Properties
+
+Access device properties similar to `flutter_screenutil`:
+
+```dart
+final scaleKit = ScaleManager.instance;
+
+// Device properties
+double screenWidth = scaleKit.screenWidth;
+double screenHeight = scaleKit.screenHeight;
+double pixelRatio = scaleKit.pixelRatio;
+double statusBarHeight = scaleKit.statusBarHeight;
+double bottomBarHeight = scaleKit.bottomBarHeight;
+double textScaleFactor = scaleKit.textScaleFactor;
+double scaleWidth = scaleKit.scaleWidth;
+double scaleHeight = scaleKit.scaleHeight;
+Orientation orientation = scaleKit.orientation;
+```
 
 <a id="responsive-builder-columns"></a>
 
@@ -1320,9 +1314,9 @@ Both widgets support the same fallback rules:
 
 Desktop behavior (CSS-like):
 
-- On Android/iOS, devices are classified only as mobile or tablet by width; desktop logic doesn’t apply.
+- On Android/iOS, devices are classified only as mobile or tablet by width; desktop logic doesn't apply.
 - On desktop (width ≥ 1200), desktop values are used by default. You can opt to reuse tablet/mobile values to mimic CSS breakpoints.
-- This lets you build grids like in CSS (e.g., 2/4/8 columns) while forcing desktop to act like tablet/mobile if that’s desired.
+- This lets you build grids like in CSS (e.g., 2/4/8 columns) while forcing desktop to act like tablet/mobile if that's desired.
 
 Examples:
 
@@ -1343,43 +1337,6 @@ final cols = SKit.responsiveInt(
   desktopAs: DesktopAs.tablet, // 👈 desktop will use tablet values unless explicitly provided
 );
 GridView.count(crossAxisCount: cols)
-```
-
-Access scale values directly:
-
-```dart
-final scale = ScaleManager.instance;
-
-Container(
-  width: scale.getWidth(200),
-  height: scale.getHeight(100),
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(scale.getRadius(12)),
-  ),
-  child: Text(
-    'Hello',
-    style: TextStyle(fontSize: scale.getFontSize(16)),
-  ),
-)
-```
-
-### Helper Properties
-
-Access device properties similar to `flutter_screenutil`:
-
-```dart
-final scaleKit = ScaleManager.instance;
-
-// Device properties
-double screenWidth = scaleKit.screenWidth;
-double screenHeight = scaleKit.screenHeight;
-double pixelRatio = scaleKit.pixelRatio;
-double statusBarHeight = scaleKit.statusBarHeight;
-double bottomBarHeight = scaleKit.bottomBarHeight;
-double textScaleFactor = scaleKit.textScaleFactor;
-double scaleWidth = scaleKit.scaleWidth;
-double scaleHeight = scaleKit.scaleHeight;
-Orientation orientation = scaleKit.orientation;
 ```
 
 <a id="orientation-autoscale"></a>
@@ -1665,6 +1622,8 @@ void main() {
 
 Wrap your app with `DevicePreview` as normal (e.g., `DevicePreview(builder: (_) => app)`). Returning `null` keeps the default logic when preview mode is turned off. Skip this helper if you prefer—the package works fine without it; this just keeps platform detection perfect when you hop between simulated devices.
 
+<a id="device-specific-scaling"></a>
+
 ## Device-Specific Scaling
 
 The package automatically adapts scaling strategies based on:
@@ -1705,6 +1664,8 @@ Thank you for being part of this journey! Every contribution, no matter how smal
 ## Acknowledgements
 
 Huge thanks to the authors and contributors of `flutter_screenutil` and similar responsive design packages. We used them extensively, learned from their great ideas, and built Flutter Scale Kit as an alternative optimized for our apps' performance and developer experience. `flutter_screenutil` is a solid package; this project simply explores a different set of trade‑offs (compute-once patterns, caching, language-aware fonts, and orientation-aware scaling) that matched our needs.
+
+<a id="faq"></a>
 
 ## FAQ
 
