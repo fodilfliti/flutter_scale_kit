@@ -1,7 +1,143 @@
 import 'package:flutter/material.dart';
-import 'aspect_ratio_adapter.dart';
 import 'package:flutter/foundation.dart';
+import 'aspect_ratio_adapter.dart';
 import 'device_detector.dart';
+
+/// Additional screen size classifications derived from configured breakpoints.
+enum DeviceSizeClass {
+  smallMobile,
+  mobile,
+  largeMobile,
+  tablet,
+  largeTablet,
+  desktop,
+  largeDesktop,
+  extraLargeDesktop,
+}
+
+/// Breakpoint configuration used for device and size classification.
+///
+/// - [mobileMaxWidth]: maximum logical width for mobile devices.
+/// - [tabletMaxWidth]: maximum logical width for tablets.
+/// - [desktopMaxWidth]: maximum logical width for standard desktops.
+/// - [largeDesktopMaxWidth]: maximum logical width for large desktops. Values
+///   greater than this threshold are considered extra-large desktops.
+/// - [smallMobileMaxWidth], [largeMobileMaxWidth], and [largeTabletMaxWidth]
+///   allow fine-grained control of additional size classes. When omitted,
+///   sensible defaults are derived from the primary breakpoints.
+class ScaleBreakpoints {
+  final double mobileMaxWidth;
+  final double tabletMaxWidth;
+  final double desktopMaxWidth;
+  final double largeDesktopMaxWidth;
+  final double smallMobileMaxWidth;
+  final double largeMobileMaxWidth;
+  final double largeTabletMaxWidth;
+
+  const ScaleBreakpoints({
+    this.mobileMaxWidth = 600,
+    this.tabletMaxWidth = 1200,
+    this.desktopMaxWidth = 1600,
+    this.largeDesktopMaxWidth = 1920,
+    double? smallMobileMaxWidth,
+    double? largeMobileMaxWidth,
+    double? largeTabletMaxWidth,
+  }) : assert(mobileMaxWidth > 0, 'mobileMaxWidth must be > 0'),
+       assert(
+         mobileMaxWidth < tabletMaxWidth,
+         'tabletMaxWidth must be greater than mobileMaxWidth',
+       ),
+       assert(
+         tabletMaxWidth <= desktopMaxWidth,
+         'desktopMaxWidth must be >= tabletMaxWidth',
+       ),
+       assert(
+         desktopMaxWidth <= largeDesktopMaxWidth,
+         'largeDesktopMaxWidth must be >= desktopMaxWidth',
+       ),
+       smallMobileMaxWidth = smallMobileMaxWidth ?? mobileMaxWidth * 0.6,
+       largeMobileMaxWidth =
+           largeMobileMaxWidth ??
+           (mobileMaxWidth + (tabletMaxWidth - mobileMaxWidth) * 0.4),
+       largeTabletMaxWidth =
+           largeTabletMaxWidth ??
+           (tabletMaxWidth + (desktopMaxWidth - tabletMaxWidth) * 0.3),
+       assert(
+         (smallMobileMaxWidth ?? mobileMaxWidth * 0.6) > 0,
+         'smallMobileMaxWidth must be > 0',
+       ),
+       assert(
+         (smallMobileMaxWidth ?? mobileMaxWidth * 0.6) <= mobileMaxWidth,
+         'smallMobileMaxWidth must be <= mobileMaxWidth',
+       ),
+       assert(
+         (largeMobileMaxWidth ??
+                 (mobileMaxWidth + (tabletMaxWidth - mobileMaxWidth) * 0.4)) >=
+             mobileMaxWidth,
+         'largeMobileMaxWidth must be >= mobileMaxWidth',
+       ),
+       assert(
+         (largeMobileMaxWidth ??
+                 (mobileMaxWidth + (tabletMaxWidth - mobileMaxWidth) * 0.4)) <=
+             tabletMaxWidth,
+         'largeMobileMaxWidth must be <= tabletMaxWidth',
+       ),
+       assert(
+         (largeTabletMaxWidth ??
+                 (tabletMaxWidth + (desktopMaxWidth - tabletMaxWidth) * 0.3)) >=
+             tabletMaxWidth,
+         'largeTabletMaxWidth must be >= tabletMaxWidth',
+       ),
+       assert(
+         (largeTabletMaxWidth ??
+                 (tabletMaxWidth + (desktopMaxWidth - tabletMaxWidth) * 0.3)) <=
+             desktopMaxWidth,
+         'largeTabletMaxWidth must be <= desktopMaxWidth',
+       );
+
+  ScaleBreakpoints copyWith({
+    double? mobileMaxWidth,
+    double? tabletMaxWidth,
+    double? desktopMaxWidth,
+    double? largeDesktopMaxWidth,
+    double? smallMobileMaxWidth,
+    double? largeMobileMaxWidth,
+    double? largeTabletMaxWidth,
+  }) {
+    return ScaleBreakpoints(
+      mobileMaxWidth: mobileMaxWidth ?? this.mobileMaxWidth,
+      tabletMaxWidth: tabletMaxWidth ?? this.tabletMaxWidth,
+      desktopMaxWidth: desktopMaxWidth ?? this.desktopMaxWidth,
+      largeDesktopMaxWidth: largeDesktopMaxWidth ?? this.largeDesktopMaxWidth,
+      smallMobileMaxWidth: smallMobileMaxWidth ?? this.smallMobileMaxWidth,
+      largeMobileMaxWidth: largeMobileMaxWidth ?? this.largeMobileMaxWidth,
+      largeTabletMaxWidth: largeTabletMaxWidth ?? this.largeTabletMaxWidth,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ScaleBreakpoints &&
+        other.mobileMaxWidth == mobileMaxWidth &&
+        other.tabletMaxWidth == tabletMaxWidth &&
+        other.desktopMaxWidth == desktopMaxWidth &&
+        other.largeDesktopMaxWidth == largeDesktopMaxWidth &&
+        other.smallMobileMaxWidth == smallMobileMaxWidth &&
+        other.largeMobileMaxWidth == largeMobileMaxWidth &&
+        other.largeTabletMaxWidth == largeTabletMaxWidth;
+  }
+
+  @override
+  int get hashCode =>
+      mobileMaxWidth.hashCode ^
+      tabletMaxWidth.hashCode ^
+      desktopMaxWidth.hashCode ^
+      largeDesktopMaxWidth.hashCode ^
+      smallMobileMaxWidth.hashCode ^
+      largeMobileMaxWidth.hashCode ^
+      largeTabletMaxWidth.hashCode;
+}
 
 /// Singleton manager for scale configuration and responsive design calculations.
 ///
@@ -120,8 +256,97 @@ class ScaleManager {
   /// Current screen orientation.
   Orientation get orientation => _orientation;
 
-  /// Public device type detection (uses platform-aware logic).
-  DeviceType get deviceType => _detectDeviceType();
+  /// Optional device type override (null means auto-detect).
+  DeviceType? _deviceOverride;
+
+  /// When true, desktop/web platforms fall back to a specific device type.
+  bool _lockDesktopForLargePlatforms = false;
+
+  /// Desktop lock fallback strategy applied when [_lockDesktopForLargePlatforms] is true.
+  DesktopLockFallback _desktopLockFallback = DesktopLockFallback.desktop;
+
+  /// Configurable breakpoint configuration.
+  ScaleBreakpoints _breakpoints = const ScaleBreakpoints();
+
+  /// Public responsive device type (applies overrides and desktop lock fallback).
+  DeviceType get deviceType => responsiveDeviceType();
+
+  /// Raw detected device type (ignores overrides and fallback logic).
+  DeviceType get rawPlatformDeviceType => _detectDeviceType();
+
+  /// Device type that respects overrides but not the fallback mapping.
+  DeviceType get platformDeviceType => _deviceOverride ?? _detectDeviceType();
+
+  /// Device type classified purely by screen width.
+  DeviceType get sizeDeviceType => _classifyDeviceByWidth(_screenWidth);
+
+  /// Publicly accessible breakpoint configuration.
+  ScaleBreakpoints get breakpoints => _breakpoints;
+
+  /// Screen size class based on the configured breakpoints.
+  DeviceSizeClass get screenSizeClass => _classifySizeClass(_screenWidth);
+
+  /// Returns the size class for an arbitrary width.
+  DeviceSizeClass sizeClassForWidth(double width) => _classifySizeClass(width);
+
+  /// Returns the device type used by responsive widgets/values.
+  DeviceType responsiveDeviceType({DesktopLockFallback? override}) {
+    final overrideDevice = _deviceOverride;
+    if (overrideDevice != null) return overrideDevice;
+
+    final detected = _detectDeviceType();
+    if (!_lockDesktopForLargePlatforms) return detected;
+
+    final fallback = override ?? _desktopLockFallback;
+    final isDesktopPlatform =
+        detected == DeviceType.desktop || detected == DeviceType.web;
+    if (!isDesktopPlatform) return detected;
+
+    final sizeType = sizeDeviceType;
+
+    switch (fallback) {
+      case DesktopLockFallback.desktop:
+        return DeviceType.desktop;
+      case DesktopLockFallback.tablet:
+        if (sizeType == DeviceType.mobile) return DeviceType.mobile;
+        if (sizeType == DeviceType.tablet) return DeviceType.tablet;
+        return DeviceType.desktop;
+      case DesktopLockFallback.mobile:
+        if (sizeType == DeviceType.mobile) return DeviceType.mobile;
+        return DeviceType.desktop;
+    }
+  }
+
+  /// Returns the device type resolved according to the requested source.
+  DeviceType deviceTypeFor(
+    DeviceClassificationSource source, {
+    DesktopLockFallback? overrideFallback,
+  }) {
+    switch (source) {
+      case DeviceClassificationSource.responsive:
+        return responsiveDeviceType(override: overrideFallback);
+      case DeviceClassificationSource.platform:
+        return platformDeviceType;
+      case DeviceClassificationSource.size:
+        return sizeDeviceType;
+    }
+  }
+
+  /// Whether the desktop lock is currently applied.
+  bool get isDesktopLockActive {
+    if (!_lockDesktopForLargePlatforms) return false;
+    if (_deviceOverride != null) {
+      return _deviceOverride == DeviceType.desktop;
+    }
+    final detected = _detectDeviceType();
+    return detected == DeviceType.desktop || detected == DeviceType.web;
+  }
+
+  /// Returns the currently configured desktop lock fallback.
+  DesktopLockFallback get desktopLockFallback => _desktopLockFallback;
+
+  /// High-level platform category (safe to call on web).
+  PlatformCategory get platformCategory => _detectPlatformCategory();
 
   /// Top safe area height.
   double get topSafeHeight => _topSafeHeight;
@@ -234,10 +459,32 @@ class ScaleManager {
     _enabled = enabled;
   }
 
+  /// Overrides the detected device type. Pass null to restore auto detection.
+  void setDeviceOverride(DeviceType? deviceType) {
+    _deviceOverride = deviceType;
+  }
+
+  /// Locks the detected device type to desktop when running on desktop/web platforms.
+  ///
+  /// Mobile and tablet classifications remain unaffected.
+  void setDesktopLock(bool enabled) {
+    _lockDesktopForLargePlatforms = enabled;
+  }
+
+  /// Defines how locked desktop/web platforms should be treated.
+  void setDesktopLockFallback(DesktopLockFallback fallback) {
+    _desktopLockFallback = fallback;
+  }
+
   /// Override the min/max scale clamp values. Pass null to use defaults.
   void setScaleLimits({double? minScale, double? maxScale}) {
     _minScaleOverride = minScale;
     _maxScaleOverride = maxScale;
+  }
+
+  /// Configures the responsive breakpoints used for device classification.
+  void setBreakpoints(ScaleBreakpoints breakpoints) {
+    _breakpoints = breakpoints;
   }
 
   void _updateFromContext(BuildContext context) {
@@ -286,7 +533,7 @@ class ScaleManager {
   /// This ensures the UI scales appropriately across all devices without
   /// manual configuration in 95% of use cases.
   (double minScale, double maxScale) _getScaleLimits() {
-    final deviceType = _detectDeviceType();
+    final deviceType = this.deviceType;
     final aspectCategory = DeviceDetector.getAspectRatioCategory(
       _screenWidth,
       _screenHeight,
@@ -411,6 +658,60 @@ class ScaleManager {
     return DeviceType.desktop;
   }
 
+  DeviceType _classifyDeviceByWidth(double width) {
+    final bp = _breakpoints;
+    if (width <= bp.mobileMaxWidth) return DeviceType.mobile;
+    if (width <= bp.tabletMaxWidth) return DeviceType.tablet;
+    return DeviceType.desktop;
+  }
+
+  DeviceSizeClass _classifySizeClass(double width) {
+    final bp = _breakpoints;
+    if (width <= bp.smallMobileMaxWidth) {
+      return DeviceSizeClass.smallMobile;
+    }
+    if (width <= bp.mobileMaxWidth) {
+      return DeviceSizeClass.mobile;
+    }
+    if (width <= bp.largeMobileMaxWidth) {
+      return DeviceSizeClass.largeMobile;
+    }
+    if (width <= bp.tabletMaxWidth) {
+      return DeviceSizeClass.tablet;
+    }
+    if (width <= bp.largeTabletMaxWidth) {
+      return DeviceSizeClass.largeTablet;
+    }
+    if (width <= bp.desktopMaxWidth) {
+      return DeviceSizeClass.desktop;
+    }
+    if (width <= bp.largeDesktopMaxWidth) {
+      return DeviceSizeClass.largeDesktop;
+    }
+    return DeviceSizeClass.extraLargeDesktop;
+  }
+
+  PlatformCategory _detectPlatformCategory() {
+    if (kIsWeb) {
+      return PlatformCategory.web;
+    }
+
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        return PlatformCategory.android;
+      case TargetPlatform.iOS:
+        return PlatformCategory.ios;
+      case TargetPlatform.macOS:
+        return PlatformCategory.macos;
+      case TargetPlatform.windows:
+        return PlatformCategory.windows;
+      case TargetPlatform.linux:
+        return PlatformCategory.linux;
+      case TargetPlatform.fuchsia:
+        return PlatformCategory.fuchsia;
+    }
+  }
+
   /// Updates scale factors from the current context.
   ///
   /// This method is called automatically by [ScaleKitBuilder] when screen
@@ -484,7 +785,7 @@ class ScaleManager {
   }
 
   double _getFontScaleFactor() {
-    final deviceType = _detectDeviceType();
+    final deviceType = this.deviceType;
     final aspectCategory = DeviceDetector.getAspectRatioCategory(
       _screenWidth,
       _screenHeight,
@@ -540,7 +841,7 @@ class ScaleManager {
   }
 
   double _getSizeBoost() {
-    final deviceType = _detectDeviceType();
+    final deviceType = this.deviceType;
     if (_orientation == Orientation.landscape) {
       switch (deviceType) {
         case DeviceType.mobile:
@@ -697,4 +998,32 @@ enum DeviceType {
 
   /// Web platform.
   web,
+}
+
+/// High-level platform classification that is safe to query on any runtime (including web).
+enum PlatformCategory { android, ios, macos, windows, linux, fuchsia, web }
+
+/// Determines how locked desktop/web devices should be resolved in responsive APIs.
+enum DesktopLockFallback { desktop, tablet, mobile }
+
+/// Source used when querying device type helpers.
+enum DeviceClassificationSource {
+  /// Final responsive device (respects overrides and desktop lock fallback).
+  responsive,
+
+  /// Underlying platform-detected device (ignores desktop lock fallback).
+  platform,
+
+  /// Width-based classification ignoring platform hints.
+  size,
+}
+
+extension DeviceTypeClassificationExtension on DeviceType {
+  bool get isTypeOfMobile => this == DeviceType.mobile;
+
+  bool get isTypeOfTablet => this == DeviceType.tablet;
+
+  bool get isTypeOfDesktop => this == DeviceType.desktop;
+
+  bool get isTypeOfWeb => this == DeviceType.web;
 }

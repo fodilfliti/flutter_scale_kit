@@ -11,9 +11,10 @@ class DeviceDetector {
 
   /// Detect device type from screen width
   static DeviceType detectDeviceType(double screenWidth) {
-    if (screenWidth < 600) {
+    final breakpoints = ScaleManager.instance.breakpoints;
+    if (screenWidth <= breakpoints.mobileMaxWidth) {
       return DeviceType.mobile;
-    } else if (screenWidth < 1200) {
+    } else if (screenWidth <= breakpoints.tabletMaxWidth) {
       return DeviceType.tablet;
     } else {
       return DeviceType.desktop;
@@ -28,17 +29,19 @@ class DeviceDetector {
 
   /// Check if device is mobile
   static bool isMobile(double screenWidth) {
-    return screenWidth < 600;
+    return screenWidth <= ScaleManager.instance.breakpoints.mobileMaxWidth;
   }
 
   /// Check if device is tablet
   static bool isTablet(double screenWidth) {
-    return screenWidth >= 600 && screenWidth < 1200;
+    final breakpoints = ScaleManager.instance.breakpoints;
+    return screenWidth > breakpoints.mobileMaxWidth &&
+        screenWidth <= breakpoints.tabletMaxWidth;
   }
 
   /// Check if device is desktop
   static bool isDesktop(double screenWidth) {
-    return screenWidth >= 1200;
+    return screenWidth > ScaleManager.instance.breakpoints.tabletMaxWidth;
   }
 
   /// Get aspect ratio category

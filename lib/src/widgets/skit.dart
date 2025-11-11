@@ -1433,7 +1433,15 @@ class SKit {
     int? mobileLandscape,
     int? tabletLandscape,
     int? desktopLandscape,
+    DeviceType? deviceTypeOverride,
+    bool lockDesktopAsTablet = false,
+    bool lockDesktopAsMobile = false,
+    DesktopAs desktopAs = DesktopAs.desktop,
   }) {
+    assert(
+      !(lockDesktopAsTablet && lockDesktopAsMobile),
+      'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
+    );
     return responsiveInt(
       mobile: mobile,
       tablet: tablet,
@@ -1441,6 +1449,10 @@ class SKit {
       mobileLandscape: mobileLandscape,
       tabletLandscape: tabletLandscape,
       desktopLandscape: desktopLandscape,
+      deviceTypeOverride: deviceTypeOverride,
+      lockDesktopAsTablet: lockDesktopAsTablet,
+      lockDesktopAsMobile: lockDesktopAsMobile,
+      desktopAs: desktopAs,
     );
   }
 
@@ -1455,10 +1467,25 @@ class SKit {
     int? tabletLandscape,
     int? desktopLandscape,
     DesktopAs desktopAs = DesktopAs.desktop,
+    DeviceType? deviceTypeOverride,
+    bool lockDesktopAsTablet = false,
+    bool lockDesktopAsMobile = false,
   }) {
+    assert(
+      !(lockDesktopAsTablet && lockDesktopAsMobile),
+      'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
+    );
     final scale = ScaleManager.instance;
     final isLandscape = scale.orientation == Orientation.landscape;
-    final device = _device();
+    final overrideFallback =
+        lockDesktopAsTablet
+            ? DesktopLockFallback.tablet
+            : lockDesktopAsMobile
+            ? DesktopLockFallback.mobile
+            : null;
+    final device =
+        deviceTypeOverride ??
+        scale.responsiveDeviceType(override: overrideFallback);
 
     int? pickLandscape() {
       switch (device) {
@@ -1510,13 +1537,6 @@ class SKit {
     return value ?? (mobile ?? 0);
   }
 
-  static DeviceType _device() {
-    final w = ScaleManager.instance.screenWidth;
-    if (w < 600) return DeviceType.mobile;
-    if (w < 1200) return DeviceType.tablet;
-    return DeviceType.desktop;
-  }
-
   /// Resolves a responsive double value using the same fallback rules as [responsiveInt].
   static double responsiveDouble({
     double? mobile,
@@ -1526,10 +1546,25 @@ class SKit {
     double? tabletLandscape,
     double? desktopLandscape,
     DesktopAs desktopAs = DesktopAs.desktop,
+    DeviceType? deviceTypeOverride,
+    bool lockDesktopAsTablet = false,
+    bool lockDesktopAsMobile = false,
   }) {
+    assert(
+      !(lockDesktopAsTablet && lockDesktopAsMobile),
+      'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
+    );
     final scale = ScaleManager.instance;
     final isLandscape = scale.orientation == Orientation.landscape;
-    final device = _device();
+    final overrideFallback =
+        lockDesktopAsTablet
+            ? DesktopLockFallback.tablet
+            : lockDesktopAsMobile
+            ? DesktopLockFallback.mobile
+            : null;
+    final device =
+        deviceTypeOverride ??
+        scale.responsiveDeviceType(override: overrideFallback);
 
     double? pickLandscape() {
       switch (device) {

@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.5] - 2025-11-11
+
+### ✨ Added
+
+- Optional `deviceTypeOverride` parameter in `ScaleKitBuilder`, `SKResponsive`, `SKResponsiveBuilder`, and `SKResponsiveValue` to force desktop/web behaviour.
+- `ScaleManager.setDeviceOverride` helper to control global device detection.
+- `lockDesktopPlatforms` option on `ScaleKitBuilder` to auto-lock web/desktop devices without affecting mobile/tablet.
+- `ScaleManager.platformCategory` helper for safe platform inspection across mobile, desktop, and web.
+- Per-widget desktop overrides (`lockDesktopAsTablet` / `lockDesktopAsMobile`) on responsive widgets and values.
+- New context helpers `isTypeOfMobile()` / `isTypeOfTablet()` with `DeviceClassificationSource` support, plus `DeviceType` convenience getters.
+- `ScaleManager.deviceTypeFor(...)` to fetch responsive, platform, or size classifications and `desktopLockFallback` for visibility into the current lock behaviour.
+- Desktop lock fallback now respects live window breakpoints (e.g. mobile fallback applies only when the window is within the mobile size range).
+- `context.isDesktopPlatform` now includes web; use `context.isWebPlatform` when you need to target web specifically.
+- `ScaleKitBuilder` now accepts custom `ScaleBreakpoints`, unlocking configurable device thresholds and the new `DeviceSizeClass` helpers (available via `ScaleManager.screenSizeClass` and context extensions).
+- Added size-class context helpers (`screenSizeClass`, `isSmallMobileSize`, … `isExtraLargeDesktopSize`) and exposure of the active breakpoint configuration.
+- Example settings sheet and live debug panel now include breakpoint controls and live size-class/breakpoint diagnostics.
+
+### 📚 Documentation
+
+- Documented the new override options in the README with usage snippets.
+- Expanded README coverage for breakpoint configuration, size classes, and related context helpers.
+
 ## [1.1.4] - 2025-11-10
 
 ### ✨ Added

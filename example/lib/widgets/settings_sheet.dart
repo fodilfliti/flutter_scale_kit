@@ -39,8 +39,10 @@ class SettingsSheet extends StatelessWidget {
     double tabletPortraitSizeBoost,
     double desktopPortraitFontBoost,
     double desktopPortraitSizeBoost,
+    ScaleBreakpoints breakpoints,
   )
   onSave;
+  final ScaleBreakpoints breakpoints;
 
   const SettingsSheet({
     super.key,
@@ -62,6 +64,7 @@ class SettingsSheet extends StatelessWidget {
     required this.tabletPortraitSizeBoost,
     required this.desktopPortraitFontBoost,
     required this.desktopPortraitSizeBoost,
+    required this.breakpoints,
     required this.onSave,
   });
 
@@ -85,6 +88,7 @@ class SettingsSheet extends StatelessWidget {
     required double tabletPortraitSizeBoost,
     required double desktopPortraitFontBoost,
     required double desktopPortraitSizeBoost,
+    required ScaleBreakpoints breakpoints,
     required Function(
       bool enabled,
       bool autoScale,
@@ -104,6 +108,7 @@ class SettingsSheet extends StatelessWidget {
       double tabletPortraitSizeBoost,
       double desktopPortraitFontBoost,
       double desktopPortraitSizeBoost,
+      ScaleBreakpoints breakpoints,
     )
     onSave,
   }) {
@@ -134,6 +139,7 @@ class SettingsSheet extends StatelessWidget {
           tabletPortraitSizeBoost: tabletPortraitSizeBoost,
           desktopPortraitFontBoost: desktopPortraitFontBoost,
           desktopPortraitSizeBoost: desktopPortraitSizeBoost,
+          breakpoints: breakpoints,
           onSave: onSave,
         );
       },
@@ -166,6 +172,10 @@ class SettingsSheet extends StatelessWidget {
     double tempTabletPortraitSizeBoost = tabletPortraitSizeBoost;
     double tempDesktopPortraitFontBoost = desktopPortraitFontBoost;
     double tempDesktopPortraitSizeBoost = desktopPortraitSizeBoost;
+    double tempMobileBreakpoint = breakpoints.mobileMaxWidth;
+    double tempTabletBreakpoint = breakpoints.tabletMaxWidth;
+    double tempDesktopBreakpoint = breakpoints.desktopMaxWidth;
+    double tempLargeDesktopBreakpoint = breakpoints.largeDesktopMaxWidth;
 
     return StatefulBuilder(
       builder: (context, setModalState) {
@@ -187,6 +197,36 @@ class SettingsSheet extends StatelessWidget {
                 value: value,
                 onChanged: (v) {
                   setModalState(() => onChanged(v));
+                },
+              ),
+            ],
+          );
+        }
+
+        Widget breakpointSlider(
+          String label,
+          double value,
+          double min,
+          double max,
+          ValueChanged<double> onChanged,
+        ) {
+          final double clampedValue = value.clamp(min, max).toDouble();
+          final int divisions =
+              (((max - min) / 10).round()).clamp(1, 1000).toInt();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('$label: ${clampedValue.toStringAsFixed(0)} px'),
+              Slider(
+                min: min,
+                max: max,
+                divisions: divisions,
+                value: clampedValue,
+                onChanged: (v) {
+                  setModalState(() {
+                    final snapped = (v / 10).round() * 10.0;
+                    onChanged(snapped.clamp(min, max).toDouble());
+                  });
                 },
               ),
             ],
@@ -607,6 +647,90 @@ class SettingsSheet extends StatelessWidget {
                   ], // end if tempEnabled
                   if (tempEnabled) ...[
                     const Divider(),
+                    Text(
+                      'Device Breakpoints',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade800,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    breakpointSlider(
+                      'Mobile max width',
+                      tempMobileBreakpoint,
+                      320,
+                      900,
+                      (value) {
+                        tempMobileBreakpoint = value;
+                        if (tempMobileBreakpoint >= tempTabletBreakpoint - 20) {
+                          tempTabletBreakpoint = tempMobileBreakpoint + 20;
+                        }
+                        if (tempTabletBreakpoint >=
+                            tempDesktopBreakpoint - 20) {
+                          tempDesktopBreakpoint = tempTabletBreakpoint + 40;
+                        }
+                        if (tempDesktopBreakpoint >=
+                            tempLargeDesktopBreakpoint - 20) {
+                          tempLargeDesktopBreakpoint =
+                              tempDesktopBreakpoint + 20;
+                        }
+                      },
+                    ),
+                    breakpointSlider(
+                      'Tablet max width',
+                      tempTabletBreakpoint,
+                      700,
+                      1600,
+                      (value) {
+                        tempTabletBreakpoint = value;
+                        if (tempTabletBreakpoint <= tempMobileBreakpoint + 20) {
+                          tempTabletBreakpoint = tempMobileBreakpoint + 20;
+                        }
+                        if (tempTabletBreakpoint >=
+                            tempDesktopBreakpoint - 20) {
+                          tempDesktopBreakpoint = tempTabletBreakpoint + 40;
+                        }
+                        if (tempDesktopBreakpoint >=
+                            tempLargeDesktopBreakpoint - 20) {
+                          tempLargeDesktopBreakpoint =
+                              tempDesktopBreakpoint + 20;
+                        }
+                      },
+                    ),
+                    breakpointSlider(
+                      'Desktop max width',
+                      tempDesktopBreakpoint,
+                      1100,
+                      2400,
+                      (value) {
+                        tempDesktopBreakpoint = value;
+                        if (tempDesktopBreakpoint <=
+                            tempTabletBreakpoint + 20) {
+                          tempDesktopBreakpoint = tempTabletBreakpoint + 20;
+                        }
+                        if (tempDesktopBreakpoint >=
+                            tempLargeDesktopBreakpoint - 20) {
+                          tempLargeDesktopBreakpoint =
+                              tempDesktopBreakpoint + 20;
+                        }
+                      },
+                    ),
+                    breakpointSlider(
+                      'Large desktop max width',
+                      tempLargeDesktopBreakpoint,
+                      1300,
+                      3200,
+                      (value) {
+                        tempLargeDesktopBreakpoint = value;
+                        if (tempLargeDesktopBreakpoint <=
+                            tempDesktopBreakpoint + 10) {
+                          tempLargeDesktopBreakpoint =
+                              tempDesktopBreakpoint + 10;
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
                     SwitchListTile(
                       title: const Text('autoScale'),
                       value: tempAutoScale,
@@ -731,6 +855,10 @@ class SettingsSheet extends StatelessWidget {
                               tempTabletPortraitSizeBoost = 1.0;
                               tempDesktopPortraitFontBoost = 1.0;
                               tempDesktopPortraitSizeBoost = 1.0;
+                              tempMobileBreakpoint = 600;
+                              tempTabletBreakpoint = 1200;
+                              tempDesktopBreakpoint = 1600;
+                              tempLargeDesktopBreakpoint = 1920;
                             });
                           },
                           child: const Text('Reset to defaults'),
@@ -763,6 +891,13 @@ class SettingsSheet extends StatelessWidget {
                               tempTabletPortraitSizeBoost,
                               tempDesktopPortraitFontBoost,
                               tempDesktopPortraitSizeBoost,
+                              ScaleBreakpoints(
+                                mobileMaxWidth: tempMobileBreakpoint,
+                                tabletMaxWidth: tempTabletBreakpoint,
+                                desktopMaxWidth: tempDesktopBreakpoint,
+                                largeDesktopMaxWidth:
+                                    tempLargeDesktopBreakpoint,
+                              ),
                             );
                           },
                           child: const Text('Save'),

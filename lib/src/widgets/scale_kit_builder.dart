@@ -43,6 +43,9 @@ class ScaleKitBuilder extends StatefulWidget {
   /// Design device type.
   final DeviceType designType;
 
+  /// Optional override for device detection (null = auto-detect).
+  final DeviceType? deviceTypeOverride;
+
   /// Minimum scale factor (optional).
   final double? minScale;
 
@@ -81,6 +84,19 @@ class ScaleKitBuilder extends StatefulWidget {
   /// Globally enable/disable scaling (default: true).
   final bool enabled;
 
+  /// When true, web and desktop platforms are locked to desktop responsive behaviour.
+  /// Mobile/tablet platforms remain unaffected.
+  final bool lockDesktopPlatforms;
+
+  /// When [lockDesktopPlatforms] is true, force desktop to behave like tablet.
+  final bool lockDesktopAsTablet;
+
+  /// When [lockDesktopPlatforms] is true, force desktop to behave like mobile.
+  final bool lockDesktopAsMobile;
+
+  /// Breakpoint configuration for responsive device detection.
+  final ScaleBreakpoints breakpoints;
+
   /// Optional listenable to toggle scaling at runtime.
   final ValueListenable<bool>? enabledListenable;
 
@@ -91,6 +107,9 @@ class ScaleKitBuilder extends StatefulWidget {
   /// - [designWidth] - Design width in logical pixels
   /// - [designHeight] - Design height in logical pixels
   /// - [designType] - Design device type (default: mobile)
+  /// - [deviceTypeOverride] - Optional override for runtime device detection
+  /// - [lockDesktopPlatforms] - Force desktop/web platforms to behave as desktop automatically
+  /// - [breakpoints] - Custom device breakpoints used for size-based detection
   /// - [minScale] - Optional minimum scale factor
   /// - [maxScale] - Optional maximum scale factor
   const ScaleKitBuilder({
@@ -99,6 +118,7 @@ class ScaleKitBuilder extends StatefulWidget {
     required this.designWidth,
     required this.designHeight,
     this.designType = DeviceType.mobile,
+    this.deviceTypeOverride,
     this.minScale,
     this.maxScale,
     this.mobileLandscapeFontBoost,
@@ -117,8 +137,15 @@ class ScaleKitBuilder extends StatefulWidget {
     this.autoScaleLandscape = true,
     this.autoScalePortrait = false,
     this.enabled = true,
+    this.lockDesktopPlatforms = false,
+    this.lockDesktopAsTablet = false,
+    this.lockDesktopAsMobile = false,
+    this.breakpoints = const ScaleBreakpoints(),
     this.enabledListenable,
-  });
+  }) : assert(
+         !(lockDesktopAsTablet && lockDesktopAsMobile),
+         'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
+       );
 
   @override
   State<ScaleKitBuilder> createState() => _ScaleKitBuilderState();
@@ -154,6 +181,33 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     if (!_isInitialized) return;
 
     bool reapply = false;
+
+    if (oldWidget.deviceTypeOverride != widget.deviceTypeOverride) {
+      ScaleManager.instance.setDeviceOverride(widget.deviceTypeOverride);
+      reapply = true;
+    }
+
+    if (oldWidget.lockDesktopPlatforms != widget.lockDesktopPlatforms) {
+      ScaleManager.instance.setDesktopLock(widget.lockDesktopPlatforms);
+      reapply = true;
+    }
+
+    if (oldWidget.breakpoints != widget.breakpoints) {
+      ScaleManager.instance.setBreakpoints(widget.breakpoints);
+      reapply = true;
+    }
+
+    if (oldWidget.lockDesktopAsTablet != widget.lockDesktopAsTablet ||
+        oldWidget.lockDesktopAsMobile != widget.lockDesktopAsMobile) {
+      ScaleManager.instance.setDesktopLockFallback(
+        widget.lockDesktopAsTablet
+            ? DesktopLockFallback.tablet
+            : widget.lockDesktopAsMobile
+            ? DesktopLockFallback.mobile
+            : DesktopLockFallback.desktop,
+      );
+      reapply = true;
+    }
 
     if (oldWidget.autoScale != widget.autoScale) {
       ScaleManager.instance.setAutoScale(widget.autoScale);
@@ -235,8 +289,18 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
         minScale: widget.minScale,
         maxScale: widget.maxScale,
       );
+      ScaleManager.instance.setDeviceOverride(widget.deviceTypeOverride);
       ScaleManager.instance.setAutoScale(widget.autoScale);
       ScaleManager.instance.setEnabled(widget.enabled);
+      ScaleManager.instance.setDesktopLock(widget.lockDesktopPlatforms);
+      ScaleManager.instance.setBreakpoints(widget.breakpoints);
+      ScaleManager.instance.setDesktopLockFallback(
+        widget.lockDesktopAsTablet
+            ? DesktopLockFallback.tablet
+            : widget.lockDesktopAsMobile
+            ? DesktopLockFallback.mobile
+            : DesktopLockFallback.desktop,
+      );
       ScaleManager.instance.setAutoScaleOrientation(
         landscape: widget.autoScaleLandscape,
         portrait: widget.autoScalePortrait,
@@ -299,6 +363,9 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
 
   @override
   void dispose() {
+    ScaleManager.instance.setDesktopLock(false);
+    ScaleManager.instance.setDesktopLockFallback(DesktopLockFallback.desktop);
+    ScaleManager.instance.setDeviceOverride(null);
     _detachEnabledListenable();
     super.dispose();
   }

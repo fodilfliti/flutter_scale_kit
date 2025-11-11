@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -166,6 +167,56 @@ void main() {
 
                 expect(isMobile || isTablet || isDesktop, isTrue);
 
+                final manager = ScaleManager.instance;
+                final responsiveType = manager.deviceTypeFor(
+                  DeviceClassificationSource.responsive,
+                );
+                expect(context.isTypeOfMobile(), responsiveType.isTypeOfMobile);
+                expect(context.isTypeOfTablet(), responsiveType.isTypeOfTablet);
+                expect(
+                  context.isTypeOfDesktop(),
+                  responsiveType == DeviceType.desktop ||
+                      responsiveType == DeviceType.web,
+                );
+                expect(
+                  context.isTypeOfMobile(
+                    source: DeviceClassificationSource.size,
+                  ),
+                  manager.deviceTypeFor(DeviceClassificationSource.size) ==
+                      DeviceType.mobile,
+                );
+                expect(
+                  context.isTypeOfTablet(
+                    source: DeviceClassificationSource.platform,
+                  ),
+                  manager.deviceTypeFor(DeviceClassificationSource.platform) ==
+                      DeviceType.tablet,
+                );
+                expect(
+                  context.isTypeOfDesktop(
+                    source: DeviceClassificationSource.platform,
+                  ),
+                  () {
+                    final platformType = manager.deviceTypeFor(
+                      DeviceClassificationSource.platform,
+                    );
+                    return platformType == DeviceType.desktop ||
+                        platformType == DeviceType.web;
+                  }(),
+                );
+                final platformCategory = manager.platformCategory;
+                expect(
+                  context.isDesktopPlatform,
+                  platformCategory == PlatformCategory.windows ||
+                      platformCategory == PlatformCategory.macos ||
+                      platformCategory == PlatformCategory.linux ||
+                      platformCategory == PlatformCategory.web,
+                );
+                expect(
+                  context.isWebPlatform,
+                  platformCategory == PlatformCategory.web,
+                );
+
                 return const SizedBox();
               },
             ),
@@ -173,6 +224,159 @@ void main() {
         ),
       ),
     );
+  });
+
+  testWidgets('Desktop lock falls back to mobile layout when width is mobile', (
+    WidgetTester tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    final originalSize = tester.view.physicalSize;
+    final originalPixelRatio = tester.view.devicePixelRatio;
+    tester.view.physicalSize = const Size(500, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.physicalSize = originalSize;
+      tester.view.devicePixelRatio = originalPixelRatio;
+    });
+
+    late int resolved;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ScaleKitBuilder(
+          designWidth: 375,
+          designHeight: 812,
+          lockDesktopPlatforms: true,
+          lockDesktopAsMobile: true,
+          child: Builder(
+            builder: (context) {
+              resolved = SKit.responsiveInt(
+                mobile: 2,
+                desktop: 8,
+                lockDesktopAsMobile: true,
+              );
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(resolved, 2);
+  });
+
+  testWidgets('Desktop lock keeps desktop layout when width is desktop', (
+    WidgetTester tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    final originalSize = tester.view.physicalSize;
+    final originalPixelRatio = tester.view.devicePixelRatio;
+    tester.view.physicalSize = const Size(1400, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.physicalSize = originalSize;
+      tester.view.devicePixelRatio = originalPixelRatio;
+    });
+
+    late int resolved;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ScaleKitBuilder(
+          designWidth: 375,
+          designHeight: 812,
+          lockDesktopPlatforms: true,
+          lockDesktopAsMobile: true,
+          child: Builder(
+            builder: (context) {
+              resolved = SKit.responsiveInt(
+                mobile: 2,
+                desktop: 8,
+                lockDesktopAsMobile: true,
+              );
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(resolved, 8);
+  });
+
+  testWidgets('Custom breakpoints adjust size class classification', (
+    WidgetTester tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    final originalSize = tester.view.physicalSize;
+    final originalPixelRatio = tester.view.devicePixelRatio;
+    addTearDown(() {
+      tester.view.physicalSize = originalSize;
+      tester.view.devicePixelRatio = originalPixelRatio;
+    });
+
+    Future<void> captureWidth(
+      double width,
+      void Function(DeviceSizeClass sizeClass, DeviceType deviceType)
+      assertions,
+    ) async {
+      tester.view.physicalSize = Size(width, 900);
+      tester.view.devicePixelRatio = 1.0;
+
+      late DeviceSizeClass capturedSizeClass;
+      late DeviceType capturedDeviceType;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ScaleKitBuilder(
+            designWidth: 375,
+            designHeight: 812,
+            breakpoints: const ScaleBreakpoints(
+              mobileMaxWidth: 520,
+              tabletMaxWidth: 920,
+              desktopMaxWidth: 1500,
+              largeDesktopMaxWidth: 2100,
+            ),
+            child: Builder(
+              builder: (context) {
+                final scale = ScaleManager.instance;
+                capturedSizeClass = scale.screenSizeClass;
+                capturedDeviceType = scale.deviceTypeFor(
+                  DeviceClassificationSource.size,
+                );
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      assertions(capturedSizeClass, capturedDeviceType);
+    }
+
+    await captureWidth(480, (sizeClass, deviceType) {
+      expect(sizeClass, DeviceSizeClass.mobile);
+      expect(deviceType, DeviceType.mobile);
+    });
+
+    await captureWidth(980, (sizeClass, deviceType) {
+      expect(sizeClass, DeviceSizeClass.largeTablet);
+      expect(deviceType, DeviceType.tablet);
+    });
+
+    await captureWidth(1700, (sizeClass, deviceType) {
+      expect(sizeClass, DeviceSizeClass.largeDesktop);
+      expect(deviceType, DeviceType.desktop);
+    });
   });
 
   testWidgets('Number extensions work correctly', (WidgetTester tester) async {

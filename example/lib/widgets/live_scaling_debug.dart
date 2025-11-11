@@ -55,12 +55,40 @@ Orientation orientation = scale.orientation;''',
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(8.r),
             ),
-            child: Text(
-              'pixelRatio=${scale.devicePixelRatio.toStringAsFixed(2)}, '
-              'orientation=${scale.orientation.name}, '
-              'scaleW=${scale.scaleWidth.toStringAsFixed(3)}, '
-              'scaleH=${scale.scaleHeight.toStringAsFixed(3)}',
-              style: TextStyle(fontSize: 11.sp, color: Colors.grey.shade700),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'pixelRatio=${scale.devicePixelRatio.toStringAsFixed(2)}, '
+                  'orientation=${scale.orientation.name}, '
+                  'scaleW=${scale.scaleWidth.toStringAsFixed(3)}, '
+                  'scaleH=${scale.scaleHeight.toStringAsFixed(3)}',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                SizedBox(height: 6.h),
+                Text(
+                  'deviceType=${scale.deviceType.name}, '
+                  'sizeClass=${scale.screenSizeClass.name}',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                SizedBox(height: 6.h),
+                Text(
+                  'breakpoints → mobile≤${scale.breakpoints.mobileMaxWidth.toStringAsFixed(0)}, '
+                  'tablet≤${scale.breakpoints.tabletMaxWidth.toStringAsFixed(0)}, '
+                  'desktop≤${scale.breakpoints.desktopMaxWidth.toStringAsFixed(0)}, '
+                  'largeDesktop≤${scale.breakpoints.largeDesktopMaxWidth.toStringAsFixed(0)}',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

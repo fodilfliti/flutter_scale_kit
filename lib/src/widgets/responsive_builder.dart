@@ -19,6 +19,13 @@ class SKResponsive extends StatelessWidget {
   final ResponsiveWidgetBuilder? desktopLandscape;
   final DesktopAs desktopAs;
 
+  /// Forces the responsive logic to treat the current device as the provided type.
+  final DeviceType? deviceTypeOverride;
+
+  /// Overrides the desktop lock fallback (when active) for this widget.
+  final bool lockDesktopAsTablet;
+  final bool lockDesktopAsMobile;
+
   const SKResponsive({
     super.key,
     this.mobile,
@@ -28,16 +35,30 @@ class SKResponsive extends StatelessWidget {
     this.tabletLandscape,
     this.desktopLandscape,
     this.desktopAs = DesktopAs.desktop,
-  });
+    this.deviceTypeOverride,
+    this.lockDesktopAsTablet = false,
+    this.lockDesktopAsMobile = false,
+  }) : assert(
+         !(lockDesktopAsTablet && lockDesktopAsMobile),
+         'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
+       );
 
   @override
   Widget build(BuildContext context) {
     final scale = ScaleManager.instance;
-    final device = _deviceByWidth();
+    final overrideFallback =
+        lockDesktopAsTablet
+            ? DesktopLockFallback.tablet
+            : lockDesktopAsMobile
+            ? DesktopLockFallback.mobile
+            : null;
+    final device =
+        deviceTypeOverride ??
+        scale.responsiveDeviceType(override: overrideFallback);
     final isLandscape = scale.orientation == Orientation.landscape;
 
     ResponsiveWidgetBuilder? pick() {
-      if (device == DeviceType.desktop) {
+      if (device == DeviceType.desktop || device == DeviceType.web) {
         // Desktop handling can mimic tablet/mobile if desired
         switch (desktopAs) {
           case DesktopAs.desktop:
@@ -63,9 +84,9 @@ class SKResponsive extends StatelessWidget {
             // If mobileLandscape is null, fall back to mobile
             return mobileLandscape ?? mobile;
           case DeviceType.desktop:
-            return desktop; // unreachable due to early return, keeps analyzer happy
+            return desktopLandscape ?? desktop ?? tablet ?? mobile;
           case DeviceType.web:
-            return desktop ?? tablet ?? mobile;
+            return desktopLandscape ?? desktop ?? tablet ?? mobile;
         }
       } else {
         switch (device) {
@@ -85,13 +106,6 @@ class SKResponsive extends StatelessWidget {
     if (builder != null) return builder(context);
     return const SizedBox.shrink();
   }
-
-  DeviceType _deviceByWidth() {
-    final w = ScaleManager.instance.screenWidth;
-    if (w < 600) return DeviceType.mobile;
-    if (w < 1200) return DeviceType.tablet;
-    return DeviceType.desktop;
-  }
 }
 
 /// Generic responsive value resolver following the same fallback rules.
@@ -103,6 +117,13 @@ class SKResponsiveValue<T> {
   final T? tabletLandscape;
   final T? desktopLandscape;
 
+  /// Forces this value set to resolve as the provided [DeviceType] when non-null.
+  final DeviceType? deviceTypeOverride;
+
+  /// Overrides the desktop lock fallback (when active) for this value.
+  final bool lockDesktopAsTablet;
+  final bool lockDesktopAsMobile;
+
   const SKResponsiveValue({
     this.mobile,
     this.tablet,
@@ -110,12 +131,30 @@ class SKResponsiveValue<T> {
     this.mobileLandscape,
     this.tabletLandscape,
     this.desktopLandscape,
-  });
+    this.deviceTypeOverride,
+    this.lockDesktopAsTablet = false,
+    this.lockDesktopAsMobile = false,
+  }) : assert(
+         !(lockDesktopAsTablet && lockDesktopAsMobile),
+         'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
+       );
 
-  T? resolve() {
+  /// Resolves the value for the current context.
+  ///
+  /// Provide [overrideDeviceType] to force resolution regardless of the detected device.
+  T? resolve({DeviceType? overrideDeviceType}) {
     final scale = ScaleManager.instance;
     final isLandscape = scale.orientation == Orientation.landscape;
-    final device = scale.deviceType;
+    final overrideFallback =
+        lockDesktopAsTablet
+            ? DesktopLockFallback.tablet
+            : lockDesktopAsMobile
+            ? DesktopLockFallback.mobile
+            : null;
+    final device =
+        overrideDeviceType ??
+        deviceTypeOverride ??
+        scale.responsiveDeviceType(override: overrideFallback);
 
     if (device == DeviceType.desktop || device == DeviceType.web) {
       return desktop ?? tablet ?? mobile;
@@ -201,6 +240,13 @@ class SKResponsiveBuilder extends StatelessWidget {
 
   final DesktopAs desktopAs;
 
+  /// Forces the builder to resolve as a specific [DeviceType]. When null, the global detection is used.
+  final DeviceType? deviceTypeOverride;
+
+  /// Overrides the desktop lock fallback (when active) for this builder.
+  final bool lockDesktopAsTablet;
+  final bool lockDesktopAsMobile;
+
   const SKResponsiveBuilder({
     super.key,
     this.builder,
@@ -211,6 +257,9 @@ class SKResponsiveBuilder extends StatelessWidget {
     this.tabletLandscape,
     this.desktopLandscape,
     this.desktopAs = DesktopAs.desktop,
+    this.deviceTypeOverride,
+    this.lockDesktopAsTablet = false,
+    this.lockDesktopAsMobile = false,
   }) : assert(
          builder != null ||
              mobile != null ||
@@ -220,12 +269,24 @@ class SKResponsiveBuilder extends StatelessWidget {
              tabletLandscape != null ||
              desktopLandscape != null,
          'At least one builder must be provided',
+       ),
+       assert(
+         !(lockDesktopAsTablet && lockDesktopAsMobile),
+         'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
        );
 
   @override
   Widget build(BuildContext context) {
     final scale = ScaleManager.instance;
-    final device = _deviceByWidth();
+    final overrideFallback =
+        lockDesktopAsTablet
+            ? DesktopLockFallback.tablet
+            : lockDesktopAsMobile
+            ? DesktopLockFallback.mobile
+            : null;
+    final device =
+        deviceTypeOverride ??
+        scale.responsiveDeviceType(override: overrideFallback);
     final orientation = scale.orientation;
 
     // Try device-specific builders first (similar to SKResponsive)
@@ -310,12 +371,5 @@ class SKResponsiveBuilder extends StatelessWidget {
           return mobile;
       }
     }
-  }
-
-  DeviceType _deviceByWidth() {
-    final w = ScaleManager.instance.screenWidth;
-    if (w < 600) return DeviceType.mobile;
-    if (w < 1200) return DeviceType.tablet;
-    return DeviceType.desktop;
   }
 }

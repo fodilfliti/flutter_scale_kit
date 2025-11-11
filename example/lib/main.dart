@@ -87,6 +87,8 @@ class _MyAppState extends State<MyApp> {
   double? _minScale;
   double? _maxScale;
 
+  ScaleBreakpoints _breakpoints = const ScaleBreakpoints();
+
   @override
   void initState() {
     super.initState();
@@ -139,6 +141,7 @@ class _MyAppState extends State<MyApp> {
       designWidth: 375,
       designHeight: 812,
       designType: DeviceType.mobile,
+      breakpoints: _breakpoints,
 
       // 🧠 INTELLIGENT AUTO-CONFIGURATION:
       // minScale & maxScale are null by default, enabling smart auto-detection!
@@ -247,6 +250,7 @@ class _MyAppState extends State<MyApp> {
       tabletPortraitSizeBoost: _tabletPortraitSizeBoost,
       desktopPortraitFontBoost: _desktopPortraitFontBoost,
       desktopPortraitSizeBoost: _desktopPortraitSizeBoost,
+      breakpoints: _breakpoints,
       onSave: (
         enabled,
         autoScale,
@@ -266,6 +270,7 @@ class _MyAppState extends State<MyApp> {
         tabletPortraitSizeBoost,
         desktopPortraitFontBoost,
         desktopPortraitSizeBoost,
+        ScaleBreakpoints breakpoints,
       ) async {
         setState(() {
           _autoScale = autoScale;
@@ -285,6 +290,7 @@ class _MyAppState extends State<MyApp> {
           _tabletPortraitSizeBoost = tabletPortraitSizeBoost;
           _desktopPortraitFontBoost = desktopPortraitFontBoost;
           _desktopPortraitSizeBoost = desktopPortraitSizeBoost;
+          _breakpoints = breakpoints;
         });
         // Force-apply: toggle disable -> wait -> restore target enabled
         final bool targetEnabled = enabled;
@@ -701,7 +707,7 @@ class HomePage extends StatelessWidget {
         border: Border.all(color: Colors.orange.shade300, width: 2.w),
         boxShadow: [
           BoxShadow(
-            color: Colors.orange.shade200.withOpacity(0.3),
+            color: Colors.orange.shade200.withValues(alpha: 0.3),
             blurRadius: 8.rSafe,
             offset: Offset(0, 4.h),
           ),

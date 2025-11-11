@@ -14,6 +14,7 @@ A high-performance responsive design package for Flutter that helps you create a
 - **🧠 Intelligent Auto-Configuration**: Automatically detects optimal scale limits based on device type, screen size, orientation, and aspect ratio—**works out of the box in 95% of cases**
 - **📱 Universal Platform Support**: Handles phones, tablets, desktop, and web with platform-specific optimizations and built-in device detection helpers
 - **🔄 Orientation-Aware Scaling**: Adjusts scaling factors on rotation with per-orientation boosts and optional overrides
+- **🧩 Full Breakpoint & Behaviour Control**: Tune mobile/tablet/desktop thresholds, choose how desktop mimics other breakpoints, and steer scaling logic without writing custom detectors
 - **🎯 Design Fidelity**: Keeps UI proportional to design mockups via size enums (`SKSize`), design tokens, and centralized `ScaleKitDesignValues`
 - **⚡ High Performance**: Cached calculations, flyweight factories, and threshold-based updates minimize rebuild overhead
 - **🛠️ Developer-Friendly API**: Familiar `.w`, `.h`, `.sp`, `.rSafe` extensions plus `SKit` helpers, responsive builders, and ThemeData integration
@@ -228,8 +229,11 @@ That’s all—no `minScale`, `maxScale`, or boost knobs required. The limits an
 Add this to your package's `pubspec.yaml` file:
 
 ```yaml
+flutter:
+  sdk: flutter
+
 dependencies:
-  flutter_scale_kit: ^1.1.4
+  flutter_scale_kit: ^1.1.5
 ```
 
 Then run:
@@ -313,6 +317,17 @@ class MyApp extends StatelessWidget {
       designWidth: 375,
       designHeight: 812,
       designType: DeviceType.mobile,
+      // Optional: customize device breakpoints (defaults: 600 / 1200 / 1600 / 1920)
+      // breakpoints: const ScaleBreakpoints(
+      //   mobileMaxWidth: 640,
+      //   tabletMaxWidth: 1180,
+      //   desktopMaxWidth: 1680,
+      // ),
+      // Optional: lock desktop/web platforms to desktop behaviour only
+      // lockDesktopPlatforms: true,
+      // Optional: pick tablet/mobile variants when locked
+      // lockDesktopAsTablet: true,
+      // lockDesktopAsMobile: true,
       child: MaterialApp(
         title: 'My App',
         // Optional: create a responsive theme once ScaleKitBuilder is in place
@@ -327,6 +342,9 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
+
+- Need to lock Scale Kit to desktop behaviour (even on smaller windows)? Pass `deviceTypeOverride: DeviceType.desktop` or `DeviceType.web` when constructing `ScaleKitBuilder`.
+- Want that lock to happen automatically whenever you’re on web/desktop? Set `lockDesktopPlatforms: true` so Scale Kit forces desktop handling only on those platforms, and use `lockDesktopAsTablet` / `lockDesktopAsMobile` to decide which breakpoint desktop should mimic when locked.
 
 - **Phones** hold between 0.85–1.25×, even on foldables.
 - **Tablets** expand comfortably without blowing out typography.
@@ -453,6 +471,10 @@ SKResponsiveBuilder(
   tablet: (_) => _CardsGrid(columns: 2),
   desktop: (_) => _CardsGrid(columns: 4),
   mobileLandscape: (_) => _CardsGrid(columns: 2),
+  // Optional: force desktop/web into tablet/mobile breakpoints
+  // lockDesktopAsTablet: true,
+  // lockDesktopAsMobile: true,
+  // deviceTypeOverride: DeviceType.tablet,
 );
 ```
 
@@ -470,6 +492,11 @@ final columns = SKit.responsiveInt(
   tablet: 4,           // optional - falls back to mobile if null
   desktop: 6,          // optional - falls back to tablet → mobile if null
   mobileLandscape: 3,  // optional override for mobile landscape
+  // Optional desktop controls (match builders):
+  // deviceTypeOverride: DeviceType.tablet,
+  // lockDesktopAsTablet: true,
+  // lockDesktopAsMobile: true,
+  // desktopAs: DesktopAs.tablet,
 );
 
 // Use in GridView
@@ -483,6 +510,8 @@ final spacing = SKit.responsiveDouble(
   mobile: 8.0,
   tablet: 16.0,
   desktop: 24.0,
+  // Same optional controls as responsiveInt
+  // lockDesktopAsMobile: true,
 );
 
 // Responsive item counts
@@ -496,6 +525,10 @@ final maxItems = SKit.responsiveInt(
 - Define responsive values once and use them throughout your UI
 - Automatic fallback: desktop → tablet → mobile
 - Works with both integers and doubles
+- Advanced options mirror the widget API:
+  - `deviceTypeOverride` to force a specific breakpoint
+  - `lockDesktopAsTablet` / `lockDesktopAsMobile` to remap desktop/web when the lock is active
+  - `desktopAs` to reuse tablet/mobile fallbacks without toggling the lock
 
 #### Design System Tokens
 
@@ -540,6 +573,8 @@ ScaleKitBuilder(
 **🎯 Quick Start Complete!** Above, you learned the essentials: setup, core APIs, and popular patterns.
 
 **📖 Now: Deep Dive** - Below you'll find comprehensive documentation for every method, advanced tuning options, and implementation details. Use this as your complete reference guide.
+
+**You stay in charge:** Scale Kit lets you redefine breakpoints, decide how desktop behaves, and adjust orientation boosts or size-class fallbacks while the engine handles all the wiring—no need for custom detectors or extension glue.
 
 ---
 
@@ -1301,7 +1336,41 @@ double textScaleFactor = scaleKit.textScaleFactor;
 double scaleWidth = scaleKit.scaleWidth;
 double scaleHeight = scaleKit.scaleHeight;
 Orientation orientation = scaleKit.orientation;
+DeviceType deviceType = scaleKit.deviceType;
+PlatformCategory platform = scaleKit.platformCategory;
+DeviceSizeClass sizeClass = scaleKit.screenSizeClass;
 ```
+
+- `deviceType` respects `deviceTypeOverride` and `lockDesktopPlatforms`.
+- `platformCategory` safely reports the underlying platform without using `dart:io`, so it works on web too.
+- `deviceTypeFor(DeviceClassificationSource source)` exposes the responsive, platform, or size classifications so you can sync with the new context helpers or custom logic.
+- `desktopLockFallback` tells you which breakpoint desktop/web will mimic when the lock is active (configurable globally or per widget).
+- `screenSizeClass` reflects the current `DeviceSizeClass` helper (small mobile → extra large desktop) derived from your configured breakpoints.
+
+### Custom Breakpoints & Size Classes
+
+Tweak the width thresholds used for device detection (and the derived size
+classes) by supplying `ScaleBreakpoints` to `ScaleKitBuilder`:
+
+```dart
+const customBreakpoints = ScaleBreakpoints(
+  mobileMaxWidth: 540,
+  tabletMaxWidth: 1100,
+  desktopMaxWidth: 1650,
+  largeDesktopMaxWidth: 2200,
+);
+
+return ScaleKitBuilder(
+  breakpoints: customBreakpoints,
+  designWidth: 375,
+  designHeight: 812,
+  child: MaterialApp(...),
+);
+```
+
+`ScaleManager.screenSizeClass` and the new context helpers (see below) let you
+branch on the expanded `DeviceSizeClass` enum—ranging from `smallMobile` all the
+way up to `extraLargeDesktop`.
 
 <a id="responsive-builder-columns"></a>
 
@@ -1321,6 +1390,10 @@ SKResponsive(
   tablet: (_) => Text('Tablet portrait'),
   tabletLandscape: (_) => Text('Tablet landscape'), // Falls back to tablet -> mobileLandscape -> mobile
   desktop: (_) => Text('Desktop'),
+  // Optional: force a device type (e.g., keep desktop UI on web regardless of width)
+  deviceTypeOverride: DeviceType.desktop,
+  // Optional: when desktop lock is active, force tablet/mobile branches
+  lockDesktopAsTablet: true,
 )
 ```
 
@@ -1349,6 +1422,10 @@ SKResponsiveBuilder(
     return Text('Desktop or other');
   },
   desktopAs: DesktopAs.tablet, // Optional: make desktop behave like tablet
+  // Optional: force a specific device classification for this builder
+  deviceTypeOverride: DeviceType.desktop,
+  // Optional: push locked desktop to mobile/tablet branches
+  lockDesktopAsMobile: true,
 )
 ```
 
@@ -1383,6 +1460,8 @@ Both widgets support the same fallback rules:
 
 - Device: desktop → tablet → mobile; tablet → mobile
 - Orientation: landscape → device portrait; for tablet.landscape → mobile.landscape → mobile.portrait
+- Desktop remapping: control it globally with `ScaleKitBuilder` (`lockDesktopPlatforms`, `lockDesktopAsTablet`, `lockDesktopAsMobile`) or per widget/value via the same flags. Use `deviceTypeOverride` to bypass detection entirely when you need a hard switch.
+- Remapping respects live window size: e.g. `lockDesktopAsMobile` only routes desktop/web to the mobile branch when the window width falls under the mobile breakpoint; wider windows continue to render the desktop builder.
 
 Desktop behavior (CSS-like):
 
@@ -1462,6 +1541,19 @@ Notes:
 - `context.isMobile` - Check if device is mobile
 - `context.isTablet` - Check if device is tablet
 - `context.isDesktop` - Check if device is desktop
+- `context.isTypeOfMobile({source: DeviceClassificationSource.responsive})` - Check mobile classification across responsive/platform/size sources
+- `context.isTypeOfTablet({source: DeviceClassificationSource.responsive})` - Check tablet classification across responsive/platform/size sources
+- `context.isTypeOfDesktop({source: DeviceClassificationSource.responsive, includeWeb: true})` - Check desktop classification, optionally treating web as desktop
+- `context.isDesktopPlatform` - True when running on Windows/macOS/Linux/Web
+- `context.isWebPlatform` - True when running on the web
+- `DeviceClassificationSource` lets you target the responsive result (default), the raw platform classification, or width-only size classification when using the helpers above.
+- `context.screenSizeClass` - Retrieve the current `DeviceSizeClass`
+- `context.isSmallMobileSize` / `isMobileSize` / `isLargeMobileSize` / `isTabletSize` / `isLargeTabletSize` / `isDesktopSize` / `isLargeDesktopSize` / `isExtraLargeDesktopSize` - Convenience checks for the expanded size classes
+- `context.scaleBreakpoints` - Access the active breakpoint configuration
+
+### DeviceType Helpers
+
+- `deviceType.isTypeOfMobile` / `.isTypeOfTablet` / `.isTypeOfDesktop` / `.isTypeOfWeb` expose simple checks on the enum itself.
 
 ### ScaleManager Properties
 

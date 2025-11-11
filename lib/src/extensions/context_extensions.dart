@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/scale_manager.dart';
 import '../core/scale_value_factory.dart';
-import '../core/device_detector.dart';
 
 /// BuildContext extensions for easy access to scaling utilities
 extension ScaleContextExtension on BuildContext {
@@ -84,13 +83,78 @@ extension ScaleContextExtension on BuildContext {
 
   /// Check if device is mobile
   bool get isMobile =>
-      DeviceDetector.detectFromContext(this) == DeviceType.mobile;
+      scaleManager.deviceTypeFor(DeviceClassificationSource.size) ==
+      DeviceType.mobile;
 
   /// Check if device is tablet
   bool get isTablet =>
-      DeviceDetector.detectFromContext(this) == DeviceType.tablet;
+      scaleManager.deviceTypeFor(DeviceClassificationSource.size) ==
+      DeviceType.tablet;
 
   /// Check if device is desktop
   bool get isDesktop =>
-      DeviceDetector.detectFromContext(this) == DeviceType.desktop;
+      scaleManager.deviceTypeFor(DeviceClassificationSource.size) ==
+      DeviceType.desktop;
+
+  /// Check if the responsive classification resolves to mobile/tablet/desktop.
+  ///
+  /// Use [source] to control which classification is consulted (responsive/platform/size).
+  bool isTypeOfMobile({
+    DeviceClassificationSource source = DeviceClassificationSource.responsive,
+  }) => scaleManager.deviceTypeFor(source) == DeviceType.mobile;
+
+  /// Check if the responsive classification resolves to tablet for the chosen [source].
+  bool isTypeOfTablet({
+    DeviceClassificationSource source = DeviceClassificationSource.responsive,
+  }) => scaleManager.deviceTypeFor(source) == DeviceType.tablet;
+
+  /// Check if the responsive classification resolves to desktop (optionally treating web as desktop).
+  bool isTypeOfDesktop({
+    DeviceClassificationSource source = DeviceClassificationSource.responsive,
+    bool includeWeb = true,
+  }) {
+    final type = scaleManager.deviceTypeFor(source);
+    if (type == DeviceType.desktop) return true;
+    if (!includeWeb) return false;
+    return type == DeviceType.web;
+  }
+
+  /// True when the current platform is a desktop OS (Windows/macOS/Linux/Web).
+  bool get isDesktopPlatform {
+    switch (scaleManager.platformCategory) {
+      case PlatformCategory.windows:
+      case PlatformCategory.macos:
+      case PlatformCategory.linux:
+      case PlatformCategory.web:
+        return true;
+      case PlatformCategory.android:
+      case PlatformCategory.ios:
+      case PlatformCategory.fuchsia:
+        return false;
+    }
+  }
+
+  /// True when running on the web platform.
+  bool get isWebPlatform =>
+      scaleManager.platformCategory == PlatformCategory.web;
+
+  /// Screen size class based on the configured breakpoints.
+  DeviceSizeClass get screenSizeClass => scaleManager.screenSizeClass;
+
+  /// Convenience checker for screen size classes.
+  bool isScreenSize(DeviceSizeClass sizeClass) => screenSizeClass == sizeClass;
+
+  bool get isSmallMobileSize => screenSizeClass == DeviceSizeClass.smallMobile;
+  bool get isMobileSize => screenSizeClass == DeviceSizeClass.mobile;
+  bool get isLargeMobileSize => screenSizeClass == DeviceSizeClass.largeMobile;
+  bool get isTabletSize => screenSizeClass == DeviceSizeClass.tablet;
+  bool get isLargeTabletSize => screenSizeClass == DeviceSizeClass.largeTablet;
+  bool get isDesktopSize => screenSizeClass == DeviceSizeClass.desktop;
+  bool get isLargeDesktopSize =>
+      screenSizeClass == DeviceSizeClass.largeDesktop;
+  bool get isExtraLargeDesktopSize =>
+      screenSizeClass == DeviceSizeClass.extraLargeDesktop;
+
+  /// Access the configured breakpoints for advanced use-cases.
+  ScaleBreakpoints get scaleBreakpoints => scaleManager.breakpoints;
 }
