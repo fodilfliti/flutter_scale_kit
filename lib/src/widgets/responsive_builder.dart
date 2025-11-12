@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import '../core/scale_manager.dart';
 import '../core/responsive_enums.dart';
+import 'scale_kit_builder.dart';
 
 typedef ResponsiveWidgetBuilder = Widget Function(BuildContext context);
 
@@ -45,6 +46,7 @@ class SKResponsive extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScaleKitScope.watch(context);
     final scale = ScaleManager.instance;
     final overrideFallback =
         lockDesktopAsTablet
@@ -142,7 +144,14 @@ class SKResponsiveValue<T> {
   /// Resolves the value for the current context.
   ///
   /// Provide [overrideDeviceType] to force resolution regardless of the detected device.
-  T? resolve({DeviceType? overrideDeviceType}) {
+  ///
+  /// Pass [context] when you need the value to refresh automatically during
+  /// viewport changes (resizes, rotation). When omitted, the caller needs to
+  /// trigger a rebuild manually after the environment changes.
+  T? resolve({DeviceType? overrideDeviceType, BuildContext? context}) {
+    if (context != null) {
+      ScaleKitScope.watch(context);
+    }
     final scale = ScaleManager.instance;
     final isLandscape = scale.orientation == Orientation.landscape;
     final overrideFallback =
@@ -277,6 +286,7 @@ class SKResponsiveBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScaleKitScope.watch(context);
     final scale = ScaleManager.instance;
     final overrideFallback =
         lockDesktopAsTablet

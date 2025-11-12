@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.10] - 2025-11-12
+
+### ✨ Added
+
+- Optional `context` parameters for `SKit.columns()`, `SKit.responsiveInt()`, `SKit.responsiveDouble()`, and `SKResponsiveValue.resolve()` so responsive values can subscribe to viewport changes automatically.
+
+### 🔧 Fixed
+
+- `SKResponsive` and `SKResponsiveBuilder` now depend on `ScaleKitScope`, ensuring device/orientation branches rebuild as soon as the window resizes or rotates.
+- Documentation and examples updated to pass `context` into responsive value helpers, matching the new behavior.
+
 ## [1.1.9] - 2025-11-12
 
 ### ✨ Added
@@ -23,7 +34,6 @@ All notable changes to this project will be documented in this file.
 
 ### 🔧 Fixed
 
-- Relaxed auto-detected scale clamps for desktop/web windows so ultra-short or ultra-narrow viewports no longer force oversized fonts and spacing when resizing.
 - Relaxed auto-detected scale clamps for desktop/web windows so ultra-short or ultra-narrow viewports no longer force oversized fonts and spacing when resizing.
 
 ## [1.1.6] - 2025-11-12

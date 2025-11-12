@@ -233,7 +233,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.1.9
+  flutter_scale_kit: ^1.1.10
 ```
 
 Then run:
@@ -488,6 +488,7 @@ For simple responsive values like grid columns, spacing, or counts, use responsi
 ```dart
 // Responsive grid columns
 final columns = SKit.responsiveInt(
+  context: context,
   mobile: 2,           // required base value
   tablet: 4,           // optional - falls back to mobile if null
   desktop: 6,          // optional - falls back to tablet → mobile if null
@@ -507,6 +508,7 @@ GridView.count(
 
 // Responsive spacing values
 final spacing = SKit.responsiveDouble(
+  context: context,
   mobile: 8.0,
   tablet: 16.0,
   desktop: 24.0,
@@ -516,6 +518,7 @@ final spacing = SKit.responsiveDouble(
 
 // Responsive item counts
 final maxItems = SKit.responsiveInt(
+  context: context,
   mobile: 10,
   tablet: 20,
   desktop: 50,
@@ -529,6 +532,7 @@ final maxItems = SKit.responsiveInt(
   - `deviceTypeOverride` to force a specific breakpoint
   - `lockDesktopAsTablet` / `lockDesktopAsMobile` to remap desktop/web when the lock is active
   - `desktopAs` to reuse tablet/mobile fallbacks without toggling the lock
+- Pass the current `BuildContext` (`context: context`) so values refresh automatically when the window resizes or rotates.
 
 #### Design System Tokens
 
@@ -1447,6 +1451,7 @@ SKResponsiveBuilder(
 ```dart
 // Responsive integer with fallback rules (alias for columns)
 final cols = SKit.responsiveInt(
+  context: context,
   mobile: 2, // required base
   tablet: 4, // optional (falls back to mobile if null)
   desktop: 8, // optional (falls back to tablet->mobile if null)
@@ -1482,6 +1487,7 @@ SKResponsive(
 
 // Resolve an integer (e.g., Grid crossAxisCount) with desktop mapped to tablet
 final cols = SKit.responsiveInt(
+  context: context,
   mobile: 2,
   tablet: 4,
   desktop: 8,

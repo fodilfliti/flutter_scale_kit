@@ -470,6 +470,10 @@ class ScaleKitScope extends InheritedWidget {
     return context.dependOnInheritedWidgetOfExactType<ScaleKitScope>();
   }
 
+  static void watch(BuildContext context) {
+    maybeOf(context);
+  }
+
   @override
   bool updateShouldNotify(covariant ScaleKitScope oldWidget) {
     return oldWidget.tick != tick;

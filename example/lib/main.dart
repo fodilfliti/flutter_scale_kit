@@ -1290,6 +1290,7 @@ class HomePage extends StatelessWidget {
               Builder(
                 builder: (context) {
                   final cols = SKit.responsiveInt(
+                    context: context,
                     mobile: 2,
                     tablet: 4,
                     desktop: 8,
@@ -1304,26 +1305,31 @@ class HomePage extends StatelessWidget {
                 },
               ),
               SizedBox(height: 8.h),
-              Container(
-                height: 120.h,
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8.rSafe),
-                ),
-                child: GridView.count(
-                  crossAxisCount: SKit.responsiveInt(
-                    mobile: 2,
-                    tablet: 4,
-                    desktop: 8,
-                  ),
-                  crossAxisSpacing: 8.w,
-                  mainAxisSpacing: 8.h,
-                  children: List.generate(
-                    8,
-                    (i) => Container(color: Colors.blue[(i % 9 + 1) * 100]),
-                  ),
-                ),
+              Builder(
+                builder: (context) {
+                  return Container(
+                    height: 120.h,
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(8.rSafe),
+                    ),
+                    child: GridView.count(
+                      crossAxisCount: SKit.responsiveInt(
+                        context: context,
+                        mobile: 2,
+                        tablet: 4,
+                        desktop: 8,
+                      ),
+                      crossAxisSpacing: 8.w,
+                      mainAxisSpacing: 8.h,
+                      children: List.generate(
+                        8,
+                        (i) => Container(color: Colors.blue[(i % 9 + 1) * 100]),
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),

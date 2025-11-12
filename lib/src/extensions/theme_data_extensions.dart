@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/scale_manager.dart';
 import '../core/font_config.dart';
+import '../widgets/scale_kit_builder.dart';
 
 /// ThemeData extensions for responsive theme configuration
 extension ScaleThemeDataExtension on ThemeData {
@@ -115,6 +116,7 @@ class ResponsiveThemeData {
     double? fontSizeFactor,
     Map<String, Object>? other,
   }) {
+    ScaleKitScope.watch(context);
     final baseTheme = ThemeData(
       colorScheme:
           colorScheme ?? ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -158,6 +160,7 @@ class ResponsiveThemeData {
     required BuildContext context,
     required TextTheme baseTextTheme,
   }) {
+    ScaleKitScope.watch(context);
     // Get current language code safely
     String languageCode = 'en'; // Default fallback
     try {

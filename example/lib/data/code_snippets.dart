@@ -101,12 +101,14 @@ SKResponsiveBuilder(
 
   // SKit Helper Class
   static const skitHelper = '''final cols = SKit.responsiveInt(
+  context: context,
   mobile: 1,
   tablet: 2,
   desktop: 3,
 );
 
 final padding = SKit.responsiveDouble(
+  context: context,
   mobile: 8,
   tablet: 16,
   desktop: 24,

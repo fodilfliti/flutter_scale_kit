@@ -250,6 +250,7 @@ void main() {
             child: Builder(
               builder: (context) {
                 resolved = SKit.responsiveInt(
+                  context: context,
                   mobile: 2,
                   desktop: 8,
                   lockDesktopAsMobile: true,
@@ -292,6 +293,7 @@ void main() {
             child: Builder(
               builder: (context) {
                 resolved = SKit.responsiveInt(
+                  context: context,
                   mobile: 2,
                   desktop: 8,
                   lockDesktopAsMobile: true,
@@ -560,6 +562,91 @@ void main() {
       expect(buildCount.value, greaterThan(1));
     },
   );
+
+  testWidgets('SKResponsive rebuilds with orientation changes', (
+    WidgetTester tester,
+  ) async {
+    final originalSize = tester.view.physicalSize;
+    final originalPixelRatio = tester.view.devicePixelRatio;
+    addTearDown(() {
+      tester.view.physicalSize = originalSize;
+      tester.view.devicePixelRatio = originalPixelRatio;
+    });
+
+    tester.view.physicalSize = const Size(500, 900);
+    tester.view.devicePixelRatio = 1.0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ScaleKitBuilder(
+          designWidth: 375,
+          designHeight: 812,
+          child: SKResponsive(
+            mobile: (_) => const Text('mobile'),
+            mobileLandscape: (_) => const Text('mobile-landscape'),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(find.text('mobile'), findsOneWidget);
+
+    tester.view.physicalSize = const Size(900, 500);
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(find.text('mobile-landscape'), findsOneWidget);
+  });
+
+  testWidgets('SKit.responsiveInt updates after viewport changes', (
+    WidgetTester tester,
+  ) async {
+    final originalSize = tester.view.physicalSize;
+    final originalPixelRatio = tester.view.devicePixelRatio;
+    addTearDown(() {
+      tester.view.physicalSize = originalSize;
+      tester.view.devicePixelRatio = originalPixelRatio;
+    });
+
+    tester.view.physicalSize = const Size(500, 900);
+    tester.view.devicePixelRatio = 1.0;
+
+    late int resolved;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ScaleKitBuilder(
+          designWidth: 375,
+          designHeight: 812,
+          child: Builder(
+            builder: (context) {
+              resolved = SKit.responsiveInt(
+                context: context,
+                mobile: 2,
+                tablet: 4,
+                desktop: 6,
+                deviceTypeOverride: ScaleManager.instance.sizeDeviceType,
+              );
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(resolved, 2);
+
+    tester.view.physicalSize = const Size(900, 900);
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(resolved, 4);
+
+    tester.view.physicalSize = const Size(1500, 900);
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(resolved, 6);
+  });
 }
 
 class _StatefulProbe extends StatefulWidget {

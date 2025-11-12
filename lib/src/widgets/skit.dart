@@ -21,6 +21,7 @@ import 'scaled_container.dart';
 import 'spacing_widgets.dart';
 import '../core/scale_manager.dart';
 import '../core/responsive_enums.dart';
+import 'scale_kit_builder.dart';
 
 /// Defines how radius values should be resolved.
 enum SKRadiusMode {
@@ -1426,7 +1427,12 @@ class SKit {
   /// - columns(mobile: 2) => tablet=2, desktop=2
   /// - columns(mobile: 2, desktop: 8) => tablet=2, desktop=8
   /// - columns(mobile: 2, mobileLandscape: 4) => tabletLandscape=4 (if not provided)
+  ///
+  /// Pass [context] to automatically refresh when the viewport resizes or the
+  /// device orientation changes. When omitted, the value still resolves
+  /// correctly, but the caller must rebuild manually.
   static int columns({
+    BuildContext? context,
     int? mobile,
     int? tablet,
     int? desktop,
@@ -1443,6 +1449,7 @@ class SKit {
       'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
     );
     return responsiveInt(
+      context: context,
       mobile: mobile,
       tablet: tablet,
       desktop: desktop,
@@ -1459,7 +1466,11 @@ class SKit {
   /// Resolves a responsive integer with the same rules as [columns],
   /// but with a generic name suitable for any integer-based config
   /// (e.g., grid columns, padding steps, itemCount, etc.).
+  ///
+  /// Supplying [context] registers the caller with `ScaleKitScope`, ensuring the
+  /// value re-computes automatically during window resizes and rotations.
   static int responsiveInt({
+    BuildContext? context,
     int? mobile,
     int? tablet,
     int? desktop,
@@ -1475,6 +1486,9 @@ class SKit {
       !(lockDesktopAsTablet && lockDesktopAsMobile),
       'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
     );
+    if (context != null) {
+      ScaleKitScope.watch(context);
+    }
     final scale = ScaleManager.instance;
     final isLandscape = scale.orientation == Orientation.landscape;
     final overrideFallback =
@@ -1538,7 +1552,10 @@ class SKit {
   }
 
   /// Resolves a responsive double value using the same fallback rules as [responsiveInt].
+  ///
+  /// Provide [context] to subscribe to viewport changes automatically.
   static double responsiveDouble({
+    BuildContext? context,
     double? mobile,
     double? tablet,
     double? desktop,
@@ -1554,6 +1571,9 @@ class SKit {
       !(lockDesktopAsTablet && lockDesktopAsMobile),
       'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
     );
+    if (context != null) {
+      ScaleKitScope.watch(context);
+    }
     final scale = ScaleManager.instance;
     final isLandscape = scale.orientation == Orientation.landscape;
     final overrideFallback =

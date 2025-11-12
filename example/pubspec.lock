@@ -145,7 +145,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.1.9"
+    version: "1.1.10"
   flutter_screenutil:
     dependency: "direct main"
     description:
