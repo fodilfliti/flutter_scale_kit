@@ -157,8 +157,6 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
   Locale? _previousLocale;
   bool _isInitialized = false;
   VoidCallback? _enabledListener;
-  int _rebuildTick = 0;
-
   static const double _sizeChangeThreshold = 0.05;
 
   @override
@@ -449,14 +447,12 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     }
 
     if (mounted) {
-      setState(() {
-        _rebuildTick++;
-      });
+      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return KeyedSubtree(key: ValueKey(_rebuildTick), child: widget.child);
+    return widget.child;
   }
 }
