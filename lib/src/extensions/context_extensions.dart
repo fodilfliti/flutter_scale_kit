@@ -155,6 +155,33 @@ extension ScaleContextExtension on BuildContext {
   bool get isExtraLargeDesktopSize =>
       screenSizeClass == DeviceSizeClass.extraLargeDesktop;
 
+  /// True when running on desktop/web but the viewport currently resolves to a mobile size class.
+  bool get isDesktopMobileSize =>
+      isDesktopPlatform &&
+      (isSmallMobileSize || isMobileSize || isLargeMobileSize);
+
+  /// True when running on desktop/web and the viewport currently resolves to a tablet size class.
+  bool get isDesktopTabletSize =>
+      isDesktopPlatform && (isTabletSize || isLargeTabletSize);
+
+  /// True when running on desktop/web and the viewport currently resolves to a desktop or larger size class.
+  bool get isDesktopDesktopSize =>
+      isDesktopPlatform &&
+      (isDesktopSize || isLargeDesktopSize || isExtraLargeDesktopSize);
+
+  /// True when running on desktop/web and the viewport resolves to a desktop or larger class.
+  bool get isDesktopDesktopOrLarger => isDesktopDesktopSize;
+
+  /// True on desktop/web when the width is at least the tablet breakpoint.
+  bool get isDesktopAtLeastTablet =>
+      isDesktopPlatform &&
+      scaleManager.screenWidth > scaleBreakpoints.mobileMaxWidth;
+
+  /// True on desktop/web when the width is at least the desktop breakpoint.
+  bool get isDesktopAtLeastDesktop =>
+      isDesktopPlatform &&
+      scaleManager.screenWidth > scaleBreakpoints.tabletMaxWidth;
+
   /// Access the configured breakpoints for advanced use-cases.
   ScaleBreakpoints get scaleBreakpoints => scaleManager.breakpoints;
 }

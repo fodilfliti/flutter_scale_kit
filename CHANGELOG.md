@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.6] - 2025-11-12
+
+### ✨ Added
+
+- New desktop-aware context helpers (`isDesktopMobileSize`, `isDesktopTabletSize`, `isDesktopDesktopOrLarger`) combining platform detection with size classes.
+- Added desktop min-width helpers (`isDesktopAtLeastTablet`, `isDesktopAtLeastDesktop`) mirroring CSS breakpoint semantics.
+- Live debug panel now surfaces desktop size flags for quick inspection.
+
+### 🔧 Fixed
+
+- Relaxed auto-detected scale clamps for desktop/web windows so ultra-short or ultra-narrow viewports no longer force oversized fonts and spacing when resizing.
+
+### 📚 Documentation
+
+- README context-extension reference updated with the new desktop helpers and expanded size-class guidance.
+
 ## [1.1.5] - 2025-11-11
 
 ### ✨ Added

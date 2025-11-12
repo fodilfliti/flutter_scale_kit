@@ -233,7 +233,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.1.5
+  flutter_scale_kit: ^1.1.6
 ```
 
 Then run:
@@ -1549,6 +1549,8 @@ Notes:
 - `DeviceClassificationSource` lets you target the responsive result (default), the raw platform classification, or width-only size classification when using the helpers above.
 - `context.screenSizeClass` - Retrieve the current `DeviceSizeClass`
 - `context.isSmallMobileSize` / `isMobileSize` / `isLargeMobileSize` / `isTabletSize` / `isLargeTabletSize` / `isDesktopSize` / `isLargeDesktopSize` / `isExtraLargeDesktopSize` - Convenience checks for the expanded size classes
+- `context.isDesktopMobileSize` / `isDesktopTabletSize` / `isDesktopDesktopOrLarger` - Desktop/web-only size flags combining platform + size class
+- `context.isDesktopAtLeastTablet` / `isDesktopAtLeastDesktop` - Desktop/web-only min-width helpers (use previous breakpoint thresholds, CSS-style `min-width`)
 - `context.scaleBreakpoints` - Access the active breakpoint configuration
 
 ### DeviceType Helpers

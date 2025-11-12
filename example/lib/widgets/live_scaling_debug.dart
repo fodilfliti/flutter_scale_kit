@@ -15,6 +15,11 @@ class LiveScalingDebug extends StatelessWidget {
     final scaledFont = scale.getFontSize(baseFont);
     final scaledW = scale.getWidth(baseW);
     final scaledH = scale.getHeight(baseH);
+    final desktopMobile = context.isDesktopMobileSize;
+    final desktopTablet = context.isDesktopTabletSize;
+    final desktopDesktop = context.isDesktopDesktopOrLarger;
+    final desktopMinTablet = context.isDesktopAtLeastTablet;
+    final desktopMinDesktop = context.isDesktopAtLeastDesktop;
 
     return SectionCard(
       title: 'Live Scaling Debug',
@@ -75,6 +80,25 @@ Orientation orientation = scale.orientation;''',
                   style: TextStyle(
                     fontSize: 11.sp,
                     color: Colors.grey.shade700,
+                  ),
+                ),
+                SizedBox(height: 6.h),
+                Text(
+                  'desktop-mobile=${desktopMobile ? 'yes' : 'no'}, '
+                  'desktop-tablet=${desktopTablet ? 'yes' : 'no'}, '
+                  'desktop-desktop=${desktopDesktop ? 'yes' : 'no'}',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                SizedBox(height: 6.h),
+                Text(
+                  '≥tablet=${desktopMinTablet ? 'yes' : 'no'}, '
+                  '≥desktop=${desktopMinDesktop ? 'yes' : 'no'}',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: Colors.grey.shade600,
                   ),
                 ),
                 SizedBox(height: 6.h),

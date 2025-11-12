@@ -538,11 +538,13 @@ class ScaleManager {
       _screenWidth,
       _screenHeight,
     );
+    final platform = platformCategory;
 
     // Calculate how much the screen differs from design
     final rawScaleW = _screenWidth / _designWidth;
     final rawScaleH = _screenHeight / _designHeight;
     final maxRawScale = rawScaleW > rawScaleH ? rawScaleW : rawScaleH;
+    final minRawScale = rawScaleW < rawScaleH ? rawScaleW : rawScaleH;
 
     (double minScale, double maxScale) defaults;
 
@@ -610,8 +612,43 @@ class ScaleManager {
         break;
     }
 
-    final double effectiveMin = _minScaleOverride ?? defaults.$1;
-    final double effectiveMax = _maxScaleOverride ?? defaults.$2;
+    double effectiveMin = _minScaleOverride ?? defaults.$1;
+    double effectiveMax = _maxScaleOverride ?? defaults.$2;
+
+    if (_minScaleOverride == null && minRawScale < effectiveMin) {
+      final bool isDesktop =
+          deviceType == DeviceType.desktop || deviceType == DeviceType.web;
+      final bool isDesktopPlatform = switch (platform) {
+        PlatformCategory.windows ||
+        PlatformCategory.macos ||
+        PlatformCategory.linux ||
+        PlatformCategory.web => true,
+        PlatformCategory.android ||
+        PlatformCategory.ios ||
+        PlatformCategory.fuchsia => false,
+      };
+      if (isDesktop || isDesktopPlatform) {
+        final double lowerBound;
+        switch (aspectCategory) {
+          case AspectRatioCategory.wide:
+            lowerBound = 0.35;
+            break;
+          case AspectRatioCategory.narrow:
+            lowerBound = 0.4;
+            break;
+          case AspectRatioCategory.standard:
+            lowerBound = 0.45;
+            break;
+        }
+        final double adjustedMin =
+            minRawScale < lowerBound ? lowerBound : minRawScale;
+        if (adjustedMin < effectiveMin) {
+          effectiveMin = adjustedMin;
+        }
+      } else {
+        effectiveMin = minRawScale;
+      }
+    }
 
     // Safety check: ensure min <= max
     if (effectiveMin > effectiveMax) {

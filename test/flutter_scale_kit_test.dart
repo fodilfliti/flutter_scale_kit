@@ -325,7 +325,15 @@ void main() {
 
     Future<void> captureWidth(
       double width,
-      void Function(DeviceSizeClass sizeClass, DeviceType deviceType)
+      void Function(
+        DeviceSizeClass sizeClass,
+        DeviceType deviceType,
+        bool desktopMobile,
+        bool desktopTablet,
+        bool desktopDesktop,
+        bool desktopAtLeastTablet,
+        bool desktopAtLeastDesktop,
+      )
       assertions,
     ) async {
       tester.view.physicalSize = Size(width, 900);
@@ -333,6 +341,11 @@ void main() {
 
       late DeviceSizeClass capturedSizeClass;
       late DeviceType capturedDeviceType;
+      late bool capturedDesktopMobile;
+      late bool capturedDesktopTablet;
+      late bool capturedDesktopDesktop;
+      late bool capturedDesktopAtLeastTablet;
+      late bool capturedDesktopAtLeastDesktop;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -352,6 +365,11 @@ void main() {
                 capturedDeviceType = scale.deviceTypeFor(
                   DeviceClassificationSource.size,
                 );
+                capturedDesktopMobile = context.isDesktopMobileSize;
+                capturedDesktopTablet = context.isDesktopTabletSize;
+                capturedDesktopDesktop = context.isDesktopDesktopOrLarger;
+                capturedDesktopAtLeastTablet = context.isDesktopAtLeastTablet;
+                capturedDesktopAtLeastDesktop = context.isDesktopAtLeastDesktop;
                 return const SizedBox.shrink();
               },
             ),
@@ -360,22 +378,69 @@ void main() {
       );
 
       await tester.pumpAndSettle();
-      assertions(capturedSizeClass, capturedDeviceType);
+      assertions(
+        capturedSizeClass,
+        capturedDeviceType,
+        capturedDesktopMobile,
+        capturedDesktopTablet,
+        capturedDesktopDesktop,
+        capturedDesktopAtLeastTablet,
+        capturedDesktopAtLeastDesktop,
+      );
     }
 
-    await captureWidth(480, (sizeClass, deviceType) {
+    await captureWidth(480, (
+      sizeClass,
+      deviceType,
+      dMobile,
+      dTablet,
+      dDesk,
+      dMinTablet,
+      dMinDesk,
+    ) {
       expect(sizeClass, DeviceSizeClass.mobile);
       expect(deviceType, DeviceType.mobile);
+      expect(dMobile, isTrue);
+      expect(dTablet, isFalse);
+      expect(dDesk, isFalse);
+      expect(dMinTablet, isFalse);
+      expect(dMinDesk, isFalse);
     });
 
-    await captureWidth(980, (sizeClass, deviceType) {
+    await captureWidth(980, (
+      sizeClass,
+      deviceType,
+      dMobile,
+      dTablet,
+      dDesk,
+      dMinTablet,
+      dMinDesk,
+    ) {
       expect(sizeClass, DeviceSizeClass.largeTablet);
-      expect(deviceType, DeviceType.tablet);
+      expect(deviceType, DeviceType.desktop);
+      expect(dMobile, isFalse);
+      expect(dTablet, isTrue);
+      expect(dDesk, isTrue);
+      expect(dMinTablet, isTrue);
+      expect(dMinDesk, isTrue);
     });
 
-    await captureWidth(1700, (sizeClass, deviceType) {
+    await captureWidth(1700, (
+      sizeClass,
+      deviceType,
+      dMobile,
+      dTablet,
+      dDesk,
+      dMinTablet,
+      dMinDesk,
+    ) {
       expect(sizeClass, DeviceSizeClass.largeDesktop);
       expect(deviceType, DeviceType.desktop);
+      expect(dMobile, isFalse);
+      expect(dTablet, isFalse);
+      expect(dDesk, isTrue);
+      expect(dMinTablet, isTrue);
+      expect(dMinDesk, isTrue);
     });
   });
 

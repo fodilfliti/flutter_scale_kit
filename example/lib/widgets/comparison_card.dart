@@ -65,7 +65,7 @@ class ComparisonCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: item.color.withOpacity(0.1),
+                  color: item.color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4.r),
                   border: Border.all(color: item.color, width: 1),
                 ),
@@ -101,10 +101,10 @@ class ComparisonCard extends StatelessWidget {
             SizedBox(height: 8.h),
             Container(
               decoration: BoxDecoration(
-                color: item.color.withOpacity(0.05),
+                color: item.color.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(6.r),
                 border: Border.all(
-                  color: item.color.withOpacity(0.3),
+                  color: item.color.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
