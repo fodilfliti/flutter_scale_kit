@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.9] - 2025-11-12
+
+### ✨ Added
+
+- `ScaleManager.setRadiusBounds()` and `resetRadiusBounds()` to tailor `.r` scaling ranges per orientation when you need bespoke limits.
+
+### 🔧 Fixed
+
+- `.r` radius scaling now adapts to device type, orientation, and aspect ratio, automatically clamping values so corners stay tasteful on desktop/web while remaining responsive on mobile.
+
 ## [1.1.8] - 2025-11-12
 
 ### 🔧 Fixed

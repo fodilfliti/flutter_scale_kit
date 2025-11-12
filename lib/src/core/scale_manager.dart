@@ -913,9 +913,25 @@ class ScaleManager {
   /// - [radius] - The radius value to scale
   ///
   /// Returns the scaled radius based on the current scale factor.
+  double? _radiusPortraitMinOverride;
+  double? _radiusPortraitMaxOverride;
+  double? _radiusLandscapeMinOverride;
+  double? _radiusLandscapeMaxOverride;
+
   double getRadius(double radius) {
     if (!_enabled) return radius;
-    return radius * _scaleWidth;
+    if (radius == 0) return 0;
+
+    final double multiplier = _computeRadiusMultiplier();
+    final (double minMultiplier, double maxMultiplier) = _resolveRadiusBounds();
+
+    final double scaled = radius * multiplier;
+    final double min = radius * minMultiplier;
+    final double max = radius * maxMultiplier;
+
+    if (scaled < min) return min;
+    if (scaled > max) return max;
+    return scaled;
   }
 
   double _radiusSafePortraitMinMultiplier = 0.85;
@@ -959,6 +975,57 @@ class ScaleManager {
       _radiusSafeLandscapeMinMultiplier <= _radiusSafeLandscapeMaxMultiplier,
       'landscapeMin must be <= landscapeMax',
     );
+  }
+
+  /// Configure the clamping multipliers used by [getRadius].
+  ///
+  /// Overrides apply per-orientation. Pass values greater than zero.
+  /// Use [resetRadiusBounds] to restore automatic behaviour.
+  void setRadiusBounds({
+    double? portraitMin,
+    double? portraitMax,
+    double? landscapeMin,
+    double? landscapeMax,
+  }) {
+    void validate(String label, double? value) {
+      if (value != null) {
+        assert(value > 0, '$label must be > 0');
+      }
+    }
+
+    validate('portraitMin', portraitMin);
+    validate('portraitMax', portraitMax);
+    validate('landscapeMin', landscapeMin);
+    validate('landscapeMax', landscapeMax);
+
+    if (portraitMin != null) _radiusPortraitMinOverride = portraitMin;
+    if (portraitMax != null) _radiusPortraitMaxOverride = portraitMax;
+    if (landscapeMin != null) _radiusLandscapeMinOverride = landscapeMin;
+    if (landscapeMax != null) _radiusLandscapeMaxOverride = landscapeMax;
+
+    if (_radiusPortraitMinOverride != null &&
+        _radiusPortraitMaxOverride != null) {
+      assert(
+        _radiusPortraitMinOverride! <= _radiusPortraitMaxOverride!,
+        'portraitMin must be <= portraitMax',
+      );
+    }
+
+    if (_radiusLandscapeMinOverride != null &&
+        _radiusLandscapeMaxOverride != null) {
+      assert(
+        _radiusLandscapeMinOverride! <= _radiusLandscapeMaxOverride!,
+        'landscapeMin must be <= landscapeMax',
+      );
+    }
+  }
+
+  /// Clears any overrides applied via [setRadiusBounds].
+  void resetRadiusBounds() {
+    _radiusPortraitMinOverride = null;
+    _radiusPortraitMaxOverride = null;
+    _radiusLandscapeMinOverride = null;
+    _radiusLandscapeMaxOverride = null;
   }
 
   /// Gets a scaled radius value with gentle clamping to avoid exaggerated rounding.
@@ -1019,6 +1086,105 @@ class ScaleManager {
   /// not be called directly.
   void clearCache() {
     // Cache clearing is handled by ScaleValueCache
+  }
+
+  double _computeRadiusMultiplier() {
+    final aspectCategory = DeviceDetector.getAspectRatioCategory(
+      _screenWidth,
+      _screenHeight,
+    );
+
+    double baseMultiplier;
+    switch (aspectCategory) {
+      case AspectRatioCategory.narrow:
+        baseMultiplier = (_scaleWidth * 0.9 + _scaleHeight * 0.1);
+        break;
+      case AspectRatioCategory.wide:
+        baseMultiplier = (_scaleWidth * 0.3 + _scaleHeight * 0.7);
+        break;
+      case AspectRatioCategory.standard:
+        baseMultiplier = (_scaleWidth + _scaleHeight) / 2;
+        break;
+    }
+
+    final double sizeBoost =
+        (_autoScale && _shouldApplySizeBoostForOrientation())
+            ? _getSizeBoost()
+            : 1.0;
+
+    return baseMultiplier * sizeBoost;
+  }
+
+  (double min, double max) _resolveRadiusBounds() {
+    final bool isLandscape = _orientation == Orientation.landscape;
+    final (double defaultMin, double defaultMax) = _defaultRadiusBounds();
+    final double min =
+        isLandscape
+            ? (_radiusLandscapeMinOverride ?? defaultMin)
+            : (_radiusPortraitMinOverride ?? defaultMin);
+    final double max =
+        isLandscape
+            ? (_radiusLandscapeMaxOverride ?? defaultMax)
+            : (_radiusPortraitMaxOverride ?? defaultMax);
+
+    if (min > max) {
+      return (max, min);
+    }
+    return (min, max);
+  }
+
+  (double min, double max) _defaultRadiusBounds() {
+    final deviceType = this.deviceType;
+    final bool isLandscape = _orientation == Orientation.landscape;
+
+    double min;
+    double max;
+    switch (deviceType) {
+      case DeviceType.mobile:
+        min = isLandscape ? 0.7 : 0.85;
+        max = isLandscape ? 1.35 : 1.2;
+        break;
+      case DeviceType.tablet:
+        min = isLandscape ? 0.65 : 0.8;
+        max = isLandscape ? 1.5 : 1.35;
+        break;
+      case DeviceType.desktop:
+      case DeviceType.web:
+        min = isLandscape ? 0.5 : 0.65;
+        max = isLandscape ? 1.9 : 1.6;
+        break;
+    }
+
+    final aspectCategory = DeviceDetector.getAspectRatioCategory(
+      _screenWidth,
+      _screenHeight,
+    );
+    switch (aspectCategory) {
+      case AspectRatioCategory.wide:
+        min = ((min - 0.05).clamp(0.4, min)).toDouble();
+        max += 0.2;
+        break;
+      case AspectRatioCategory.narrow:
+        min += 0.05;
+        max -= 0.1;
+        break;
+      case AspectRatioCategory.standard:
+        break;
+    }
+
+    final double screenDiagonal =
+        (_screenWidth * _screenWidth) + (_screenHeight * _screenHeight);
+    final double designDiagonal =
+        (_designWidth * _designWidth) + (_designHeight * _designHeight);
+
+    if (screenDiagonal > designDiagonal * 4) {
+      max += 0.1;
+    } else if (screenDiagonal < designDiagonal * 0.75) {
+      max -= 0.05;
+      min += 0.05;
+    }
+
+    return (min, max);
   }
 }
 

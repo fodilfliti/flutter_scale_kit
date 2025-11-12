@@ -267,12 +267,13 @@ class ScaleValueCache {
         );
       }
 
-      final radius = manager.scaleWidth;
       return BorderRadius.only(
-        topLeft: Radius.circular((topLeft ?? all ?? 0) * radius),
-        topRight: Radius.circular((topRight ?? all ?? 0) * radius),
-        bottomLeft: Radius.circular((bottomLeft ?? all ?? 0) * radius),
-        bottomRight: Radius.circular((bottomRight ?? all ?? 0) * radius),
+        topLeft: Radius.circular(manager.getRadius(topLeft ?? all ?? 0)),
+        topRight: Radius.circular(manager.getRadius(topRight ?? all ?? 0)),
+        bottomLeft: Radius.circular(manager.getRadius(bottomLeft ?? all ?? 0)),
+        bottomRight: Radius.circular(
+          manager.getRadius(bottomRight ?? all ?? 0),
+        ),
       );
     });
   }

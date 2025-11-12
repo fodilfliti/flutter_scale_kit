@@ -476,6 +476,48 @@ void main() {
     );
   });
 
+  testWidgets('Radius scaling respects configurable bounds', (
+    WidgetTester tester,
+  ) async {
+    final originalSize = tester.view.physicalSize;
+    final originalPixelRatio = tester.view.devicePixelRatio;
+    addTearDown(() {
+      tester.view.physicalSize = originalSize;
+      tester.view.devicePixelRatio = originalPixelRatio;
+      ScaleManager.instance.resetRadiusBounds();
+    });
+
+    tester.view.physicalSize = const Size(1800, 1200);
+    tester.view.devicePixelRatio = 1.0;
+
+    late double scaledRadius;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ScaleKitBuilder(
+          designWidth: 375,
+          designHeight: 812,
+          child: Builder(
+            builder: (context) {
+              ScaleManager.instance.setRadiusBounds(
+                portraitMin: 0.9,
+                portraitMax: 1.05,
+                landscapeMin: 0.9,
+                landscapeMax: 1.05,
+              );
+              scaledRadius = 24.r;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(scaledRadius, greaterThanOrEqualTo(21.6));
+    expect(scaledRadius, lessThanOrEqualTo(25.20001));
+  });
+
   testWidgets(
     'ScaleKitBuilder preserves state of descendants when viewport changes',
     (WidgetTester tester) async {
