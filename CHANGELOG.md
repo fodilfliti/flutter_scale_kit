@@ -2,11 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.8] - 2025-11-12
+
+### 🔧 Fixed
+
+- `ScaleKitBuilder` now wraps descendants in an internal `ScaleKitScope`, so extension methods automatically pick up refreshed scale metrics on desktop/web (and other resizable platforms) without blowing away widget state.
+- Viewport changes continue to preserve existing stateful screens while recalculating responsive values.
+
 ## [1.1.7] - 2025-11-12
 
 ### 🔧 Fixed
 
-- `ScaleKitBuilder` keeps the existing widget tree keyed during viewport changes so stateful screens no longer reset when windows resize or rotate.
+- Relaxed auto-detected scale clamps for desktop/web windows so ultra-short or ultra-narrow viewports no longer force oversized fonts and spacing when resizing.
 - Relaxed auto-detected scale clamps for desktop/web windows so ultra-short or ultra-narrow viewports no longer force oversized fonts and spacing when resizing.
 
 ## [1.1.6] - 2025-11-12

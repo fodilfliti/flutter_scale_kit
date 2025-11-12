@@ -157,6 +157,7 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
   Locale? _previousLocale;
   bool _isInitialized = false;
   VoidCallback? _enabledListener;
+  int _rebuildTick = 0;
   static const double _sizeChangeThreshold = 0.05;
 
   @override
@@ -447,12 +448,30 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     }
 
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _rebuildTick++;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    return ScaleKitScope(tick: _rebuildTick, child: widget.child);
+  }
+}
+
+/// Internal scope used to notify descendants when ScaleKit recalculates.
+class ScaleKitScope extends InheritedWidget {
+  const ScaleKitScope({super.key, required this.tick, required super.child});
+
+  final int tick;
+
+  static ScaleKitScope? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ScaleKitScope>();
+  }
+
+  @override
+  bool updateShouldNotify(covariant ScaleKitScope oldWidget) {
+    return oldWidget.tick != tick;
   }
 }

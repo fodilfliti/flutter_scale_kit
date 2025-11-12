@@ -487,20 +487,25 @@ void main() {
       });
 
       final initCount = ValueNotifier<int>(0);
-      addTearDown(initCount.dispose);
+      final buildCount = ValueNotifier<int>(0);
+      addTearDown(() {
+        initCount.dispose();
+        buildCount.dispose();
+      });
 
       await tester.pumpWidget(
         MaterialApp(
           home: ScaleKitBuilder(
             designWidth: 375,
             designHeight: 812,
-            child: _StatefulProbe(initCount: initCount),
+            child: _StatefulProbe(initCount: initCount, buildCount: buildCount),
           ),
         ),
       );
 
       await tester.pumpAndSettle();
       expect(initCount.value, 1);
+      expect(buildCount.value, 1);
 
       // Simulate a viewport change large enough to trigger ScaleKit recalculation.
       tester.view.physicalSize = const Size(1200, 800);
@@ -508,16 +513,18 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      // initState should not run again.
+      // initState should not run again, but the widget should rebuild.
       expect(initCount.value, 1);
+      expect(buildCount.value, greaterThan(1));
     },
   );
 }
 
 class _StatefulProbe extends StatefulWidget {
-  const _StatefulProbe({required this.initCount});
+  const _StatefulProbe({required this.initCount, required this.buildCount});
 
   final ValueNotifier<int> initCount;
+  final ValueNotifier<int> buildCount;
 
   @override
   State<_StatefulProbe> createState() => _StatefulProbeState();
@@ -532,6 +539,9 @@ class _StatefulProbeState extends State<_StatefulProbe> {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox.shrink();
+    widget.buildCount.value++;
+    // Access a scaled value inside build to ensure extensions register scope dependencies.
+    final width = context.scaleWidth(100);
+    return Text('scaled=$width');
   }
 }

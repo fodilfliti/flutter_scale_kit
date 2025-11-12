@@ -1,26 +1,43 @@
 import 'package:flutter/material.dart';
 import '../core/scale_manager.dart';
 import '../core/scale_value_factory.dart';
+import '../widgets/scale_kit_builder.dart';
 
 /// BuildContext extensions for easy access to scaling utilities
 extension ScaleContextExtension on BuildContext {
+  void _dependOnScaleScope() {
+    ScaleKitScope.maybeOf(this);
+  }
+
   /// Get ScaleManager instance
-  ScaleManager get scaleManager => ScaleManager.instance;
+  ScaleManager get scaleManager {
+    _dependOnScaleScope();
+    return ScaleManager.instance;
+  }
 
   /// Get scaled width
-  double scaleWidth(double width) =>
-      ScaleValueFactory.instance.createWidth(width);
+  double scaleWidth(double width) {
+    _dependOnScaleScope();
+    return ScaleValueFactory.instance.createWidth(width);
+  }
 
   /// Get scaled height
-  double scaleHeight(double height) =>
-      ScaleValueFactory.instance.createHeight(height);
+  double scaleHeight(double height) {
+    _dependOnScaleScope();
+    return ScaleValueFactory.instance.createHeight(height);
+  }
 
   /// Get scaled font size
-  double scaleFontSize(double fontSize) =>
-      ScaleValueFactory.instance.createFontSize(fontSize);
+  double scaleFontSize(double fontSize) {
+    _dependOnScaleScope();
+    return ScaleValueFactory.instance.createFontSize(fontSize);
+  }
 
   /// Get scaled size
-  double scaleSize(double size) => ScaleValueFactory.instance.createWidth(size);
+  double scaleSize(double size) {
+    _dependOnScaleScope();
+    return ScaleValueFactory.instance.createWidth(size);
+  }
 
   /// Get responsive padding
   EdgeInsets scalePadding({
@@ -32,6 +49,7 @@ extension ScaleContextExtension on BuildContext {
     double? left,
     double? right,
   }) {
+    _dependOnScaleScope();
     return ScaleValueFactory.instance.createPadding(
       all: all,
       horizontal: horizontal,
@@ -53,6 +71,7 @@ extension ScaleContextExtension on BuildContext {
     double? left,
     double? right,
   }) {
+    _dependOnScaleScope();
     return ScaleValueFactory.instance.createMargin(
       all: all,
       horizontal: horizontal,
@@ -72,6 +91,7 @@ extension ScaleContextExtension on BuildContext {
     double? bottomLeft,
     double? bottomRight,
   }) {
+    _dependOnScaleScope();
     return ScaleValueFactory.instance.createBorderRadius(
       all: all,
       topLeft: topLeft,

@@ -233,7 +233,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.1.7
+  flutter_scale_kit: ^1.1.8
 ```
 
 Then run:
