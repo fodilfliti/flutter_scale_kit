@@ -85,6 +85,7 @@ Jump to any section:
 ### 🧪 Optional Tools
 
 - [Enable/Disable Scaling (Runtime Toggle)](#enable-disable-scaling)
+- [Device Metrics Mixin](#device-metrics-mixin)
 - [Device Preview Integration (Optional)](#device-preview-integration)
 
 ### 📚 Reference
@@ -233,7 +234,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.1.10
+  flutter_scale_kit: ^1.2.0
 ```
 
 Then run:
@@ -571,6 +572,52 @@ ScaleKitBuilder(
 - Works great with const widgets and reduces repetitive size/spacing code.
 
 ---
+
+## 🖥️ Desktop & Web Freedom
+
+Building for desktop and the web is trickier than phones or tablets: users resize windows constantly, ultrawide monitors coexist with tiny browser panes, and some flows feel better when they borrow a tablet or even a mobile layout. Scale Kit exposes extra switches so you can decide how each screen behaves instead of getting locked into a single breakpoint.
+
+- **Responsive routing on your terms**  
+  `lockDesktopPlatforms`, `lockDesktopAsTablet`, and `lockDesktopAsMobile` let you pin desktop/web platforms to a specific breakpoint when you prefer the tablet or mobile version of a screen. When the lock is enabled, Scale Kit still watches window width and only remaps when it makes sense (e.g., small desktop windows fall back to mobile, large ones stay desktop).
+
+- **Per-widget overrides when a page needs special treatment**  
+  Widgets such as `SKResponsive`, `SKResponsiveBuilder`, and helpers like `SKit.responsiveInt` accept flags (`deviceTypeOverride`, `desktopAs`, `lockDesktopAsTablet`, etc.) so individual routes can deviate from the global configuration. Use them to keep a dense data table on desktop while forcing the settings screen to reuse the tablet layout.
+
+- **Platform-aware layouts inside each breakpoint**  
+  Device type is only half the story—`context.isDesktopPlatform`, `context.isMobilePlatform`, `context.isWebPlatform`, and `ScaleManager.platformCategory` let you branch on Android vs iOS vs Windows/macOS even when they share the same responsive width. Pair these helpers with `deviceTypeOverride` to deliver an iOS-specific sheet on tablets or a Windows-style toolbar on large monitors without duplicating your layout logic.
+
+- **Width-only decisions without committing to layout swaps**  
+  The context helpers (`context.isDesktopSize`, `context.isDesktopAtLeastTablet`, ...) and `ScaleManager.screenSizeClass` let you branch on pure size classes even after you lock the device type. This is ideal when you only want to tweak spacing or font scale for ultrawide monitors without switching the entire widget tree.
+
+- **Fallbacks that mirror CSS breakpoints**  
+  Desktop values fall back to tablet → mobile automatically unless you supply explicit builders/values. Combined with `desktopAs`, this gives you the same control you expect from CSS media queries while staying inside Flutter idioms.
+
+```dart
+SKResponsiveBuilder(
+  desktop: (_) => DesktopDashboard(),
+  tablet: (_) => TabletDashboard(),
+  mobile: (_) => MobileDashboard(),
+  // Force desktop/web to reuse the tablet experience on smaller windows
+  lockDesktopAsTablet: true,
+  // But keep the analytics page locked to desktop layout regardless of width
+  deviceTypeOverride: DeviceType.desktop,
+);
+
+Widget buildToolbar(BuildContext context) {
+  if (context.isMobilePlatform) {
+    return const MobileToolbar(); // Android/iOS specific actions
+  }
+  if (context.isDesktopPlatform) {
+    return const DesktopToolbar(); // macOS/Windows/Linux shortcuts
+  }
+  if (context.isWebPlatform) {
+    return const WebToolbar(); // Browser-friendly controls
+  }
+  return const UniversalToolbar();
+}
+```
+
+These options exist because the web is unpredictable: sometimes you want full desktop density, other times a compact tablet card list reads better. Scale Kit gives you the knobs—use the global locks to define the defaults, then override per page or per value so every screen stays intentional.
 
 ## 📚 Complete API Reference
 
@@ -1769,6 +1816,31 @@ Notes:
 - `.w/.h/.sp` and ScaleManager methods return raw values while disabled.
 - Reactivate to restore responsive scaling immediately.
 - The example app's settings sheet (tune icon) exposes the same toggle for quick experiments.
+
+<a id="device-metrics-mixin"></a>
+
+### Device Metrics Mixin
+
+Need quick access to device helpers inside any `State` class without grabbing a `BuildContext`? Mix in `DeviceMetricsMixin` to get logical screen size, pixel ratio, and platform flags that stay in sync with `WidgetsBinding`.
+
+```dart
+class DashboardState extends State<Dashboard>
+    with DeviceMetricsMixin<Dashboard> {
+  @override
+  Widget build(BuildContext context) {
+    if (isDesktop) return const DesktopDashboard();
+    if (isTablet) return const TabletDashboard();
+    return const MobileDashboard();
+  }
+
+  @override
+  void onDeviceMetricsChanged(Size previous, Size current) {
+    debugPrint('Metrics changed: $current');
+  }
+}
+```
+
+The mixin exposes `logicalScreenSize`, `devicePixelRatio`, `isMobile`, `isTablet`, `isDesktop`, and platform-specific helpers like `isMobilePlatform`, `isDesktopPlatform`, and `isWeb`. Keep using your existing responsive logic—this is just a lightweight shortcut when you need those values quickly.
 
 <a id="device-preview-integration"></a>
 

@@ -58,7 +58,29 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class DeviceMetricsSnapshot {
+  const DeviceMetricsSnapshot({
+    required this.logicalSize,
+    required this.devicePixelRatio,
+    required this.isMobile,
+    required this.isTablet,
+    required this.isDesktop,
+    required this.isMobilePlatform,
+    required this.isDesktopPlatform,
+    required this.isWeb,
+  });
+
+  final Size logicalSize;
+  final double devicePixelRatio;
+  final bool isMobile;
+  final bool isTablet;
+  final bool isDesktop;
+  final bool isMobilePlatform;
+  final bool isDesktopPlatform;
+  final bool isWeb;
+}
+
+class _MyAppState extends State<MyApp> with DeviceMetricsMixin<MyApp> {
   final ValueNotifier<bool> _enabled = ValueNotifier<bool>(true);
   bool _autoScale = true;
   bool _autoScaleLandscape = true;
@@ -136,6 +158,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceMetrics = DeviceMetricsSnapshot(
+      logicalSize: logicalScreenSize,
+      devicePixelRatio: devicePixelRatio,
+      isMobile: isMobile,
+      isTablet: isTablet,
+      isDesktop: isDesktop,
+      isMobilePlatform: isMobilePlatform,
+      isDesktopPlatform: isDesktopPlatform,
+      isWeb: isWeb,
+    );
+
     Widget app = ScaleKitBuilder(
       key: ValueKey(_builderVersion),
       designWidth: 375,
@@ -217,6 +250,7 @@ class _MyAppState extends State<MyApp> {
           onDevicePreviewToggle: _toggleDevicePreview,
           onDevicePreviewActivateDirectly: _activateDevicePreviewDirectly,
           onDevicePreviewChanged: _onDevicePreviewChanged,
+          deviceMetrics: deviceMetrics,
         ),
       ),
     );
@@ -314,6 +348,7 @@ class HomePage extends StatelessWidget {
   final VoidCallback onDevicePreviewToggle;
   final VoidCallback onDevicePreviewActivateDirectly;
   final VoidCallback onDevicePreviewChanged;
+  final DeviceMetricsSnapshot deviceMetrics;
 
   const HomePage({
     super.key,
@@ -323,6 +358,7 @@ class HomePage extends StatelessWidget {
     required this.onDevicePreviewToggle,
     required this.onDevicePreviewActivateDirectly,
     required this.onDevicePreviewChanged,
+    required this.deviceMetrics,
   });
 
   // Helper to check if running on desktop (Windows, macOS, Linux) or web
@@ -442,6 +478,14 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
             _buildQuickStartExample(),
+            SizedBox(height: 24.h),
+
+            const SectionTitle(
+              title: '🧩 Device Metrics Mixin',
+              subtitle: 'State mixin with tablet/mobile/desktop helpers',
+            ),
+            SizedBox(height: 12.h),
+            _buildDeviceMetricsMixinExample(),
             SizedBox(height: 24.h),
 
             // Autoscale Orientation Info
@@ -925,6 +969,80 @@ class HomePage extends StatelessWidget {
             );
           }
         },
+      ),
+    );
+  }
+
+  // ============================================================================
+  // DEVICE METRICS MIXIN EXAMPLE
+  // ============================================================================
+  Widget _buildDeviceMetricsMixinExample() {
+    final size = deviceMetrics.logicalSize;
+    final logicalWidth = size.width.toStringAsFixed(1);
+    final logicalHeight = size.height.toStringAsFixed(1);
+    final pixelRatio = deviceMetrics.devicePixelRatio.toStringAsFixed(2);
+
+    return SectionCard(
+      title: 'Access device helpers directly in State classes',
+      description:
+          'Mix DeviceMetricsMixin into any StatefulWidget to get logical size, pixel ratio, platform flags, and responsive helpers (isMobile/isTablet/isDesktop) without depending on BuildContext or external packages.',
+      code: '''
+class DashboardState extends State<Dashboard>
+    with DeviceMetricsMixin<Dashboard> {
+  @override
+  Widget build(BuildContext context) {
+    if (isDesktop) return const DesktopDashboard();
+    if (isTablet) return const TabletDashboard();
+    return const MobileDashboard();
+  }
+
+  @override
+  void onDeviceMetricsChanged(Size previous, Size current) {
+    debugPrint('Metrics changed: \$previous → \$current');
+  }
+}
+''',
+      codeLanguage: 'dart',
+      result: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Logical size: $logicalWidth × $logicalHeight',
+            style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            'Device pixel ratio: $pixelRatio',
+            style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade800),
+          ),
+          SizedBox(height: 12.h),
+          _buildMetricFlag('isMobile', deviceMetrics.isMobile),
+          _buildMetricFlag('isTablet', deviceMetrics.isTablet),
+          _buildMetricFlag('isDesktop', deviceMetrics.isDesktop),
+          _buildMetricFlag('isMobilePlatform', deviceMetrics.isMobilePlatform),
+          _buildMetricFlag('isDesktopPlatform', deviceMetrics.isDesktopPlatform),
+          _buildMetricFlag('isWeb', deviceMetrics.isWeb),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetricFlag(String label, bool value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6.h),
+      child: Row(
+        children: [
+          Icon(
+            value ? Icons.check_circle : Icons.cancel,
+            size: 16.sp,
+            color: value ? Colors.green.shade600 : Colors.red.shade400,
+          ),
+          SizedBox(width: 8.w),
+          Text(
+            '$label: $value',
+            style: TextStyle(fontSize: 12.sp),
+          ),
+        ],
       ),
     );
   }

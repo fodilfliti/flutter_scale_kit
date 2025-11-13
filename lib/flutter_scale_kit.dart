@@ -49,3 +49,4 @@ export 'src/extensions/scale_extensions.dart';
 export 'src/extensions/context_extensions.dart';
 export 'src/extensions/theme_data_extensions.dart';
 export 'src/extensions/text_style_extensions.dart';
+export 'src/mixins/device_metrics_mixin.dart';

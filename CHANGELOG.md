@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2025-11-13
+
+### ✨ Added
+
+- `DeviceMetricsMixin` for `State` classes, exposing logical screen size, pixel ratio, and device/platform helpers (`isMobile`, `isTablet`, `isDesktop`, `isMobilePlatform`, `isDesktopPlatform`, `isWeb`) without requiring a `BuildContext`.
+- Example app integrates `DeviceMetricsMixin` in `MyApp` and showcases live metrics in a new "Device Metrics Mixin" section.
+
+### 📚 Documentation
+
+- README Optional Tools section now documents `DeviceMetricsMixin` with usage snippets and explanation.
+
 ## [1.1.10] - 2025-11-12
 
 ### ✨ Added
