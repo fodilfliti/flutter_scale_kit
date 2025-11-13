@@ -100,6 +100,16 @@ class ScaleKitBuilder extends StatefulWidget {
   /// Optional listenable to toggle scaling at runtime.
   final ValueListenable<bool>? enabledListenable;
 
+  /// Threshold for triggering rebuilds when size changes (0.0 to 1.0).
+  ///
+  /// When the screen size changes by more than this percentage (relative to previous size),
+  /// the scale manager will recalculate and trigger a rebuild. Set to 0.0 to rebuild on any change.
+  ///
+  /// Defaults:
+  /// - 0.05 (5%) for mobile/tablet platforms
+  /// - 0.03 (3%) for desktop/web platforms
+  final double? sizeChangeThreshold;
+
   /// Creates a [ScaleKitBuilder] widget.
   ///
   /// Parameters:
@@ -112,6 +122,7 @@ class ScaleKitBuilder extends StatefulWidget {
   /// - [breakpoints] - Custom device breakpoints used for size-based detection
   /// - [minScale] - Optional minimum scale factor
   /// - [maxScale] - Optional maximum scale factor
+  /// - [sizeChangeThreshold] - Threshold for triggering rebuilds (0.0-1.0). Defaults to 0.05 (5%) for mobile/tablet, 0.03 (3%) for desktop/web. Set to 0.0 to rebuild on any change.
   const ScaleKitBuilder({
     super.key,
     required this.child,
@@ -142,6 +153,7 @@ class ScaleKitBuilder extends StatefulWidget {
     this.lockDesktopAsMobile = false,
     this.breakpoints = const ScaleBreakpoints(),
     this.enabledListenable,
+    this.sizeChangeThreshold,
   }) : assert(
          !(lockDesktopAsTablet && lockDesktopAsMobile),
          'lockDesktopAsTablet and lockDesktopAsMobile cannot both be true.',
@@ -158,7 +170,22 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
   bool _isInitialized = false;
   VoidCallback? _enabledListener;
   int _rebuildTick = 0;
-  static const double _sizeChangeThreshold = 0.05;
+
+  /// Get the size change threshold with platform-aware defaults.
+  double _getSizeChangeThreshold() {
+    if (widget.sizeChangeThreshold != null) {
+      return widget.sizeChangeThreshold!;
+    }
+    // Default: 5% for mobile/tablet, 3% for desktop/web
+    if (defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.linux ||
+        defaultTargetPlatform == TargetPlatform.fuchsia ||
+        kIsWeb) {
+      return 0.03; // 3% for desktop/web
+    }
+    return 0.05; // 5% for mobile/tablet
+  }
 
   @override
   void initState() {
@@ -412,11 +439,15 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
               ? heightChange / _previousSize!.height
               : 0.0;
 
-      final significantChange =
-          widthChangePercent > _sizeChangeThreshold ||
-          heightChangePercent > _sizeChangeThreshold ||
-          widthChangePercent > 0.5 ||
-          heightChangePercent > 0.5;
+      final threshold = _getSizeChangeThreshold();
+      // If threshold is 0, rebuild on any change
+      // Otherwise, rebuild if change exceeds threshold or is a large foldable transition (>50%)
+      final significantChange = threshold == 0.0
+          ? (widthChangePercent > 0.0 || heightChangePercent > 0.0)
+          : (widthChangePercent > threshold ||
+              heightChangePercent > threshold ||
+              widthChangePercent > 0.5 ||
+              heightChangePercent > 0.5);
 
       if (significantChange) {
         shouldUpdate = true;

@@ -109,6 +109,9 @@ class _MyAppState extends State<MyApp> with DeviceMetricsMixin<MyApp> {
   double? _minScale;
   double? _maxScale;
 
+  // Size change threshold: null = platform-aware defaults (5% mobile/tablet, 3% desktop/web)
+  double? _sizeChangeThreshold;
+
   ScaleBreakpoints _breakpoints = const ScaleBreakpoints();
 
   @override
@@ -222,6 +225,9 @@ class _MyAppState extends State<MyApp> with DeviceMetricsMixin<MyApp> {
       tabletPortraitSizeBoost: _tabletPortraitSizeBoost, // Default: 1.0
       desktopPortraitFontBoost: _desktopPortraitFontBoost, // Default: 1.0
       desktopPortraitSizeBoost: _desktopPortraitSizeBoost, // Default: 1.0
+      // Size change threshold: null = platform-aware defaults (5% mobile/tablet, 3% desktop/web)
+      // Set to 0.0 to rebuild on any change, or a value like 0.01 for 1% threshold
+      sizeChangeThreshold: _sizeChangeThreshold,
       child: MaterialApp(
         title: 'Flutter Scale Kit - Complete Examples',
         debugShowCheckedModeBanner: false,

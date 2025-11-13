@@ -234,7 +234,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.2.0
+  flutter_scale_kit: ^1.2.1
 ```
 
 Then run:
@@ -329,6 +329,9 @@ class MyApp extends StatelessWidget {
       // Optional: pick tablet/mobile variants when locked
       // lockDesktopAsTablet: true,
       // lockDesktopAsMobile: true,
+      // Optional: control rebuild threshold (default: 0.05 for mobile/tablet, 0.03 for desktop/web)
+      // sizeChangeThreshold: 0.01, // 1% threshold
+      // sizeChangeThreshold: 0.0,   // Rebuild on any change
       child: MaterialApp(
         title: 'My App',
         // Optional: create a responsive theme once ScaleKitBuilder is in place
@@ -345,7 +348,8 @@ class MyApp extends StatelessWidget {
 ```
 
 - Need to lock Scale Kit to desktop behaviour (even on smaller windows)? Pass `deviceTypeOverride: DeviceType.desktop` or `DeviceType.web` when constructing `ScaleKitBuilder`.
-- Want that lock to happen automatically whenever you’re on web/desktop? Set `lockDesktopPlatforms: true` so Scale Kit forces desktop handling only on those platforms, and use `lockDesktopAsTablet` / `lockDesktopAsMobile` to decide which breakpoint desktop should mimic when locked.
+- Want that lock to happen automatically whenever you're on web/desktop? Set `lockDesktopPlatforms: true` so Scale Kit forces desktop handling only on those platforms, and use `lockDesktopAsTablet` / `lockDesktopAsMobile` to decide which breakpoint desktop should mimic when locked.
+- Need fine-grained control over when rebuilds trigger? Use `sizeChangeThreshold` to set the percentage change required before recalculating scales. Defaults to 5% for mobile/tablet and 3% for desktop/web. Set to `0.0` to rebuild on any size change.
 
 - **Phones** hold between 0.85–1.25×, even on foldables.
 - **Tablets** expand comfortably without blowing out typography.

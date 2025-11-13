@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2025-11-13
+
+### ✨ Added
+
+- `sizeChangeThreshold` parameter in `ScaleKitBuilder` to control when rebuilds trigger on size changes. Defaults to 5% (0.05) for mobile/tablet platforms and 3% (0.03) for desktop/web platforms. Set to 0.0 to rebuild on any change.
+
+### 📚 Documentation
+
+- README updated with `sizeChangeThreshold` usage examples and platform-aware default behavior explanation.
+
 ## [1.2.0] - 2025-11-13
 
 ### ✨ Added
