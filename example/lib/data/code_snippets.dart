@@ -437,7 +437,7 @@ SKit.spacing()         // Uses default (12)''';
   // Context Extensions
   static const contextExtensions = '''// Scaling extensions
 Container(
-  padding: context.scalePadding(horizontal: 20, vertical: 16),
+  padding: context.scalePadding(start: 24, end: 12, vertical: 16),
   margin: context.scaleMargin(all: 8),
   decoration: BoxDecoration(
     borderRadius: context.scaleBorderRadius(all: 10),

@@ -22,8 +22,8 @@ class ScaleValueCache {
   final Map<CacheKey, double> _fixedRadiusCache = {};
   final Map<CacheKey, double> _screenWidthCache = {};
   final Map<CacheKey, double> _screenHeightCache = {};
-  final Map<CacheKey, EdgeInsets> _paddingCache = {};
-  final Map<CacheKey, EdgeInsets> _marginCache = {};
+  final Map<CacheKey, EdgeInsetsGeometry> _paddingCache = {};
+  final Map<CacheKey, EdgeInsetsGeometry> _marginCache = {};
   final Map<CacheKey, BorderRadius> _borderRadiusCache = {};
   final Map<CacheKey, BorderRadius> _borderRadiusSafeCache = {};
   final Map<CacheKey, BorderRadius> _borderRadiusFixedCache = {};
@@ -167,8 +167,9 @@ class ScaleValueCache {
     );
   }
 
-  /// Get cached padding or calculate and cache
-  EdgeInsets getPadding({
+  EdgeInsetsGeometry _resolveInsets({
+    required Map<CacheKey, EdgeInsetsGeometry> cache,
+    required ScaleType scaleType,
     double? all,
     double? horizontal,
     double? vertical,
@@ -176,45 +177,69 @@ class ScaleValueCache {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
   }) {
-    // Create a unique key based on padding parameters
-    final value =
-        (all ?? 0) +
-        (horizontal ?? 0) * 10 +
-        (vertical ?? 0) * 100 +
-        (top ?? 0) * 1000 +
-        (bottom ?? 0) * 10000 +
-        (left ?? 0) * 100000 +
-        (right ?? 0) * 1000000;
-
-    final manager = ScaleManager.instance;
+    final useDirectional = start != null || end != null;
     final key = CacheKey(
-      value: value,
-      scaleType: ScaleType.padding,
+      value: Object.hash(
+        all,
+        horizontal,
+        vertical,
+        top,
+        bottom,
+        left,
+        right,
+        start,
+        end,
+        useDirectional,
+      ),
+      scaleType: scaleType,
       deviceId: _getDeviceId(),
     );
 
-    return _paddingCache.putIfAbsent(key, () {
-      if (!manager.isEnabled) {
-        return EdgeInsets.only(
-          top: top ?? vertical ?? all ?? 0,
-          bottom: bottom ?? vertical ?? all ?? 0,
-          left: left ?? horizontal ?? all ?? 0,
-          right: right ?? horizontal ?? all ?? 0,
+    return cache.putIfAbsent(key, () {
+      final manager = ScaleManager.instance;
+      double resolveValue(
+        double? primary,
+        double? secondary,
+        double? fallback,
+      ) {
+        return primary ?? secondary ?? fallback ?? 0;
+      }
+
+      double scaleWidth(double value) =>
+          manager.isEnabled ? value * manager.scaleWidth : value;
+      double scaleHeight(double value) =>
+          manager.isEnabled ? value * manager.scaleHeight : value;
+
+      final double topValue = resolveValue(top, vertical, all);
+      final double bottomValue = resolveValue(bottom, vertical, all);
+      final double leftValue = resolveValue(left, horizontal, all);
+      final double rightValue = resolveValue(right, horizontal, all);
+      final double startValue = resolveValue(start, horizontal, all);
+      final double endValue = resolveValue(end, horizontal, all);
+
+      if (useDirectional) {
+        return EdgeInsetsDirectional.only(
+          top: scaleHeight(topValue),
+          bottom: scaleHeight(bottomValue),
+          start: scaleWidth(startValue),
+          end: scaleWidth(endValue),
         );
       }
 
       return EdgeInsets.only(
-        top: (top ?? vertical ?? all ?? 0) * manager.scaleHeight,
-        bottom: (bottom ?? vertical ?? all ?? 0) * manager.scaleHeight,
-        left: (left ?? horizontal ?? all ?? 0) * manager.scaleWidth,
-        right: (right ?? horizontal ?? all ?? 0) * manager.scaleWidth,
+        top: scaleHeight(topValue),
+        bottom: scaleHeight(bottomValue),
+        left: scaleWidth(leftValue),
+        right: scaleWidth(rightValue),
       );
     });
   }
 
-  /// Get cached margin or calculate and cache
-  EdgeInsets getMargin({
+  /// Get cached padding or calculate and cache
+  EdgeInsetsGeometry getPadding({
     double? all,
     double? horizontal,
     double? vertical,
@@ -222,9 +247,12 @@ class ScaleValueCache {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
   }) {
-    // Reuse padding calculation logic
-    return getPadding(
+    return _resolveInsets(
+      cache: _paddingCache,
+      scaleType: ScaleType.padding,
       all: all,
       horizontal: horizontal,
       vertical: vertical,
@@ -232,6 +260,35 @@ class ScaleValueCache {
       bottom: bottom,
       left: left,
       right: right,
+      start: start,
+      end: end,
+    );
+  }
+
+  /// Get cached margin or calculate and cache
+  EdgeInsetsGeometry getMargin({
+    double? all,
+    double? horizontal,
+    double? vertical,
+    double? top,
+    double? bottom,
+    double? left,
+    double? right,
+    double? start,
+    double? end,
+  }) {
+    return _resolveInsets(
+      cache: _marginCache,
+      scaleType: ScaleType.margin,
+      all: all,
+      horizontal: horizontal,
+      vertical: vertical,
+      top: top,
+      bottom: bottom,
+      left: left,
+      right: right,
+      start: start,
+      end: end,
     );
   }
 

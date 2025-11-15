@@ -1,6 +1,6 @@
 /// Cache key for storing scaled values
 class CacheKey {
-  final double value;
+  final Object value;
   final ScaleType scaleType;
   final String deviceId; // device type + orientation + aspect ratio category
 

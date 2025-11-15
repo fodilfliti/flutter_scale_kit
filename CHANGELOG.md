@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2025-11-13
+
+### ✨ Added
+
+- `start` / `end` parameters across padding and margin APIs (`context.scalePadding`, `context.scaleMargin`, `SKit.padding`, `SKit.margin`, low-level factories) for direction-aware spacing that respects RTL automatically.
+
+### 📚 Documentation
+
+- Device Metrics Mixin link promoted to the Getting Started section so it’s easier to spot.
+- README and example snippets now highlight `start` / `end` usage for RTL-friendly spacing.
+
 ## [1.2.1] - 2025-11-13
 
 ### ✨ Added

@@ -71,11 +71,11 @@ class ScaleKitDesignValues {
   /// Extra large padding value.
   final double? paddingXl;
 
-  /// Horizontal padding [EdgeInsets].
-  final EdgeInsets? paddingHorizontal;
+  /// Horizontal padding [EdgeInsetsGeometry].
+  final EdgeInsetsGeometry? paddingHorizontal;
 
-  /// Vertical padding [EdgeInsets].
-  final EdgeInsets? paddingVertical;
+  /// Vertical padding [EdgeInsetsGeometry].
+  final EdgeInsetsGeometry? paddingVertical;
 
   /// Extra small margin value.
   final double? marginXs;
@@ -92,11 +92,11 @@ class ScaleKitDesignValues {
   /// Extra large margin value.
   final double? marginXl;
 
-  /// Horizontal margin [EdgeInsets].
-  final EdgeInsets? marginHorizontal;
+  /// Horizontal margin [EdgeInsetsGeometry].
+  final EdgeInsetsGeometry? marginHorizontal;
 
-  /// Vertical margin [EdgeInsets].
-  final EdgeInsets? marginVertical;
+  /// Vertical margin [EdgeInsetsGeometry].
+  final EdgeInsetsGeometry? marginVertical;
 
   /// Extra small radius value.
   final double? radiusXs;
@@ -301,46 +301,46 @@ class ScaleKitDesignValuesSet {
   final TextStyle? textXxl;
 
   /// Extra small padding.
-  final EdgeInsets? paddingXs;
+  final EdgeInsetsGeometry? paddingXs;
 
   /// Small padding.
-  final EdgeInsets? paddingSm;
+  final EdgeInsetsGeometry? paddingSm;
 
   /// Medium padding.
-  final EdgeInsets? paddingMd;
+  final EdgeInsetsGeometry? paddingMd;
 
   /// Large padding.
-  final EdgeInsets? paddingLg;
+  final EdgeInsetsGeometry? paddingLg;
 
   /// Extra large padding.
-  final EdgeInsets? paddingXl;
+  final EdgeInsetsGeometry? paddingXl;
 
   /// Horizontal padding.
-  final EdgeInsets paddingHorizontal;
+  final EdgeInsetsGeometry paddingHorizontal;
 
   /// Vertical padding.
-  final EdgeInsets paddingVertical;
+  final EdgeInsetsGeometry paddingVertical;
 
   /// Extra small margin.
-  final EdgeInsets? marginXs;
+  final EdgeInsetsGeometry? marginXs;
 
   /// Small margin.
-  final EdgeInsets? marginSm;
+  final EdgeInsetsGeometry? marginSm;
 
   /// Medium margin.
-  final EdgeInsets? marginMd;
+  final EdgeInsetsGeometry? marginMd;
 
   /// Large margin.
-  final EdgeInsets? marginLg;
+  final EdgeInsetsGeometry? marginLg;
 
   /// Extra large margin.
-  final EdgeInsets? marginXl;
+  final EdgeInsetsGeometry? marginXl;
 
   /// Horizontal margin.
-  final EdgeInsets marginHorizontal;
+  final EdgeInsetsGeometry marginHorizontal;
 
   /// Vertical margin.
-  final EdgeInsets marginVertical;
+  final EdgeInsetsGeometry marginVertical;
 
   /// Extra small radius value.
   final double? radiusXs;
@@ -466,11 +466,11 @@ typedef SKitThemeValues = ScaleKitDesignValuesSet;
 /// Use [ScaleKitDesignValues.compute] instead for comprehensive theme support.
 /// This class is kept for backward compatibility with existing code.
 class SKitValues {
-  /// Padding [EdgeInsets].
-  final EdgeInsets padding;
+  /// Padding [EdgeInsetsGeometry].
+  final EdgeInsetsGeometry padding;
 
-  /// Margin [EdgeInsets].
-  final EdgeInsets margin;
+  /// Margin [EdgeInsetsGeometry].
+  final EdgeInsetsGeometry margin;
 
   /// Border radius.
   final BorderRadius borderRadius;
@@ -523,9 +523,9 @@ class SKitValues {
   /// Returns a [SKitValues] object with computed and scaled values.
   factory SKitValues.compute({
     double? padding,
-    EdgeInsets? paddingEdgeInsets,
+    EdgeInsetsGeometry? paddingEdgeInsets,
     double? margin,
-    EdgeInsets? marginEdgeInsets,
+    EdgeInsetsGeometry? marginEdgeInsets,
     double? borderRadius,
     BorderRadius? borderRadiusValue,
     double? width,

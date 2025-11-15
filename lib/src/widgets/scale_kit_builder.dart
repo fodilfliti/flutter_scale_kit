@@ -442,12 +442,13 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
       final threshold = _getSizeChangeThreshold();
       // If threshold is 0, rebuild on any change
       // Otherwise, rebuild if change exceeds threshold or is a large foldable transition (>50%)
-      final significantChange = threshold == 0.0
-          ? (widthChangePercent > 0.0 || heightChangePercent > 0.0)
-          : (widthChangePercent > threshold ||
-              heightChangePercent > threshold ||
-              widthChangePercent > 0.5 ||
-              heightChangePercent > 0.5);
+      final significantChange =
+          threshold == 0.0
+              ? (widthChangePercent > 0.0 || heightChangePercent > 0.0)
+              : (widthChangePercent > threshold ||
+                  heightChangePercent > threshold ||
+                  widthChangePercent > 0.5 ||
+                  heightChangePercent > 0.5);
 
       if (significantChange) {
         shouldUpdate = true;

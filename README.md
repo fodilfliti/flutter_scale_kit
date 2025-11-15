@@ -57,6 +57,7 @@ Jump to any section:
 - [✨ Key Features](#key-features)
 - [📦 Installation](#installation)
 - [🚀 Getting Started](#quick-start-guide)
+- [Device Metrics Mixin](#device-metrics-mixin)
 
 ### 📚 Complete API Reference
 
@@ -85,7 +86,6 @@ Jump to any section:
 ### 🧪 Optional Tools
 
 - [Enable/Disable Scaling (Runtime Toggle)](#enable-disable-scaling)
-- [Device Metrics Mixin](#device-metrics-mixin)
 - [Device Preview Integration (Optional)](#device-preview-integration)
 
 ### 📚 Reference
@@ -234,7 +234,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.2.1
+  flutter_scale_kit: ^1.2.2
 ```
 
 Then run:
@@ -350,6 +350,7 @@ class MyApp extends StatelessWidget {
 - Need to lock Scale Kit to desktop behaviour (even on smaller windows)? Pass `deviceTypeOverride: DeviceType.desktop` or `DeviceType.web` when constructing `ScaleKitBuilder`.
 - Want that lock to happen automatically whenever you're on web/desktop? Set `lockDesktopPlatforms: true` so Scale Kit forces desktop handling only on those platforms, and use `lockDesktopAsTablet` / `lockDesktopAsMobile` to decide which breakpoint desktop should mimic when locked.
 - Need fine-grained control over when rebuilds trigger? Use `sizeChangeThreshold` to set the percentage change required before recalculating scales. Defaults to 5% for mobile/tablet and 3% for desktop/web. Set to `0.0` to rebuild on any size change.
+- Need RTL-aware spacing? Pass `start` / `end` to `context.scalePadding`, `context.scaleMargin`, or `SKit.padding` so Directionality resolves the correct edges automatically.
 
 - **Phones** hold between 0.85–1.25×, even on foldables.
 - **Tablets** expand comfortably without blowing out typography.
@@ -394,6 +395,8 @@ SKit.padding(
   ),
 )
 ```
+
+`SKit.padding` and `SKit.margin` also accept `start` / `end` so you can keep one layout definition for both RTL and LTR flows.
 
 #### 3. Comprehensive Text Widgets (All-in-One)
 
@@ -1336,7 +1339,7 @@ Use context extensions for responsive scaling:
 
 ```dart
 Container(
-  padding: context.scalePadding(horizontal: 20, vertical: 16),
+  padding: context.scalePadding(start: 24, end: 12, vertical: 16),
   margin: context.scaleMargin(all: 8),
   decoration: BoxDecoration(
     borderRadius: context.scaleBorderRadius(all: 12),
@@ -1373,6 +1376,8 @@ Container(
   ),
 )
 ```
+
+`start`/`end` parameters resolve to the correct side automatically based on `Directionality`, so RTL layouts get the same responsive spacing without maintaining separate left/right values.
 
 ### Helper Properties
 

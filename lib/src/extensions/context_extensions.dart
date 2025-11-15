@@ -40,7 +40,10 @@ extension ScaleContextExtension on BuildContext {
   }
 
   /// Get responsive padding
-  EdgeInsets scalePadding({
+  ///
+  /// Supports absolute sides ([left]/[right]) as well as direction-aware sides
+  /// ([start]/[end]) which resolve using the current [Directionality].
+  EdgeInsetsGeometry scalePadding({
     double? all,
     double? horizontal,
     double? vertical,
@@ -48,6 +51,8 @@ extension ScaleContextExtension on BuildContext {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
   }) {
     _dependOnScaleScope();
     return ScaleValueFactory.instance.createPadding(
@@ -58,11 +63,16 @@ extension ScaleContextExtension on BuildContext {
       bottom: bottom,
       left: left,
       right: right,
+      start: start,
+      end: end,
     );
   }
 
   /// Get responsive margin
-  EdgeInsets scaleMargin({
+  ///
+  /// Supports absolute sides ([left]/[right]) as well as direction-aware sides
+  /// ([start]/[end]) which resolve using the current [Directionality].
+  EdgeInsetsGeometry scaleMargin({
     double? all,
     double? horizontal,
     double? vertical,
@@ -70,6 +80,8 @@ extension ScaleContextExtension on BuildContext {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
   }) {
     _dependOnScaleScope();
     return ScaleValueFactory.instance.createMargin(
@@ -80,6 +92,8 @@ extension ScaleContextExtension on BuildContext {
       bottom: bottom,
       left: left,
       right: right,
+      start: start,
+      end: end,
     );
   }
 

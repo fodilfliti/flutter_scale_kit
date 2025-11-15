@@ -119,12 +119,13 @@ class ScaleValueFactory {
   ///
   /// Parameters:
   /// - [all] - Padding applied to all sides
-  /// - [horizontal] - Horizontal padding (left and right)
+  /// - [horizontal] - Horizontal padding (left/right or start/end)
   /// - [vertical] - Vertical padding (top and bottom)
   /// - [top], [bottom], [left], [right] - Individual side padding
+  /// - [start], [end] - Direction-aware padding resolved by [Directionality]
   ///
-  /// Returns scaled [EdgeInsets] padding.
-  EdgeInsets createPadding({
+  /// Returns scaled [EdgeInsetsGeometry] padding.
+  EdgeInsetsGeometry createPadding({
     double? all,
     double? horizontal,
     double? vertical,
@@ -132,6 +133,8 @@ class ScaleValueFactory {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
   }) {
     return _cache.getPadding(
       all: all,
@@ -141,6 +144,8 @@ class ScaleValueFactory {
       bottom: bottom,
       left: left,
       right: right,
+      start: start,
+      end: end,
     );
   }
 
@@ -150,12 +155,13 @@ class ScaleValueFactory {
   ///
   /// Parameters:
   /// - [all] - Margin applied to all sides
-  /// - [horizontal] - Horizontal margin (left and right)
+  /// - [horizontal] - Horizontal margin (left/right or start/end)
   /// - [vertical] - Vertical margin (top and bottom)
   /// - [top], [bottom], [left], [right] - Individual side margin
+  /// - [start], [end] - Direction-aware margin resolved by [Directionality]
   ///
-  /// Returns scaled [EdgeInsets] margin.
-  EdgeInsets createMargin({
+  /// Returns scaled [EdgeInsetsGeometry] margin.
+  EdgeInsetsGeometry createMargin({
     double? all,
     double? horizontal,
     double? vertical,
@@ -163,6 +169,8 @@ class ScaleValueFactory {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
   }) {
     return _cache.getMargin(
       all: all,
@@ -172,6 +180,8 @@ class ScaleValueFactory {
       bottom: bottom,
       left: left,
       right: right,
+      start: start,
+      end: end,
     );
   }
 

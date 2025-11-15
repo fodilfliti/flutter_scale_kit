@@ -1026,7 +1026,10 @@ class DashboardState extends State<Dashboard>
           _buildMetricFlag('isTablet', deviceMetrics.isTablet),
           _buildMetricFlag('isDesktop', deviceMetrics.isDesktop),
           _buildMetricFlag('isMobilePlatform', deviceMetrics.isMobilePlatform),
-          _buildMetricFlag('isDesktopPlatform', deviceMetrics.isDesktopPlatform),
+          _buildMetricFlag(
+            'isDesktopPlatform',
+            deviceMetrics.isDesktopPlatform,
+          ),
           _buildMetricFlag('isWeb', deviceMetrics.isWeb),
         ],
       ),
@@ -1044,10 +1047,7 @@ class DashboardState extends State<Dashboard>
             color: value ? Colors.green.shade600 : Colors.red.shade400,
           ),
           SizedBox(width: 8.w),
-          Text(
-            '$label: $value',
-            style: TextStyle(fontSize: 12.sp),
-          ),
+          Text('$label: $value', style: TextStyle(fontSize: 12.sp)),
         ],
       ),
     );
@@ -2247,7 +2247,7 @@ class DashboardState extends State<Dashboard>
       code: CodeSnippets.contextExtensions,
       codeLanguage: 'dart',
       result: Container(
-        padding: context.scalePadding(horizontal: 20, vertical: 16),
+        padding: context.scalePadding(start: 24, end: 12, vertical: 16),
         margin: context.scaleMargin(all: 8),
         decoration: BoxDecoration(
           color: Colors.amber.shade100,
@@ -2257,7 +2257,7 @@ class DashboardState extends State<Dashboard>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'context.scalePadding(horizontal: 20, vertical: 16)',
+              'context.scalePadding(start: 24, end: 12, vertical: 16)',
               style: TextStyle(fontSize: 12.sp),
             ),
             SizedBox(height: 8.h),

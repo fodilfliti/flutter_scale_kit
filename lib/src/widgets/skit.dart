@@ -85,9 +85,10 @@ class SKit {
   ///
   /// Parameters:
   /// - [all] - Padding applied to all sides
-  /// - [horizontal] - Horizontal padding (left and right)
+  /// - [horizontal] - Horizontal padding (left/right or start/end)
   /// - [vertical] - Vertical padding (top and bottom)
   /// - [top], [bottom], [left], [right] - Individual side padding
+  /// - [start], [end] - Direction-aware padding that resolves with [Directionality]
   /// - [child] - Optional child widget
   ///
   /// Returns a [SKPadding] widget with scaled padding.
@@ -99,6 +100,8 @@ class SKit {
     dynamic bottom,
     dynamic left,
     dynamic right,
+    dynamic start,
+    dynamic end,
     Widget? child,
   }) {
     final values = paddingSizes;
@@ -110,6 +113,8 @@ class SKit {
       bottom: bottom != null ? _getSizeValue(bottom, values) : null,
       left: left != null ? _getSizeValue(left, values) : null,
       right: right != null ? _getSizeValue(right, values) : null,
+      start: start != null ? _getSizeValue(start, values) : null,
+      end: end != null ? _getSizeValue(end, values) : null,
       child: child,
     );
   }
@@ -162,6 +167,8 @@ class SKit {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
     Widget? child,
   }) {
     final margin = _f.createMargin(
@@ -172,6 +179,8 @@ class SKit {
       bottom: bottom,
       left: left,
       right: right,
+      start: start,
+      end: end,
     );
     return SKMargin(margin: margin, child: child);
   }
@@ -196,6 +205,8 @@ class SKit {
     dynamic bottom,
     dynamic left,
     dynamic right,
+    dynamic start,
+    dynamic end,
     Widget? child,
   }) {
     final values = marginSizes;
@@ -207,6 +218,8 @@ class SKit {
       bottom: bottom != null ? _getSizeValue(bottom, values) : null,
       left: left != null ? _getSizeValue(left, values) : null,
       right: right != null ? _getSizeValue(right, values) : null,
+      start: start != null ? _getSizeValue(start, values) : null,
+      end: end != null ? _getSizeValue(end, values) : null,
       child: child,
     );
   }
@@ -509,7 +522,7 @@ class SKit {
     return sSpace(value);
   }
 
-  /// Creates [EdgeInsets] padding using size enum or numeric values.
+  /// Creates [EdgeInsetsGeometry] padding using size enum or numeric values.
   ///
   /// All parameters can accept either [SKSize] enum values or numeric values.
   ///
@@ -519,8 +532,8 @@ class SKit {
   /// - [vertical] - Vertical padding
   /// - [top], [bottom], [left], [right] - Individual side padding
   ///
-  /// Returns scaled [EdgeInsets] padding.
-  static EdgeInsets paddingEdgeInsetsSize({
+  /// Returns scaled [EdgeInsetsGeometry] padding.
+  static EdgeInsetsGeometry paddingEdgeInsetsSize({
     dynamic all,
     dynamic horizontal,
     dynamic vertical,
@@ -528,6 +541,8 @@ class SKit {
     dynamic bottom,
     dynamic left,
     dynamic right,
+    dynamic start,
+    dynamic end,
   }) {
     final values = paddingSizes;
     return paddingEdgeInsets(
@@ -538,6 +553,8 @@ class SKit {
       bottom: bottom != null ? _getSizeValue(bottom, values) : null,
       left: left != null ? _getSizeValue(left, values) : null,
       right: right != null ? _getSizeValue(right, values) : null,
+      start: start != null ? _getSizeValue(start, values) : null,
+      end: end != null ? _getSizeValue(end, values) : null,
     );
   }
 
@@ -551,8 +568,8 @@ class SKit {
   /// - [vertical] - Vertical margin
   /// - [top], [bottom], [left], [right] - Individual side margin
   ///
-  /// Returns scaled [EdgeInsets] margin.
-  static EdgeInsets marginEdgeInsetsSize({
+  /// Returns scaled [EdgeInsetsGeometry] margin.
+  static EdgeInsetsGeometry marginEdgeInsetsSize({
     dynamic all,
     dynamic horizontal,
     dynamic vertical,
@@ -560,6 +577,8 @@ class SKit {
     dynamic bottom,
     dynamic left,
     dynamic right,
+    dynamic start,
+    dynamic end,
   }) {
     final values = marginSizes;
     return marginEdgeInsets(
@@ -570,6 +589,8 @@ class SKit {
       bottom: bottom != null ? _getSizeValue(bottom, values) : null,
       left: left != null ? _getSizeValue(left, values) : null,
       right: right != null ? _getSizeValue(right, values) : null,
+      start: start != null ? _getSizeValue(start, values) : null,
+      end: end != null ? _getSizeValue(end, values) : null,
     );
   }
 
@@ -591,6 +612,8 @@ class SKit {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
     Widget? child,
   }) {
     final padding = _f.createPadding(
@@ -601,6 +624,8 @@ class SKit {
       bottom: bottom,
       left: left,
       right: right,
+      start: start,
+      end: end,
     );
 
     return SKPadding(padding: padding, child: child);
@@ -612,9 +637,10 @@ class SKit {
   ///
   /// Parameters:
   /// - [all] - Margin applied to all sides
-  /// - [horizontal] - Horizontal margin
+  /// - [horizontal] - Horizontal margin (left/right or start/end)
   /// - [vertical] - Vertical margin
   /// - [top], [bottom], [left], [right] - Individual side margin
+  /// - [start], [end] - Direction-aware margin that resolves with [Directionality]
   /// - [child] - Optional child widget
   ///
   /// Returns a [SKMargin] widget with scaled margin.
@@ -626,6 +652,8 @@ class SKit {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
     Widget? child,
   }) {
     return _margin(
@@ -636,6 +664,8 @@ class SKit {
       bottom: bottom,
       left: left,
       right: right,
+      start: start,
+      end: end,
       child: child,
     );
   }
@@ -1344,7 +1374,7 @@ class SKit {
   /// - [top], [bottom], [left], [right] - Individual side padding
   ///
   /// Returns scaled [EdgeInsets] padding.
-  static EdgeInsets paddingEdgeInsets({
+  static EdgeInsetsGeometry paddingEdgeInsets({
     double? all,
     double? horizontal,
     double? vertical,
@@ -1352,6 +1382,8 @@ class SKit {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
   }) => _f.createPadding(
     all: all,
     horizontal: horizontal,
@@ -1360,6 +1392,8 @@ class SKit {
     bottom: bottom,
     left: left,
     right: right,
+    start: start,
+    end: end,
   );
 
   /// Creates [EdgeInsets] margin with scaled numeric values.
@@ -1373,7 +1407,7 @@ class SKit {
   /// - [top], [bottom], [left], [right] - Individual side margin
   ///
   /// Returns scaled [EdgeInsets] margin.
-  static EdgeInsets marginEdgeInsets({
+  static EdgeInsetsGeometry marginEdgeInsets({
     double? all,
     double? horizontal,
     double? vertical,
@@ -1381,6 +1415,8 @@ class SKit {
     double? bottom,
     double? left,
     double? right,
+    double? start,
+    double? end,
   }) => _f.createMargin(
     all: all,
     horizontal: horizontal,
@@ -1389,6 +1425,8 @@ class SKit {
     bottom: bottom,
     left: left,
     right: right,
+    start: start,
+    end: end,
   );
 
   /// Creates a [BorderRadius] with scaled numeric values.
