@@ -364,6 +364,29 @@ Need a different feel? Head to [Understanding Scale Limits](#understanding-scale
 
 Once your app is wrapped with `ScaleKitBuilder`, you can start using Scale Kit in three ways:
 
+### Device Metrics Mixin
+
+Need quick access to device helpers inside any `State` class without grabbing a `BuildContext`? Mix in `DeviceMetricsMixin` to get logical screen size, pixel ratio, and platform flags that stay in sync with `WidgetsBinding`.
+
+```dart
+class DashboardState extends State<Dashboard>
+    with DeviceMetricsMixin<Dashboard> {
+  @override
+  Widget build(BuildContext context) {
+    if (isDesktop) return const DesktopDashboard();
+    if (isTablet) return const TabletDashboard();
+    return const MobileDashboard();
+  }
+
+  @override
+  void onDeviceMetricsChanged(Size previous, Size current) {
+    debugPrint('Metrics changed: $current');
+  }
+}
+```
+
+The mixin exposes `logicalScreenSize`, `devicePixelRatio`, `isMobile`, `isTablet`, `isDesktop`, and platform-specific helpers like `isMobilePlatform`, `isDesktopPlatform`, and `isWeb`. Keep using your existing responsive logic—this is just a lightweight shortcut when you need those values quickly.
+
 #### 1. Extension Methods (Quick & Familiar)
 
 ```dart
@@ -1827,29 +1850,6 @@ Notes:
 - The example app's settings sheet (tune icon) exposes the same toggle for quick experiments.
 
 <a id="device-metrics-mixin"></a>
-
-### Device Metrics Mixin
-
-Need quick access to device helpers inside any `State` class without grabbing a `BuildContext`? Mix in `DeviceMetricsMixin` to get logical screen size, pixel ratio, and platform flags that stay in sync with `WidgetsBinding`.
-
-```dart
-class DashboardState extends State<Dashboard>
-    with DeviceMetricsMixin<Dashboard> {
-  @override
-  Widget build(BuildContext context) {
-    if (isDesktop) return const DesktopDashboard();
-    if (isTablet) return const TabletDashboard();
-    return const MobileDashboard();
-  }
-
-  @override
-  void onDeviceMetricsChanged(Size previous, Size current) {
-    debugPrint('Metrics changed: $current');
-  }
-}
-```
-
-The mixin exposes `logicalScreenSize`, `devicePixelRatio`, `isMobile`, `isTablet`, `isDesktop`, and platform-specific helpers like `isMobilePlatform`, `isDesktopPlatform`, and `isWeb`. Keep using your existing responsive logic—this is just a lightweight shortcut when you need those values quickly.
 
 <a id="device-preview-integration"></a>
 
