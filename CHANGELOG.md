@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.3] - 2025-11-13
+
+### ✨ Added
+
+- Math constraint extensions for width, height, screen width/height, radius, and font size: `.wMax()`, `.wMin()`, `.wClamp()`, `.hMax()`, `.hMin()`, `.hClamp()`, `.swMax()`, `.swMin()`, `.swClamp()`, `.shMax()`, `.shMin()`, `.shClamp()`, `.rMax()`, `.rMin()`, `.rClamp()`, `.spMax()`, `.spMin()`, `.spClamp()`. All constraint operations are cached to reduce calculations during UI rebuilds, only recalculating when the cache is cleared (on resize/orientation change).
+
+### 📚 Documentation
+
+- README Extension Methods section now documents constraint extensions with examples and performance benefits explanation.
+
 ## [1.2.2] - 2025-11-13
 
 ### ✨ Added

@@ -113,6 +113,210 @@ class ScaleValueFactory {
     return _cache.getScreenHeight(percentage);
   }
 
+  /// Creates a scaled width value with maximum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [width] - The width value to scale
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the scaled width clamped to the maximum value.
+  double createWidthMax(double width, double max) {
+    return _cache.getWidthMax(width, max);
+  }
+
+  /// Creates a scaled width value with minimum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [width] - The width value to scale
+  /// - [min] - Minimum allowed value
+  ///
+  /// Returns the scaled width clamped to the minimum value.
+  double createWidthMin(double width, double min) {
+    return _cache.getWidthMin(width, min);
+  }
+
+  /// Creates a scaled width value with clamp constraint (cached).
+  ///
+  /// Parameters:
+  /// - [width] - The width value to scale
+  /// - [min] - Minimum allowed value
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the scaled width clamped between min and max.
+  double createWidthClamp(double width, double min, double max) {
+    return _cache.getWidthClamp(width, min, max);
+  }
+
+  /// Creates a scaled height value with maximum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [height] - The height value to scale
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the scaled height clamped to the maximum value.
+  double createHeightMax(double height, double max) {
+    return _cache.getHeightMax(height, max);
+  }
+
+  /// Creates a scaled height value with minimum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [height] - The height value to scale
+  /// - [min] - Minimum allowed value
+  ///
+  /// Returns the scaled height clamped to the minimum value.
+  double createHeightMin(double height, double min) {
+    return _cache.getHeightMin(height, min);
+  }
+
+  /// Creates a scaled height value with clamp constraint (cached).
+  ///
+  /// Parameters:
+  /// - [height] - The height value to scale
+  /// - [min] - Minimum allowed value
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the scaled height clamped between min and max.
+  double createHeightClamp(double height, double min, double max) {
+    return _cache.getHeightClamp(height, min, max);
+  }
+
+  /// Creates a screen width percentage value with maximum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [percentage] - The percentage of screen width (0.0 to 1.0)
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the calculated screen width percentage clamped to the maximum value.
+  double createScreenWidthMax(double percentage, double max) {
+    return _cache.getScreenWidthMax(percentage, max);
+  }
+
+  /// Creates a screen width percentage value with minimum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [percentage] - The percentage of screen width (0.0 to 1.0)
+  /// - [min] - Minimum allowed value
+  ///
+  /// Returns the calculated screen width percentage clamped to the minimum value.
+  double createScreenWidthMin(double percentage, double min) {
+    return _cache.getScreenWidthMin(percentage, min);
+  }
+
+  /// Creates a screen width percentage value with clamp constraint (cached).
+  ///
+  /// Parameters:
+  /// - [percentage] - The percentage of screen width (0.0 to 1.0)
+  /// - [min] - Minimum allowed value
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the calculated screen width percentage clamped between min and max.
+  double createScreenWidthClamp(double percentage, double min, double max) {
+    return _cache.getScreenWidthClamp(percentage, min, max);
+  }
+
+  /// Creates a screen height percentage value with maximum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [percentage] - The percentage of screen height (0.0 to 1.0)
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the calculated screen height percentage clamped to the maximum value.
+  double createScreenHeightMax(double percentage, double max) {
+    return _cache.getScreenHeightMax(percentage, max);
+  }
+
+  /// Creates a screen height percentage value with minimum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [percentage] - The percentage of screen height (0.0 to 1.0)
+  /// - [min] - Minimum allowed value
+  ///
+  /// Returns the calculated screen height percentage clamped to the minimum value.
+  double createScreenHeightMin(double percentage, double min) {
+    return _cache.getScreenHeightMin(percentage, min);
+  }
+
+  /// Creates a screen height percentage value with clamp constraint (cached).
+  ///
+  /// Parameters:
+  /// - [percentage] - The percentage of screen height (0.0 to 1.0)
+  /// - [min] - Minimum allowed value
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the calculated screen height percentage clamped between min and max.
+  double createScreenHeightClamp(double percentage, double min, double max) {
+    return _cache.getScreenHeightClamp(percentage, min, max);
+  }
+
+  /// Creates a scaled radius value with maximum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [radius] - The radius value to scale
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the scaled radius clamped to the maximum value.
+  double createRadiusMax(double radius, double max) {
+    return _cache.getRadiusMax(radius, max);
+  }
+
+  /// Creates a scaled radius value with minimum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [radius] - The radius value to scale
+  /// - [min] - Minimum allowed value
+  ///
+  /// Returns the scaled radius clamped to the minimum value.
+  double createRadiusMin(double radius, double min) {
+    return _cache.getRadiusMin(radius, min);
+  }
+
+  /// Creates a scaled radius value with clamp constraint (cached).
+  ///
+  /// Parameters:
+  /// - [radius] - The radius value to scale
+  /// - [min] - Minimum allowed value
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the scaled radius clamped between min and max.
+  double createRadiusClamp(double radius, double min, double max) {
+    return _cache.getRadiusClamp(radius, min, max);
+  }
+
+  /// Creates a scaled font size value with maximum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [fontSize] - The font size value to scale
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the scaled font size clamped to the maximum value.
+  double createFontSizeMax(double fontSize, double max) {
+    return _cache.getFontSizeMax(fontSize, max);
+  }
+
+  /// Creates a scaled font size value with minimum constraint (cached).
+  ///
+  /// Parameters:
+  /// - [fontSize] - The font size value to scale
+  /// - [min] - Minimum allowed value
+  ///
+  /// Returns the scaled font size clamped to the minimum value.
+  double createFontSizeMin(double fontSize, double min) {
+    return _cache.getFontSizeMin(fontSize, min);
+  }
+
+  /// Creates a scaled font size value with clamp constraint (cached).
+  ///
+  /// Parameters:
+  /// - [fontSize] - The font size value to scale
+  /// - [min] - Minimum allowed value
+  /// - [max] - Maximum allowed value
+  ///
+  /// Returns the scaled font size clamped between min and max.
+  double createFontSizeClamp(double fontSize, double min, double max) {
+    return _cache.getFontSizeClamp(fontSize, min, max);
+  }
+
   /// Creates responsive [EdgeInsets] padding.
   ///
   /// All values are automatically scaled based on the device's screen size.

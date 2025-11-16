@@ -234,7 +234,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.2.2
+  flutter_scale_kit: ^1.2.3
 ```
 
 Then run:
@@ -400,6 +400,19 @@ Container(
   child: Text(
     'Hello World',
     style: TextStyle(fontSize: 16.sp),  // Scaled font size
+  ),
+)
+
+// Math constraint extensions (cached for performance)
+Container(
+  width: 200.wMax(300),           // Scaled width, max 300
+  height: 100.hClamp(50, 150),    // Scaled height, clamped 50-150
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(12.rClamp(8, 20)),  // Radius clamped 8-20
+  ),
+  child: Text(
+    'Constrained Text',
+    style: TextStyle(fontSize: 16.spClamp(12, 24)),  // Font size clamped 12-24
   ),
 )
 ```
@@ -732,7 +745,29 @@ All extension methods work similar to `flutter_screenutil`:
 // Spacing helpers (return SizedBox for gaps)
 12.horizontalSpace        // SizedBox(width: 12.w)
 16.verticalSpace          // SizedBox(height: 16.h)
+
+// Math constraint extensions (cached for performance)
+200.wMax(300)             // Scaled width, max 300
+200.wMin(100)             // Scaled width, min 100
+200.wClamp(100, 300)      // Scaled width, clamped between 100-300
+100.hMax(150)            // Scaled height, max 150
+100.hMin(50)              // Scaled height, min 50
+100.hClamp(50, 150)       // Scaled height, clamped between 50-150
+0.5.swMax(200)            // 50% screen width, max 200
+0.5.swMin(100)            // 50% screen width, min 100
+0.5.swClamp(100, 200)     // 50% screen width, clamped 100-200
+0.3.shMax(150)            // 30% screen height, max 150
+0.3.shMin(80)             // 30% screen height, min 80
+0.3.shClamp(80, 150)      // 30% screen height, clamped 80-150
+12.rMax(20)               // Scaled radius, max 20
+12.rMin(8)                // Scaled radius, min 8
+12.rClamp(8, 20)          // Scaled radius, clamped 8-20
+16.spMax(24)              // Scaled font size, max 24
+16.spMin(12)              // Scaled font size, min 12
+16.spClamp(12, 24)        // Scaled font size, clamped 12-24
 ```
+
+> ⚡ **Performance Note:** All constraint extensions (`.wMax()`, `.hClamp()`, `.spClamp()`, etc.) are **cached** just like the base extensions. This means calculations only happen once per unique value/constraint combination, and results are reused during UI rebuilds. The cache automatically clears when screen size or orientation changes, ensuring values stay accurate while minimizing redundant calculations.
 
 ---
 
@@ -1613,6 +1648,17 @@ Notes:
 - `.sp` - Scaled font size (e.g., `16.sp`)
 - `.h` - Scaled height (e.g., `100.h`)
 - `.spf` - Font size with system text scale factor (e.g., `16.spf`)
+
+**Math Constraint Extensions (Cached):**
+
+- `.wMax(max)`, `.wMin(min)`, `.wClamp(min, max)` - Width constraints
+- `.hMax(max)`, `.hMin(min)`, `.hClamp(min, max)` - Height constraints
+- `.swMax(max)`, `.swMin(min)`, `.swClamp(min, max)` - Screen width constraints
+- `.shMax(max)`, `.shMin(min)`, `.shClamp(min, max)` - Screen height constraints
+- `.rMax(max)`, `.rMin(min)`, `.rClamp(min, max)` - Radius constraints
+- `.spMax(max)`, `.spMin(min)`, `.spClamp(min, max)` - Font size constraints
+
+All constraint operations are cached to reduce calculations during UI rebuilds, only recalculating when the cache is cleared (on resize/orientation change).
 
 ### Context Extensions
 
