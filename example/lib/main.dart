@@ -577,6 +577,15 @@ class HomePage extends StatelessWidget {
             _buildAutoScalingWidgetsExample(),
             SizedBox(height: 24.h),
 
+            // More Automatic Scaling Widgets
+            const SectionTitle(
+              title: '🎨 More Automatic Scaling Widgets',
+              subtitle: 'SKIcon, SKCard, SKDivider, SKAppBar, SKListTile',
+            ),
+            SizedBox(height: 12.h),
+            _buildMoreAutoScalingWidgetsExample(),
+            SizedBox(height: 24.h),
+
             // Optimized Widgets
             const SectionTitle(
               title: '⚡ Optimized Widgets',
@@ -2232,6 +2241,112 @@ class DashboardState extends State<Dashboard>
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // MORE AUTOMATIC SCALING WIDGETS EXAMPLE
+  // ============================================================================
+  Widget _buildMoreAutoScalingWidgetsExample() {
+    return SectionCard(
+      title: 'More Automatic Scaling Widgets',
+      subtitle: 'SKIcon, SKCard, SKDivider, SKAppBar, SKListTile',
+      description:
+          'Additional Material widgets with automatic scaling. Use them exactly like their Flutter counterparts—all size-related properties are automatically scaled.',
+      code: CodeSnippets.moreAutoScalingWidgets,
+      codeLanguage: 'dart',
+      result: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // SKIcon
+          Row(
+            children: [
+              SKIcon(Icons.home, size: 24, color: Colors.blue),
+              const SizedBox(width: 12),
+              SKIcon(Icons.favorite, size: 32, color: Colors.red),
+              const SizedBox(width: 12),
+              SKIcon(Icons.star, size: 40, color: Colors.amber),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // SKCard
+          SKCard(
+            margin: const EdgeInsets.all(8),
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SKText(
+                    'SKCard with auto-scaling',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  const SizedBox(height: 8),
+                  SKText(
+                    'Margin, elevation, and borderRadius automatically scaled!',
+                    fontSize: 12,
+                    color: Colors.grey.shade700,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // SKDivider
+          Column(
+            children: [
+              SKDivider(thickness: 1, indent: 0, endIndent: 0),
+              const SizedBox(height: 8),
+              SKDivider(thickness: 2, indent: 16, endIndent: 16),
+              const SizedBox(height: 8),
+              SKDivider(thickness: 1, indent: 32, endIndent: 32, height: 20),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // SKListTile
+          SKCard(
+            margin: const EdgeInsets.all(8),
+            elevation: 2,
+            child: Column(
+              children: [
+                SKListTile(
+                  leading: SKIcon(Icons.person, size: 24),
+                  title: SKText(
+                    'SKListTile Title',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  subtitle: SKText(
+                    'All padding and spacing auto-scaled',
+                    fontSize: 14,
+                  ),
+                  trailing: SKIcon(Icons.arrow_forward_ios, size: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                ),
+                SKDivider(height: 1, thickness: 1),
+                SKListTile(
+                  leading: SKIcon(Icons.settings, size: 24),
+                  title: SKText(
+                    'Settings',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  minLeadingWidth: 40,
+                  minVerticalPadding: 8,
+                ),
+              ],
+            ),
           ),
         ],
       ),

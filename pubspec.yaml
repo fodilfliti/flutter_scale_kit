@@ -1,6 +1,6 @@
 name: flutter_scale_kit
 description: High-performance responsive design package for Flutter with intelligent caching, const widgets, and device-specific scaling. Optimized alternative to flutter_screenutil.
-version: 1.3.1
+version: 1.4.0
 homepage: https://github.com/fodilfliti/flutter_scale_kit
 repository: https://github.com/fodilfliti/flutter_scale_kit
 issue_tracker: https://github.com/fodilfliti/flutter_scale_kit/issues

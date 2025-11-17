@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2025-11-13
+
+### ✨ Added
+
+- **More automatic scaling widgets** - Added 5 new Material widgets with automatic scaling support:
+  - **`SKIcon`**: Automatically scales `size` property.
+  - **`SKCard`**: Automatically scales `margin`, `elevation`, and `shape.borderRadius` (using `rSafe`).
+  - **`SKDivider`**: Automatically scales `thickness`, `indent`, `endIndent`, and `height`.
+  - **`SKAppBar`**: Automatically scales `toolbarHeight`, `elevation`, `titleSpacing`, and `leadingWidth`.
+  - **`SKListTile`**: Automatically scales `contentPadding`, `minLeadingWidth`, and `minVerticalPadding`.
+- **Enhanced `SKImage` widget** - Added multiple image provider constructors matching Flutter's `Image` widget:
+  - **`SKImage.asset()`** - Load images from asset bundles with automatic width/height scaling
+  - **`SKImage.network()`** - Load images from network URLs with support for custom headers and cache optimization
+  - **`SKImage.file()`** - Load images from local files with automatic scaling
+  - **`SKImage.memory()`** - Load images from in-memory byte data with automatic scaling
+  - All constructors support `cacheWidth` and `cacheHeight` for memory optimization via `ResizeImage`
+  - Full parameter support matching Flutter's `Image` widget (fit, alignment, repeat, error handling, etc.)
+
+### 📚 Documentation
+
+- README "Optimized Layout Widgets" section updated with examples for all new widgets.
+- README now includes comprehensive `SKImage` usage examples for all image provider types (asset, network, file, memory).
+- Example app now includes a dedicated section showcasing SKIcon, SKCard, SKDivider, SKAppBar, and SKListTile with automatic scaling demonstrations.
+
 ## [1.3.1] - 2025-11-13
 
 ### ✨ Added

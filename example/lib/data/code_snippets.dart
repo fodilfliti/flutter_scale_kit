@@ -268,6 +268,41 @@ SSpace(8)  // Square spacing''';
   ),
 );''';
 
+  static const moreAutoScalingWidgets = '''// SKIcon - auto-scales size
+SKIcon(Icons.home, size: 24)
+SKIcon(Icons.favorite, size: 32, color: Colors.red)
+
+// SKCard - auto-scales margin, elevation, borderRadius
+SKCard(
+  margin: EdgeInsets.all(16),
+  elevation: 4,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12),
+  ),
+  child: Text('Card content'),
+)
+
+// SKDivider - auto-scales thickness, indent, endIndent, height
+SKDivider(thickness: 1, indent: 16, endIndent: 16)
+SKDivider(thickness: 2, height: 20)
+
+// SKAppBar - auto-scales toolbarHeight, elevation, titleSpacing
+SKAppBar(
+  title: Text('App Bar'),
+  toolbarHeight: 56,
+  elevation: 4,
+  titleSpacing: 16,
+)
+
+// SKListTile - auto-scales contentPadding, minLeadingWidth, minVerticalPadding
+SKListTile(
+  leading: SKIcon(Icons.person, size: 24),
+  title: SKText('Title', fontSize: 16),
+  subtitle: SKText('Subtitle', fontSize: 14),
+  contentPadding: EdgeInsets.all(16),
+  minLeadingWidth: 40,
+)''';
+
   // SKit Helper Methods
   static const skitMethods = '''// Padding
 SKit.padding(all: 16, child: widget)

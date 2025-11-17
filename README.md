@@ -249,6 +249,18 @@ flutter pub get
 
 Flutter Scale Kit provides multiple ways to create responsive UIs. Whether you prefer extension methods like `.w` and `.sp`, helper widgets like `SKit.roundedContainer()`, or comprehensive text styling with `SKit.textFull()`, there's an API that fits your workflow.
 
+> 🎯 **Quick Migration**: Migrating from an existing Flutter project? Our automatic scaling widgets are **drop-in replacements** for Flutter's built-in widgets! Use search & replace to switch:
+>
+> - `Container` → `SKContainer`
+> - `Text` → `SKText`
+> - `Padding` → `SKPadding`
+> - `TextField` → `SKTextField`
+> - `ElevatedButton` → `SKElevatedButton`
+> - `Switch` → `SKSwitch`
+> - And many more! See [Optimized Layout Widgets](#optimized-layout-widgets) for the complete list.
+>
+> Your existing code will work exactly the same, but now with automatic responsive scaling applied! No need to refactor or change your code structure—just swap the widget classes.
+
 All text-related APIs (extensions, `SKit.text*`, responsive themes) automatically apply your `FontConfig` when one is registered—otherwise they fall back to Flutter's default fonts so you can adopt the system gradually.
 
 ### Quick Setup (2 minutes)
@@ -445,6 +457,8 @@ SKContainer(
   ),
 )
 ```
+
+> 💡 **Easy Migration Tip**: These widgets are drop-in replacements! Migrate your existing Flutter project by simply using search & replace: `Container` → `SKContainer`, `Text` → `SKText`, `Padding` → `SKPadding`, `TextField` → `SKTextField`, `ElevatedButton` → `SKElevatedButton`, etc. Your existing code will work immediately with automatic scaling!
 
 See [Optimized Layout Widgets](#optimized-layout-widgets) section for complete details.
 
@@ -1136,9 +1150,11 @@ Column(
 
 <a id="optimized-layout-widgets"></a>
 
-### Optimized Layout Widgets (`SKPadding`, `SKMargin`, `SKContainer`, `SKText`)
+### Optimized Layout Widgets (`SKPadding`, `SKMargin`, `SKContainer`, `SKText`, `SKIcon`, `SKCard`, `SKDivider`, `SKAppBar`, `SKListTile`, `SKSwitch`, `SKSwitchListTile`, `SKTextField`, `SKTextFormField`, `SKElevatedButton`, `SKTextButton`, `SKOutlinedButton`, `SKIconButton`, `SKActionChip`, `SKFilterChip`, `SKChoiceChip`, `SKInputChip`, `SKImage`)
 
 Minimize rebuild work with lightweight wrappers while keeping everything scaled automatically. These widgets automatically apply scaling to their properties without needing extension methods:
+
+> 🚀 **Easy Migration from Existing Projects**: Because these are drop-in replacements for Flutter's built-in widgets, you can easily migrate your existing project using simple search and replace operations! Just replace `Container` → `SKContainer`, `Text` → `SKText`, `Padding` → `SKPadding`, `TextField` → `SKTextField`, `ElevatedButton` → `SKElevatedButton`, etc. All your existing code will work exactly the same, but now with automatic scaling applied!
 
 ```dart
 SKPadding(
@@ -1160,7 +1176,39 @@ SKPadding(
       ),
     ),
   ),
-);
+)
+
+// More automatic scaling widgets
+SKIcon(Icons.home, size: 24) // Size automatically scaled!
+
+SKCard(
+  margin: EdgeInsets.all(16), // Automatically scaled!
+  elevation: 4, // Automatically scaled!
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12), // Uses rSafe automatically!
+  ),
+  child: Text('Card content'),
+)
+
+SKDivider(
+  thickness: 1, // Automatically scaled!
+  indent: 16,   // Automatically scaled!
+  endIndent: 16, // Automatically scaled!
+)
+
+SKAppBar(
+  title: Text('Title'),
+  toolbarHeight: 56, // Automatically scaled!
+  elevation: 4,      // Automatically scaled!
+  titleSpacing: 16,  // Automatically scaled!
+)
+
+SKListTile(
+  leading: SKIcon(Icons.person, size: 24),
+  title: SKText('Title', fontSize: 16),
+  contentPadding: EdgeInsets.all(16), // Automatically scaled!
+  minLeadingWidth: 40,                // Automatically scaled!
+)
 ```
 
 **Key Features:**
@@ -1169,6 +1217,66 @@ SKPadding(
 - **`SKPadding`**: Automatically scales `EdgeInsets` values (supports both `EdgeInsets` and `EdgeInsetsDirectional`)
 - **`SKMargin`**: Automatically scales `EdgeInsets` values (supports both `EdgeInsets` and `EdgeInsetsDirectional`)
 - **`SKText`**: Automatically scales `fontSize` and applies `FontConfig` if configured (supports all Text widget properties)
+- **`SKIcon`**: Automatically scales `size`
+- **`SKCard`**: Automatically scales `margin`, `elevation`, and `shape.borderRadius`
+- **`SKDivider`**: Automatically scales `thickness`, `indent`, `endIndent`, and `height`
+- **`SKAppBar`**: Automatically scales `toolbarHeight`, `elevation`, `titleSpacing`, and `leadingWidth`
+- **`SKListTile`**: Automatically scales `contentPadding`, `minLeadingWidth`, and `minVerticalPadding`
+- **`SKSwitch`**: Automatically scales `splashRadius`
+- **`SKSwitchListTile`**: Automatically scales `contentPadding` and `splashRadius`
+- **`SKTextField`**: Automatically scales `fontSize`, `padding` (via `InputDecoration`), `borderRadius`, and `cursorWidth`/`cursorHeight`
+- **`SKTextFormField`**: Same as `SKTextField` with form validation support
+- **`SKElevatedButton`**: Automatically scales `padding`, `minimumSize`, `fixedSize`, `borderRadius`, and `elevation`
+- **`SKTextButton`**: Automatically scales `padding`, `minimumSize`, `fixedSize`, and `borderRadius`
+- **`SKOutlinedButton`**: Automatically scales `padding`, `minimumSize`, `fixedSize`, and `borderRadius`
+- **`SKIconButton`**: Automatically scales `iconSize`, `padding`, and `constraints`
+- **`SKActionChip`**: Automatically scales `padding`, `labelPadding`, `avatarPadding`, `borderRadius`, `elevation`, and `deleteIconSize`
+- **`SKFilterChip`**: Automatically scales `padding`, `labelPadding`, `avatarPadding`, `borderRadius`, `elevation`, and `deleteIconSize`
+- **`SKChoiceChip`**: Automatically scales `padding`, `labelPadding`, `avatarPadding`, `borderRadius`, and `elevation`
+- **`SKInputChip`**: Automatically scales `padding`, `labelPadding`, `avatarPadding`, `borderRadius`, `elevation`, and `deleteIconSize`
+- **`SKImage`**: Automatically scales `width` and `height`. Supports multiple image sources:
+  - **`SKImage.asset()`** - Load images from asset bundles (like `Image.asset`)
+  - **`SKImage.network()`** - Load images from network URLs (like `Image.network`)
+  - **`SKImage.file()`** - Load images from local files (like `Image.file`)
+  - **`SKImage.memory()`** - Load images from in-memory byte data (like `Image.memory`)
+
+All constructors automatically scale `width` and `height` parameters and support cache optimization via `cacheWidth` and `cacheHeight`.
+
+**Usage Examples:**
+
+```dart
+// Asset image
+SKImage.asset(
+  'assets/images/logo.png',
+  width: 100,
+  height: 100,
+  fit: BoxFit.cover,
+)
+
+// Network image
+SKImage.network(
+  'https://example.com/image.jpg',
+  width: 200,
+  height: 200,
+  headers: {'Authorization': 'Bearer token'},
+  cacheWidth: 400,  // Optimize memory usage
+  cacheHeight: 400,
+)
+
+// File image
+SKImage.file(
+  File('/path/to/image.png'),
+  width: 150,
+  height: 150,
+)
+
+// Memory image
+SKImage.memory(
+  imageBytes,
+  width: 120,
+  height: 120,
+)
+```
 
 All scaling uses the package's cached scaling system for optimal performance.
 
