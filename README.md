@@ -234,7 +234,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.2.3
+  flutter_scale_kit: ^1.2.4
 ```
 
 Then run:
@@ -415,6 +415,13 @@ Container(
     style: TextStyle(fontSize: 16.spClamp(12, 24)),  // Font size clamped 12-24
   ),
 )
+
+// Apply .w / .h / .r directly on insets, constraints, and radii
+final padding = EdgeInsets.only(left: 12, right: 12).w;     // EdgeInsets.only(left: 12.w, right: 12.w)
+final rtlPadding = EdgeInsetsDirectional.only(start: 16).h; // Direction-aware, uses height scaling
+final constraints = BoxConstraints(maxWidth: 200, minHeight: 80).r; // Radius-aware scaling
+final radius = Radius.circular(24).w;                        // Radius.circular(24.w)
+final borderRadius = BorderRadius.circular(16).h;            // BorderRadius.circular(16.h)
 ```
 
 #### 2. SKit Helper Widgets (Pre-built & Convenient)
@@ -1657,6 +1664,7 @@ Notes:
 - `.shMax(max)`, `.shMin(min)`, `.shClamp(min, max)` - Screen height constraints
 - `.rMax(max)`, `.rMin(min)`, `.rClamp(min, max)` - Radius constraints
 - `.spMax(max)`, `.spMin(min)`, `.spClamp(min, max)` - Font size constraints
+- Works on `EdgeInsets`, `EdgeInsetsDirectional`, `BoxConstraints`, `Radius`, and `BorderRadius`, so you can write `EdgeInsets.all(12).w`, `Radius.circular(16).h`, or `BorderRadius.circular(8).r` without repeating conversions.
 
 All constraint operations are cached to reduce calculations during UI rebuilds, only recalculating when the cache is cleared (on resize/orientation change).
 

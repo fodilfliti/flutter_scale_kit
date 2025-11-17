@@ -142,3 +142,119 @@ extension ScaleExtension on num {
   double spClamp(double min, double max) =>
       _f.createFontSizeClamp(toDouble(), min, max);
 }
+
+extension EdgeInsetsScaleExtensions on EdgeInsets {
+  EdgeInsets _scale(double Function(double) scaler) {
+    return EdgeInsets.only(
+      left: scaler(left),
+      right: scaler(right),
+      top: scaler(top),
+      bottom: scaler(bottom),
+    );
+  }
+
+  EdgeInsets get w => _scale(ScaleValueFactory.instance.createWidth);
+
+  EdgeInsets get h => _scale(ScaleValueFactory.instance.createHeight);
+
+  EdgeInsets get r => _scale(ScaleValueFactory.instance.createRadius);
+}
+
+extension EdgeInsetsDirectionalScaleExtensions on EdgeInsetsDirectional {
+  EdgeInsetsDirectional _scale(double Function(double) scaler) {
+    return EdgeInsetsDirectional.only(
+      start: scaler(start),
+      end: scaler(end),
+      top: scaler(top),
+      bottom: scaler(bottom),
+    );
+  }
+
+  EdgeInsetsDirectional get w => _scale(ScaleValueFactory.instance.createWidth);
+
+  EdgeInsetsDirectional get h =>
+      _scale(ScaleValueFactory.instance.createHeight);
+
+  EdgeInsetsDirectional get r =>
+      _scale(ScaleValueFactory.instance.createRadius);
+}
+
+extension BoxConstraintsScaleExtensions on BoxConstraints {
+  static double _scaleDimension(double value, double Function(double) scaler) {
+    if (value == double.infinity || value == double.negativeInfinity) {
+      return value;
+    }
+    return scaler(value);
+  }
+
+  BoxConstraints get w {
+    final scaler = ScaleValueFactory.instance.createWidth;
+    return copyWith(
+      minWidth: _scaleDimension(minWidth, scaler),
+      maxWidth: _scaleDimension(maxWidth, scaler),
+      minHeight: _scaleDimension(minHeight, scaler),
+      maxHeight: _scaleDimension(maxHeight, scaler),
+    );
+  }
+
+  BoxConstraints get h {
+    final scaler = ScaleValueFactory.instance.createHeight;
+    return copyWith(
+      minWidth: _scaleDimension(minWidth, scaler),
+      maxWidth: _scaleDimension(maxWidth, scaler),
+      minHeight: _scaleDimension(minHeight, scaler),
+      maxHeight: _scaleDimension(maxHeight, scaler),
+    );
+  }
+
+  BoxConstraints get r {
+    final scaler = ScaleValueFactory.instance.createRadius;
+    return copyWith(
+      minWidth: _scaleDimension(minWidth, scaler),
+      maxWidth: _scaleDimension(maxWidth, scaler),
+      minHeight: _scaleDimension(minHeight, scaler),
+      maxHeight: _scaleDimension(maxHeight, scaler),
+    );
+  }
+}
+
+extension RadiusScaleExtensions on Radius {
+  Radius _scale({
+    required double Function(double) scaleX,
+    required double Function(double) scaleY,
+  }) {
+    return Radius.elliptical(scaleX(x), scaleY(y));
+  }
+
+  Radius get w => _scale(
+    scaleX: ScaleValueFactory.instance.createWidth,
+    scaleY: ScaleValueFactory.instance.createWidth,
+  );
+
+  Radius get h => _scale(
+    scaleX: ScaleValueFactory.instance.createHeight,
+    scaleY: ScaleValueFactory.instance.createHeight,
+  );
+
+  Radius get r => _scale(
+    scaleX: ScaleValueFactory.instance.createRadius,
+    scaleY: ScaleValueFactory.instance.createRadius,
+  );
+}
+
+extension BorderRadiusScaleExtensions on BorderRadius {
+  BorderRadius _scale(Radius Function(Radius) scaler) {
+    return BorderRadius.only(
+      topLeft: scaler(topLeft),
+      topRight: scaler(topRight),
+      bottomLeft: scaler(bottomLeft),
+      bottomRight: scaler(bottomRight),
+    );
+  }
+
+  BorderRadius get w => _scale((radius) => radius.w);
+
+  BorderRadius get h => _scale((radius) => radius.h);
+
+  BorderRadius get r => _scale((radius) => radius.r);
+}

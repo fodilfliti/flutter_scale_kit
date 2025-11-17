@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.4] - 2025-11-13
+
+### ✨ Added
+
+- `.w`, `.h`, `.r` extensions for `EdgeInsets`, `EdgeInsetsDirectional`, `BoxConstraints`, `Radius`, and `BorderRadius`, enabling concise syntax like `EdgeInsets.all(10).w`, `Radius.circular(16).h`, and `BorderRadius.circular(12).r`.
+
+### 📚 Documentation
+
+- Quick Start and Extension Methods sections now showcase the new geometry extensions with examples highlighting cached constraint usage across padding, constraints, and radii.
+
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
 ## [1.2.3] - 2025-11-13
 
 ### ✨ Added
