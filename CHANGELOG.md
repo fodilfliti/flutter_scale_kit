@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2025-11-13
+
+### ✨ Added
+
+- Example app now showcases the new automatic scaling widgets (SKContainer, SKPadding, SKMargin, SKText) with a dedicated section demonstrating drop-in usage without extension helpers.
+
+### 🔧 Changed
+
+- Desktop/web default `sizeChangeThreshold` is now `0.0`, forcing rebuilds on any viewport change to avoid rounding to 0 or 1 in tight layouts. Mobile/tablet default remains 0.05 (5%). Documentation updated to reflect the new behavior.
+
+## [1.3.0] - 2025-11-13
+
+### ✨ Added
+
+- **Automatic scaling widgets** - `SKContainer`, `SKPadding`, `SKMargin`, and `SKText` now automatically apply scaling to their properties without requiring extension methods.
+  - **`SKContainer`**: Automatically scales `width`, `height`, `padding`, `margin`, `borderRadius` (using `rSafe`), `boxShadow` (blurRadius, spreadRadius, offset), `border` width, and `BoxConstraints`.
+  - **`SKPadding`**: Automatically scales `EdgeInsets` values (supports both `EdgeInsets` and `EdgeInsetsDirectional`).
+  - **`SKMargin`**: Automatically scales `EdgeInsets` values (supports both `EdgeInsets` and `EdgeInsetsDirectional`).
+  - **`SKText`**: Automatically scales `fontSize` and applies `FontConfig` if configured. Supports all Text widget properties.
+
+### 📚 Documentation
+
+- README "Optimized Layout Widgets" section updated with examples showing automatic scaling behavior.
+- Added comprehensive usage examples for all automatic scaling widgets.
+
 ## [1.2.4] - 2025-11-13
 
 ### ✨ Added

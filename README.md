@@ -234,7 +234,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.2.4
+  flutter_scale_kit: ^1.3.1
 ```
 
 Then run:
@@ -329,7 +329,7 @@ class MyApp extends StatelessWidget {
       // Optional: pick tablet/mobile variants when locked
       // lockDesktopAsTablet: true,
       // lockDesktopAsMobile: true,
-      // Optional: control rebuild threshold (default: 0.05 for mobile/tablet, 0.03 for desktop/web)
+      // Optional: control rebuild threshold (default: 0.05 for mobile/tablet, 0.0 for desktop/web)
       // sizeChangeThreshold: 0.01, // 1% threshold
       // sizeChangeThreshold: 0.0,   // Rebuild on any change
       child: MaterialApp(
@@ -349,7 +349,7 @@ class MyApp extends StatelessWidget {
 
 - Need to lock Scale Kit to desktop behaviour (even on smaller windows)? Pass `deviceTypeOverride: DeviceType.desktop` or `DeviceType.web` when constructing `ScaleKitBuilder`.
 - Want that lock to happen automatically whenever you're on web/desktop? Set `lockDesktopPlatforms: true` so Scale Kit forces desktop handling only on those platforms, and use `lockDesktopAsTablet` / `lockDesktopAsMobile` to decide which breakpoint desktop should mimic when locked.
-- Need fine-grained control over when rebuilds trigger? Use `sizeChangeThreshold` to set the percentage change required before recalculating scales. Defaults to 5% for mobile/tablet and 3% for desktop/web. Set to `0.0` to rebuild on any size change.
+- Need fine-grained control over when rebuilds trigger? Use `sizeChangeThreshold` to set the percentage change required before recalculating scales. Defaults to 5% for mobile/tablet and 0% (rebuild on any change) for desktop/web. Set to `0.0` to rebuild on any size change.
 - Need RTL-aware spacing? Pass `start` / `end` to `context.scalePadding`, `context.scaleMargin`, or `SKit.padding` so Directionality resolves the correct edges automatically.
 
 - **Phones** hold between 0.85–1.25×, even on foldables.
@@ -362,7 +362,9 @@ Need a different feel? Head to [Understanding Scale Limits](#understanding-scale
 
 ### Core APIs - Pick Your Style
 
-Once your app is wrapped with `ScaleKitBuilder`, you can start using Scale Kit in three ways:
+Once your app is wrapped with `ScaleKitBuilder`, you can start using Scale Kit in four ways:
+
+> 💡 **New in v1.3.0:** Use automatic scaling widgets (`SKContainer`, `SKPadding`, `SKMargin`, `SKText`) that automatically apply scaling without needing extension methods! See [Optimized Layout Widgets](#optimized-layout-widgets) below.
 
 ### Device Metrics Mixin
 
@@ -424,7 +426,29 @@ final radius = Radius.circular(24).w;                        // Radius.circular(
 final borderRadius = BorderRadius.circular(16).h;            // BorderRadius.circular(16.h)
 ```
 
-#### 2. SKit Helper Widgets (Pre-built & Convenient)
+#### 2. Automatic Scaling Widgets (Zero Extension Methods Needed)
+
+```dart
+SKContainer(
+  width: 200,  // Automatically scaled!
+  height: 100, // Automatically scaled!
+  padding: EdgeInsets.all(16), // Automatically scaled!
+  margin: EdgeInsets.all(8),   // Automatically scaled!
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(12), // Uses rSafe automatically!
+    color: Colors.blue.shade50,
+  ),
+  child: SKText(
+    'Hello',
+    fontSize: 16, // Automatically scaled!
+    fontWeight: FontWeight.bold,
+  ),
+)
+```
+
+See [Optimized Layout Widgets](#optimized-layout-widgets) section for complete details.
+
+#### 3. SKit Helper Widgets (Pre-built & Convenient)
 
 ```dart
 SKit.padding(
@@ -441,7 +465,7 @@ SKit.padding(
 
 `SKit.padding` and `SKit.margin` also accept `start` / `end` so you can keep one layout definition for both RTL and LTR flows.
 
-#### 3. Comprehensive Text Widgets (All-in-One)
+#### 4. Comprehensive Text Widgets (All-in-One)
 
 ```dart
 SKit.textFull(
@@ -1110,33 +1134,49 @@ Column(
 );
 ```
 
-### Optimized Layout Widgets (`SKPadding`, `SKMargin`, `SKContainer`)
+<a id="optimized-layout-widgets"></a>
 
-Minimize rebuild work with lightweight wrappers while keeping everything scaled:
+### Optimized Layout Widgets (`SKPadding`, `SKMargin`, `SKContainer`, `SKText`)
+
+Minimize rebuild work with lightweight wrappers while keeping everything scaled automatically. These widgets automatically apply scaling to their properties without needing extension methods:
 
 ```dart
 SKPadding(
-  padding: EdgeInsets.all(16.w),
+  padding: EdgeInsets.all(16), // Automatically scaled!
   child: SKMargin(
-    margin: EdgeInsets.only(bottom: 12.h),
+    margin: EdgeInsets.only(bottom: 12), // Automatically scaled!
     child: SKContainer(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      width: 200,  // Automatically scaled!
+      height: 100, // Automatically scaled!
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Automatically scaled!
       decoration: BoxDecoration(
         color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(12.rSafe),
+        borderRadius: BorderRadius.circular(12), // Uses rSafe automatically!
       ),
-      child: Text(
-        'Scaled padding, margin, and container in one line',
-        style: TextStyle(fontSize: 14.sp),
+      child: SKText(
+        'Scaled padding, margin, container, and text automatically',
+        fontSize: 14, // Automatically scaled!
+        fontWeight: FontWeight.bold,
       ),
     ),
   ),
 );
 ```
 
+**Key Features:**
+
+- **`SKContainer`**: Automatically scales `width`, `height`, `padding`, `margin`, `borderRadius` (using `rSafe`), `boxShadow`, `border` width, and `constraints`
+- **`SKPadding`**: Automatically scales `EdgeInsets` values (supports both `EdgeInsets` and `EdgeInsetsDirectional`)
+- **`SKMargin`**: Automatically scales `EdgeInsets` values (supports both `EdgeInsets` and `EdgeInsetsDirectional`)
+- **`SKText`**: Automatically scales `fontSize` and applies `FontConfig` if configured (supports all Text widget properties)
+
+All scaling uses the package's cached scaling system for optimal performance.
+
 ---
 
 ## 🛠️ Configuration & Advanced
+
+<a id="size-system-configuration"></a>
 
 ### Size System Configuration
 
@@ -1735,6 +1775,8 @@ All constraint operations are cached to reduce calculations during UI rebuilds, 
 - `currentLanguageCode` - Get current language code
 - `clear()` - Clear all font configurations
 
+<a id="performance"></a>
+
 ## Performance
 
 Flutter Scale Kit uses intelligent caching to minimize recalculations:
@@ -1743,7 +1785,9 @@ Flutter Scale Kit uses intelligent caching to minimize recalculations:
 - **Cache Invalidation**: Automatically clears cache on size/orientation change
 - **Const Widgets**: Pre-calculated values for const-compatible widgets
 - **Singleton Pattern**: Single instance manages all scaling operations
-- **Threshold-Based Updates**: Only recalculates on significant size changes (>5%)
+- **Threshold-Based Updates**: Only recalculates when size deltas exceed the active threshold (5% mobile/tablet, instantaneous for desktop/web unless overridden)
+
+<a id="architecture"></a>
 
 ## Architecture
 
@@ -1940,13 +1984,19 @@ The package automatically adapts scaling strategies based on:
 - **Orientation**: Portrait, Landscape
 - **Foldable Devices**: Detects fold/unfold transitions
 
+<a id="contributing"></a>
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+<a id="license"></a>
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+<a id="support"></a>
 
 ## Support
 

@@ -107,7 +107,7 @@ class ScaleKitBuilder extends StatefulWidget {
   ///
   /// Defaults:
   /// - 0.05 (5%) for mobile/tablet platforms
-  /// - 0.03 (3%) for desktop/web platforms
+  /// - 0.0  (0%) for desktop/web platforms (rebuild on any change)
   final double? sizeChangeThreshold;
 
   /// Creates a [ScaleKitBuilder] widget.
@@ -122,7 +122,7 @@ class ScaleKitBuilder extends StatefulWidget {
   /// - [breakpoints] - Custom device breakpoints used for size-based detection
   /// - [minScale] - Optional minimum scale factor
   /// - [maxScale] - Optional maximum scale factor
-  /// - [sizeChangeThreshold] - Threshold for triggering rebuilds (0.0-1.0). Defaults to 0.05 (5%) for mobile/tablet, 0.03 (3%) for desktop/web. Set to 0.0 to rebuild on any change.
+  /// - [sizeChangeThreshold] - Threshold for triggering rebuilds (0.0-1.0). Defaults to 0.05 (5%) for mobile/tablet and 0.0 (0%) for desktop/web (rebuild on any change). Set manually to values like 0.01 for a 1% threshold if desired.
   const ScaleKitBuilder({
     super.key,
     required this.child,
@@ -176,13 +176,13 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     if (widget.sizeChangeThreshold != null) {
       return widget.sizeChangeThreshold!;
     }
-    // Default: 5% for mobile/tablet, 3% for desktop/web
+    // Default: 5% for mobile/tablet, 0% for desktop/web (rebuild on any change)
     if (defaultTargetPlatform == TargetPlatform.windows ||
         defaultTargetPlatform == TargetPlatform.macOS ||
         defaultTargetPlatform == TargetPlatform.linux ||
         defaultTargetPlatform == TargetPlatform.fuchsia ||
         kIsWeb) {
-      return 0.03; // 3% for desktop/web
+      return 0.0; // Rebuild on any change for desktop/web
     }
     return 0.05; // 5% for mobile/tablet
   }

@@ -246,6 +246,28 @@ HSpace(8)  // Horizontal spacing
 VSpace(8)  // Vertical spacing
 SSpace(8)  // Square spacing''';
 
+  // Automatic Scaling Widgets
+  static const autoScalingWidgets = '''SKPadding(
+  padding: EdgeInsets.all(16),
+  child: SKMargin(
+    margin: EdgeInsets.only(bottom: 12),
+    child: SKContainer(
+      width: 200,
+      height: 100,
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: SKText(
+        'Scaled automatically!',
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  ),
+);''';
+
   // SKit Helper Methods
   static const skitMethods = '''// Padding
 SKit.padding(all: 16, child: widget)

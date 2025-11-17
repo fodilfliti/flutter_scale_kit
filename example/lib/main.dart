@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> with DeviceMetricsMixin<MyApp> {
   double? _minScale;
   double? _maxScale;
 
-  // Size change threshold: null = platform-aware defaults (5% mobile/tablet, 3% desktop/web)
+  // Size change threshold: null = platform-aware defaults (5% mobile/tablet, 0% desktop/web)
   double? _sizeChangeThreshold;
 
   ScaleBreakpoints _breakpoints = const ScaleBreakpoints();
@@ -225,7 +225,7 @@ class _MyAppState extends State<MyApp> with DeviceMetricsMixin<MyApp> {
       tabletPortraitSizeBoost: _tabletPortraitSizeBoost, // Default: 1.0
       desktopPortraitFontBoost: _desktopPortraitFontBoost, // Default: 1.0
       desktopPortraitSizeBoost: _desktopPortraitSizeBoost, // Default: 1.0
-      // Size change threshold: null = platform-aware defaults (5% mobile/tablet, 3% desktop/web)
+      // Size change threshold: null = platform-aware defaults (5% mobile/tablet, 0% desktop/web)
       // Set to 0.0 to rebuild on any change, or a value like 0.01 for 1% threshold
       sizeChangeThreshold: _sizeChangeThreshold,
       child: MaterialApp(
@@ -566,6 +566,15 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
             _buildFontConfigExample(),
+            SizedBox(height: 24.h),
+
+            // Automatic Scaling Widgets
+            const SectionTitle(
+              title: '✨ Automatic Scaling Widgets',
+              subtitle: 'SKContainer, SKPadding, SKMargin, SKText',
+            ),
+            SizedBox(height: 12.h),
+            _buildAutoScalingWidgetsExample(),
             SizedBox(height: 24.h),
 
             // Optimized Widgets
@@ -2127,6 +2136,104 @@ class DashboardState extends State<Dashboard>
             Text('Hello (English)', style: TextStyle(fontSize: 16.sp)),
           ],
         ),
+      ),
+    );
+  }
+
+  // ============================================================================
+  // AUTOMATIC SCALING WIDGETS EXAMPLE
+  // ============================================================================
+  Widget _buildAutoScalingWidgetsExample() {
+    return SectionCard(
+      title: 'Automatic Scaling Widgets',
+      subtitle: 'Drop-in replacements for Container, Padding, and Text',
+      description:
+          'Use SKContainer, SKPadding, SKMargin, and SKText just like their Flutter counterparts. Pass raw doubles/EdgeInsets and the package applies scaling automatically using cached values.',
+      code: CodeSnippets.autoScalingWidgets,
+      codeLanguage: 'dart',
+      result: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SKPadding(
+            padding: const EdgeInsets.all(16),
+            child: SKMargin(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: SKContainer(
+                width: 220,
+                height: 120,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.blue.shade200, width: 1.2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SKText(
+                      'All values auto-scale',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade900,
+                    ),
+                    const SizedBox(height: 6),
+                    SKText(
+                      'No extension methods needed — just pass design values.',
+                      fontSize: 12,
+                      color: Colors.blue.shade800,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: SKContainer(
+                  height: 70,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: SKText(
+                      'Width 70 auto-scales\non resize',
+                      fontSize: 12,
+                      color: Colors.green.shade900,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: SKContainer(
+                  height: 70,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.purple.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: SKText(
+                      'Same code,\nscaled for tablets/web',
+                      fontSize: 12,
+                      color: Colors.purple.shade900,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
