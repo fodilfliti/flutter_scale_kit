@@ -172,6 +172,11 @@ extension ScaleContextExtension on BuildContext {
   bool get isWebPlatform =>
       scaleManager.platformCategory == PlatformCategory.web;
 
+  /// True when running on a mobile platform (Android or iOS).
+  bool get isMobilePlatform =>
+      scaleManager.platformCategory == PlatformCategory.android ||
+      scaleManager.platformCategory == PlatformCategory.ios;
+
   /// True when running on Android platform.
   bool get isAndroidPlatform =>
       scaleManager.platformCategory == PlatformCategory.android;
