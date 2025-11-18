@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.1] - 2025-01-XX
+
+### 🔧 Fixed
+
+- **FFI Compatibility Fix** - Fixed critical issue where extension methods (`.sp`, `.w`, `.h`, `.verticalSpace`, etc.) were causing FFI errors when used with APIs like `GoogleFonts` and Flutter widgets (`SizedBox`, etc.)
+  - Replaced Expando-based tracking with Map-based tracking for all platforms to ensure returned values are always clean and FFI-compatible
+  - Extension methods now return completely clean double instances that can be safely passed to any FFI-based API
+  - Fixed `ArgumentError: Invalid argument (object): Cannot be a string, number, boolean...` errors when using `16.sp` with `GoogleFonts` or `16.verticalSpace` with `VSpace`/`SizedBox`
+  - All platforms (VM and web/Wasm) now use consistent Map-based tracking for better compatibility
+
+### 🎯 Improved
+
+- **Better Value Tracking** - Switched from Expando to Map-based tracking for all platforms, ensuring:
+  - Values are always clean and FFI-compatible
+  - No metadata attached to returned values
+  - Consistent behavior across all platforms
+  - Proper detection of pre-scaled values to prevent double-scaling
+
 ## [1.5.0] - 2025-11-18
 
 ### ✨ Added

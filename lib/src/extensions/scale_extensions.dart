@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../core/scale_value_factory.dart';
+import '../core/scaled_value_metadata.dart';
 import '../widgets/spacing_widgets.dart';
 
 /// Extension methods for easy scaling operations
@@ -141,6 +142,26 @@ extension ScaleExtension on num {
   /// Example: `16.spClamp(12, 24)` returns scaled font size clamped between 12 and 24.
   double spClamp(double min, double max) =>
       _f.createFontSizeClamp(toDouble(), min, max);
+}
+
+/// Extension on [double] to extract clean values for FFI APIs.
+///
+/// When using scaled values with FFI-based APIs like [GoogleFonts], you may
+/// need a clean double instance. The scaled values returned by extension methods
+/// (like `.sp`, `.w`, etc.) are already clean and safe to use, but this extension
+/// provides explicit access if needed.
+extension CleanDoubleExtension on double {
+  /// Returns a clean double instance suitable for FFI APIs.
+  ///
+  /// Use this when passing scaled values to GoogleFonts or other FFI-based APIs
+  /// if you encounter FFI compatibility issues. In most cases, this is not needed
+  /// as scaled values are already clean.
+  ///
+  /// Example:
+  /// ```dart
+  /// GoogleFonts.almarai(fontSize: 20.sp.clean) // Usually not needed, 20.sp works fine
+  /// ```
+  double get clean => SKScaledValueTracker.toCleanDouble(this);
 }
 
 extension EdgeInsetsScaleExtensions on EdgeInsets {
