@@ -110,9 +110,7 @@ mixin DeviceMetricsMixin<T extends StatefulWidget> on State<T> {
       );
     }
 
-    _deviceType = DeviceDetector.detectDeviceType(
-      _logicalScreenSize.shortestSide,
-    );
+    _deviceType = DeviceDetector.detectDeviceType(_logicalScreenSize.width);
   }
 }
 
