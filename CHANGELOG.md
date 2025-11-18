@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.2] - 2025-01-XX
+
+### ✨ Added
+
+- **Platform Detection Helpers** - Added new platform-specific helpers for better platform branching:
+  - **`context.isMobilePlatform`** - Returns `true` when running on Android or iOS
+  - **`context.isAndroidPlatform`** - Returns `true` when running on Android
+  - **`context.isIOSPlatform`** - Returns `true` when running on iOS
+  - **`DeviceMetricsMixin.isAndroidPlatform`** - Android platform check in State classes
+  - **`DeviceMetricsMixin.isIOSPlatform`** - iOS platform check in State classes
+
+### 🔧 Fixed
+
+- **Web Safety for Platform Detection** - Enhanced all platform detection helpers to be web-safe:
+  - `isMobilePlatform` in `DeviceMetricsMixin` now checks `kIsWeb` first to prevent errors
+  - `isDesktopPlatform` in `DeviceMetricsMixin` now correctly returns `true` for web
+  - All platform helpers use safe detection methods that work correctly on web/Wasm
+
+### 📚 Documentation
+
+- README updated with new platform helpers in Context Extensions section
+- Example code updated to show platform-specific branching with new helpers
+- Device Metrics Mixin documentation updated to include new platform helpers
+
 ## [1.5.1] - 2025-01-XX
 
 ### 🔧 Fixed
