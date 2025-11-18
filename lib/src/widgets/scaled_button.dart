@@ -61,8 +61,8 @@ class SKElevatedButton extends ElevatedButton {
           minimumSize != null
               ? WidgetStateProperty.all(
                 Size(
-                  _factory.createWidth(minimumSize.width),
-                  _factory.createHeight(minimumSize.height),
+                  _factory.resolveWidth(minimumSize.width),
+                  _factory.resolveHeight(minimumSize.height),
                 ),
               )
               : null,
@@ -70,25 +70,20 @@ class SKElevatedButton extends ElevatedButton {
           fixedSize != null
               ? WidgetStateProperty.all(
                 Size(
-                  _factory.createWidth(fixedSize.width),
-                  _factory.createHeight(fixedSize.height),
+                  _factory.resolveWidth(fixedSize.width),
+                  _factory.resolveHeight(fixedSize.height),
                 ),
               )
               : null,
       elevation:
           elevation != null
-              ? WidgetStateProperty.all(_factory.createWidth(elevation))
+              ? WidgetStateProperty.all(_factory.resolveWidth(elevation))
               : null,
       shape:
           borderRadius != null
               ? WidgetStateProperty.all(
                 RoundedRectangleBorder(
-                  borderRadius: _factory.createBorderRadiusSafe(
-                    topLeft: _extractRadiusValue(borderRadius.topLeft),
-                    topRight: _extractRadiusValue(borderRadius.topRight),
-                    bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-                    bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-                  ),
+                  borderRadius: _scaleBorderRadius(borderRadius),
                 ),
               )
               : null,
@@ -107,54 +102,49 @@ class SKElevatedButton extends ElevatedButton {
       minimumSize:
           minimumSize != null
               ? Size(
-                _factory.createWidth(minimumSize.width),
-                _factory.createHeight(minimumSize.height),
+                _factory.resolveWidth(minimumSize.width),
+                _factory.resolveHeight(minimumSize.height),
               )
               : null,
       fixedSize:
           fixedSize != null
               ? Size(
-                _factory.createWidth(fixedSize.width),
-                _factory.createHeight(fixedSize.height),
+                _factory.resolveWidth(fixedSize.width),
+                _factory.resolveHeight(fixedSize.height),
               )
               : null,
-      elevation: elevation != null ? _factory.createWidth(elevation) : null,
+      elevation: elevation != null ? _factory.resolveWidth(elevation) : null,
       shape:
           borderRadius != null
               ? RoundedRectangleBorder(
-                borderRadius: _factory.createBorderRadiusSafe(
-                  topLeft: _extractRadiusValue(borderRadius.topLeft),
-                  topRight: _extractRadiusValue(borderRadius.topRight),
-                  bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-                  bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-                ),
+                borderRadius: _scaleBorderRadius(borderRadius),
               )
               : null,
     );
   }
 
   static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
+    return _factory.resolveEdgeInsets(insets);
+  }
+
+  static BorderRadius _scaleBorderRadius(BorderRadius borderRadius) {
+    return BorderRadius.only(
+      topLeft: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topLeft)),
+      ),
+      topRight: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topRight)),
+      ),
+      bottomLeft: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomLeft),
+        ),
+      ),
+      bottomRight: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomRight),
+        ),
+      ),
     );
   }
 
@@ -223,8 +213,8 @@ class SKTextButton extends TextButton {
           minimumSize != null
               ? WidgetStateProperty.all(
                 Size(
-                  _factory.createWidth(minimumSize.width),
-                  _factory.createHeight(minimumSize.height),
+                  _factory.resolveWidth(minimumSize.width),
+                  _factory.resolveHeight(minimumSize.height),
                 ),
               )
               : null,
@@ -232,8 +222,8 @@ class SKTextButton extends TextButton {
           fixedSize != null
               ? WidgetStateProperty.all(
                 Size(
-                  _factory.createWidth(fixedSize.width),
-                  _factory.createHeight(fixedSize.height),
+                  _factory.resolveWidth(fixedSize.width),
+                  _factory.resolveHeight(fixedSize.height),
                 ),
               )
               : null,
@@ -241,12 +231,7 @@ class SKTextButton extends TextButton {
           borderRadius != null
               ? WidgetStateProperty.all(
                 RoundedRectangleBorder(
-                  borderRadius: _factory.createBorderRadiusSafe(
-                    topLeft: _extractRadiusValue(borderRadius.topLeft),
-                    topRight: _extractRadiusValue(borderRadius.topRight),
-                    bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-                    bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-                  ),
+                  borderRadius: _scaleBorderRadius(borderRadius),
                 ),
               )
               : null,
@@ -264,53 +249,48 @@ class SKTextButton extends TextButton {
       minimumSize:
           minimumSize != null
               ? Size(
-                _factory.createWidth(minimumSize.width),
-                _factory.createHeight(minimumSize.height),
+                _factory.resolveWidth(minimumSize.width),
+                _factory.resolveHeight(minimumSize.height),
               )
               : null,
       fixedSize:
           fixedSize != null
               ? Size(
-                _factory.createWidth(fixedSize.width),
-                _factory.createHeight(fixedSize.height),
+                _factory.resolveWidth(fixedSize.width),
+                _factory.resolveHeight(fixedSize.height),
               )
               : null,
       shape:
           borderRadius != null
               ? RoundedRectangleBorder(
-                borderRadius: _factory.createBorderRadiusSafe(
-                  topLeft: _extractRadiusValue(borderRadius.topLeft),
-                  topRight: _extractRadiusValue(borderRadius.topRight),
-                  bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-                  bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-                ),
+                borderRadius: _scaleBorderRadius(borderRadius),
               )
               : null,
     );
   }
 
   static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
+    return _factory.resolveEdgeInsets(insets);
+  }
+
+  static BorderRadius _scaleBorderRadius(BorderRadius borderRadius) {
+    return BorderRadius.only(
+      topLeft: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topLeft)),
+      ),
+      topRight: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topRight)),
+      ),
+      bottomLeft: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomLeft),
+        ),
+      ),
+      bottomRight: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomRight),
+        ),
+      ),
     );
   }
 
@@ -378,8 +358,8 @@ class SKOutlinedButton extends OutlinedButton {
           minimumSize != null
               ? WidgetStateProperty.all(
                 Size(
-                  _factory.createWidth(minimumSize.width),
-                  _factory.createHeight(minimumSize.height),
+                  _factory.resolveWidth(minimumSize.width),
+                  _factory.resolveHeight(minimumSize.height),
                 ),
               )
               : null,
@@ -387,8 +367,8 @@ class SKOutlinedButton extends OutlinedButton {
           fixedSize != null
               ? WidgetStateProperty.all(
                 Size(
-                  _factory.createWidth(fixedSize.width),
-                  _factory.createHeight(fixedSize.height),
+                  _factory.resolveWidth(fixedSize.width),
+                  _factory.resolveHeight(fixedSize.height),
                 ),
               )
               : null,
@@ -396,12 +376,7 @@ class SKOutlinedButton extends OutlinedButton {
           borderRadius != null
               ? WidgetStateProperty.all(
                 RoundedRectangleBorder(
-                  borderRadius: _factory.createBorderRadiusSafe(
-                    topLeft: _extractRadiusValue(borderRadius.topLeft),
-                    topRight: _extractRadiusValue(borderRadius.topRight),
-                    bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-                    bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-                  ),
+                  borderRadius: _scaleBorderRadius(borderRadius),
                 ),
               )
               : null,
@@ -419,53 +394,48 @@ class SKOutlinedButton extends OutlinedButton {
       minimumSize:
           minimumSize != null
               ? Size(
-                _factory.createWidth(minimumSize.width),
-                _factory.createHeight(minimumSize.height),
+                _factory.resolveWidth(minimumSize.width),
+                _factory.resolveHeight(minimumSize.height),
               )
               : null,
       fixedSize:
           fixedSize != null
               ? Size(
-                _factory.createWidth(fixedSize.width),
-                _factory.createHeight(fixedSize.height),
+                _factory.resolveWidth(fixedSize.width),
+                _factory.resolveHeight(fixedSize.height),
               )
               : null,
       shape:
           borderRadius != null
               ? RoundedRectangleBorder(
-                borderRadius: _factory.createBorderRadiusSafe(
-                  topLeft: _extractRadiusValue(borderRadius.topLeft),
-                  topRight: _extractRadiusValue(borderRadius.topRight),
-                  bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-                  bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-                ),
+                borderRadius: _scaleBorderRadius(borderRadius),
               )
               : null,
     );
   }
 
   static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
+    return _factory.resolveEdgeInsets(insets);
+  }
+
+  static BorderRadius _scaleBorderRadius(BorderRadius borderRadius) {
+    return BorderRadius.only(
+      topLeft: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topLeft)),
+      ),
+      topRight: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topRight)),
+      ),
+      bottomLeft: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomLeft),
+        ),
+      ),
+      bottomRight: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomRight),
+        ),
+      ),
     );
   }
 
@@ -506,49 +476,17 @@ class SKIconButton extends IconButton {
     super.disabledColor,
     super.visualDensity,
   }) : super(
-         iconSize: iconSize != null ? _factory.createFontSize(iconSize) : null,
+         iconSize: iconSize != null ? _factory.resolveFontSize(iconSize) : null,
          padding: padding != null ? _scaleEdgeInsets(padding) : null,
          constraints:
              constraints != null ? _scaleConstraints(constraints) : null,
        );
 
   static BoxConstraints _scaleConstraints(BoxConstraints constraints) {
-    return BoxConstraints(
-      minWidth: _factory.createWidth(constraints.minWidth),
-      maxWidth:
-          constraints.maxWidth != double.infinity
-              ? _factory.createWidth(constraints.maxWidth)
-              : double.infinity,
-      minHeight: _factory.createHeight(constraints.minHeight),
-      maxHeight:
-          constraints.maxHeight != double.infinity
-              ? _factory.createHeight(constraints.maxHeight)
-              : double.infinity,
-    );
+    return _factory.resolveBoxConstraints(constraints);
   }
 
   static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
-    );
+    return _factory.resolveEdgeInsets(insets);
   }
 }

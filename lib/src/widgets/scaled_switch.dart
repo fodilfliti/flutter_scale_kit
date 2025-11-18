@@ -29,11 +29,12 @@ class SKSwitch extends Switch {
     super.focusNode,
     DragStartBehavior? dragStartBehavior,
   }) : super(
-          splashRadius: splashRadius != null
-              ? _factory.createRadiusSafe(splashRadius)
-              : null,
-          dragStartBehavior: dragStartBehavior ?? DragStartBehavior.start,
-        );
+         splashRadius:
+             splashRadius != null
+                 ? _factory.resolveRadiusSafe(splashRadius)
+                 : null,
+         dragStartBehavior: dragStartBehavior ?? DragStartBehavior.start,
+       );
 }
 
 /// Scaled SwitchListTile widget - extends Flutter's SwitchListTile
@@ -72,38 +73,14 @@ class SKSwitchListTile extends SwitchListTile {
     super.materialTapTargetSize,
     super.visualDensity,
   }) : super(
-          contentPadding: contentPadding != null
-              ? _scaleEdgeInsets(contentPadding)
-              : null,
-          splashRadius: splashRadius != null
-              ? _factory.createRadiusSafe(splashRadius)
-              : null,
-          dragStartBehavior: dragStartBehavior ?? DragStartBehavior.start,
-        );
-
-  static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
-    );
-  }
+         contentPadding:
+             contentPadding != null
+                 ? _factory.resolveEdgeInsets(contentPadding)
+                 : null,
+         splashRadius:
+             splashRadius != null
+                 ? _factory.resolveRadiusSafe(splashRadius)
+                 : null,
+         dragStartBehavior: dragStartBehavior ?? DragStartBehavior.start,
+       );
 }
-

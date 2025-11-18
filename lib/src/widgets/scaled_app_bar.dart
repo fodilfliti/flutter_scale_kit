@@ -38,18 +38,18 @@ class SKAppBar extends AppBar {
     super.forceMaterialTransparency = false,
     super.clipBehavior,
   }) : super(
-         elevation: elevation != null ? _factory.createWidth(elevation) : null,
+         elevation: elevation != null ? _factory.resolveWidth(elevation) : null,
          scrolledUnderElevation:
              scrolledUnderElevation != null
-                 ? _factory.createWidth(scrolledUnderElevation)
+                 ? _factory.resolveWidth(scrolledUnderElevation)
                  : null,
          toolbarHeight:
              toolbarHeight != null
-                 ? _factory.createHeight(toolbarHeight)
+                 ? _factory.resolveHeight(toolbarHeight)
                  : null,
          leadingWidth:
-             leadingWidth != null ? _factory.createWidth(leadingWidth) : null,
+             leadingWidth != null ? _factory.resolveWidth(leadingWidth) : null,
          titleSpacing:
-             titleSpacing != null ? _factory.createWidth(titleSpacing) : null,
+             titleSpacing != null ? _factory.resolveWidth(titleSpacing) : null,
        );
 }

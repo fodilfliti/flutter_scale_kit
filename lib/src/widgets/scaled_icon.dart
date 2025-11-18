@@ -15,8 +15,5 @@ class SKIcon extends Icon {
     super.shadows,
     super.semanticLabel,
     super.textDirection,
-  }) : super(
-          size: size != null ? _factory.createFontSize(size) : null,
-        );
+  }) : super(size: size != null ? _factory.resolveFontSize(size) : null);
 }
-

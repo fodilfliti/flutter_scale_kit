@@ -37,42 +37,17 @@ class SKListTile extends ListTile {
     super.autofocus = false,
     super.focusNode,
   }) : super(
-          contentPadding: contentPadding != null
-              ? _scaleEdgeInsets(contentPadding)
-              : null,
-          minLeadingWidth: minLeadingWidth != null
-              ? _factory.createWidth(minLeadingWidth)
-              : null,
-          minVerticalPadding: minVerticalPadding != null
-              ? _factory.createHeight(minVerticalPadding)
-              : null,
-        );
-
-  /// Scales EdgeInsetsGeometry values
-  static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    // For other EdgeInsetsGeometry types, try to extract values
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
-    );
-  }
+         contentPadding:
+             contentPadding != null
+                 ? _factory.resolveEdgeInsets(contentPadding)
+                 : null,
+         minLeadingWidth:
+             minLeadingWidth != null
+                 ? _factory.resolveWidth(minLeadingWidth)
+                 : null,
+         minVerticalPadding:
+             minVerticalPadding != null
+                 ? _factory.resolveHeight(minVerticalPadding)
+                 : null,
+       );
 }
-

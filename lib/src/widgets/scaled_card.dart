@@ -17,52 +17,41 @@ class SKCard extends Card {
     ShapeBorder? shape,
     super.semanticContainer,
   }) : super(
-          elevation:
-              elevation != null ? _factory.createWidth(elevation) : null,
-          margin: margin != null ? _scaleMargin(margin) : null,
-          shape: shape != null ? _scaleShape(shape) : null,
-        );
-
-  /// Scales EdgeInsetsGeometry margin values
-  static EdgeInsetsGeometry _scaleMargin(EdgeInsetsGeometry margin) {
-    if (margin is EdgeInsets) {
-      return _factory.createMargin(
-        top: margin.top,
-        bottom: margin.bottom,
-        left: margin.left,
-        right: margin.right,
-      );
-    } else if (margin is EdgeInsetsDirectional) {
-      return _factory.createMargin(
-        top: margin.top,
-        bottom: margin.bottom,
-        start: margin.start,
-        end: margin.end,
-      );
-    }
-    // For other EdgeInsetsGeometry types, try to extract values
-    final resolved = margin.resolve(TextDirection.ltr);
-    return _factory.createMargin(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
-    );
-  }
+         elevation: elevation != null ? _factory.resolveWidth(elevation) : null,
+         margin: margin != null ? _factory.resolveEdgeInsets(margin) : null,
+         shape: shape != null ? _scaleShape(shape) : null,
+       );
 
   /// Scales ShapeBorder (primarily RoundedRectangleBorder)
   static ShapeBorder _scaleShape(ShapeBorder shape) {
     if (shape is RoundedRectangleBorder) {
       final borderRadius = shape.borderRadius;
       return RoundedRectangleBorder(
-        borderRadius: borderRadius is BorderRadius
-            ? _factory.createBorderRadiusSafe(
-                topLeft: _extractRadiusValue(borderRadius.topLeft),
-                topRight: _extractRadiusValue(borderRadius.topRight),
-                bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-                bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-              )
-            : borderRadius,
+        borderRadius:
+            borderRadius is BorderRadius
+                ? BorderRadius.only(
+                  topLeft: Radius.circular(
+                    _factory.resolveRadiusSafe(
+                      _extractRadiusValue(borderRadius.topLeft),
+                    ),
+                  ),
+                  topRight: Radius.circular(
+                    _factory.resolveRadiusSafe(
+                      _extractRadiusValue(borderRadius.topRight),
+                    ),
+                  ),
+                  bottomLeft: Radius.circular(
+                    _factory.resolveRadiusSafe(
+                      _extractRadiusValue(borderRadius.bottomLeft),
+                    ),
+                  ),
+                  bottomRight: Radius.circular(
+                    _factory.resolveRadiusSafe(
+                      _extractRadiusValue(borderRadius.bottomRight),
+                    ),
+                  ),
+                )
+                : borderRadius,
         side: shape.side,
       );
     }
@@ -78,4 +67,3 @@ class SKCard extends Card {
     return radius.x;
   }
 }
-

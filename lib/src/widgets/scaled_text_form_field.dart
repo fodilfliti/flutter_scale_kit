@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../core/scale_value_factory.dart';
 import '../core/font_config.dart';
 
@@ -76,9 +75,9 @@ class SKTextFormField extends TextFormField {
            applyFontConfig: applyFontConfig ?? true,
          ),
          cursorWidth:
-             cursorWidth != 2.0 ? _factory.createWidth(cursorWidth) : 2.0,
+             cursorWidth != 2.0 ? _factory.resolveWidth(cursorWidth) : 2.0,
          cursorHeight:
-             cursorHeight != null ? _factory.createHeight(cursorHeight) : null,
+             cursorHeight != null ? _factory.resolveHeight(cursorHeight) : null,
          scrollPadding: _scaleEdgeInsets(scrollPadding) as EdgeInsets,
        );
 
@@ -91,52 +90,14 @@ class SKTextFormField extends TextFormField {
               : null,
       prefixIconConstraints:
           decoration.prefixIconConstraints != null
-              ? BoxConstraints(
-                minWidth: _factory.createWidth(
-                  decoration.prefixIconConstraints!.minWidth,
-                ),
-                minHeight: _factory.createHeight(
-                  decoration.prefixIconConstraints!.minHeight,
-                ),
-                maxWidth:
-                    decoration.prefixIconConstraints!.maxWidth !=
-                            double.infinity
-                        ? _factory.createWidth(
-                          decoration.prefixIconConstraints!.maxWidth,
-                        )
-                        : double.infinity,
-                maxHeight:
-                    decoration.prefixIconConstraints!.maxHeight !=
-                            double.infinity
-                        ? _factory.createHeight(
-                          decoration.prefixIconConstraints!.maxHeight,
-                        )
-                        : double.infinity,
+              ? _factory.resolveBoxConstraints(
+                decoration.prefixIconConstraints!,
               )
               : null,
       suffixIconConstraints:
           decoration.suffixIconConstraints != null
-              ? BoxConstraints(
-                minWidth: _factory.createWidth(
-                  decoration.suffixIconConstraints!.minWidth,
-                ),
-                minHeight: _factory.createHeight(
-                  decoration.suffixIconConstraints!.minHeight,
-                ),
-                maxWidth:
-                    decoration.suffixIconConstraints!.maxWidth !=
-                            double.infinity
-                        ? _factory.createWidth(
-                          decoration.suffixIconConstraints!.maxWidth,
-                        )
-                        : double.infinity,
-                maxHeight:
-                    decoration.suffixIconConstraints!.maxHeight !=
-                            double.infinity
-                        ? _factory.createHeight(
-                          decoration.suffixIconConstraints!.maxHeight,
-                        )
-                        : double.infinity,
+              ? _factory.resolveBoxConstraints(
+                decoration.suffixIconConstraints!,
               )
               : null,
       border:
@@ -176,7 +137,7 @@ class SKTextFormField extends TextFormField {
         final side = borderSide as BorderSide;
         if (side.width != 1.0) {
           return border.copyWith(
-            borderSide: side.copyWith(width: _factory.createWidth(side.width)),
+            borderSide: side.copyWith(width: _factory.resolveWidth(side.width)),
           );
         }
       }
@@ -185,12 +146,7 @@ class SKTextFormField extends TextFormField {
       try {
         final borderRadius = (border as dynamic).borderRadius;
         if (borderRadius is BorderRadius) {
-          final scaledRadius = _factory.createBorderRadiusSafe(
-            topLeft: _extractRadiusValue(borderRadius.topLeft),
-            topRight: _extractRadiusValue(borderRadius.topRight),
-            bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-            bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-          );
+          final scaledRadius = _scaleBorderRadius(borderRadius);
           // Only update if radius changed
           if (borderRadius != scaledRadius) {
             try {
@@ -220,27 +176,27 @@ class SKTextFormField extends TextFormField {
 
   /// Scales EdgeInsetsGeometry values
   static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
+    return _factory.resolveEdgeInsets(insets);
+  }
+
+  static BorderRadius _scaleBorderRadius(BorderRadius borderRadius) {
+    return BorderRadius.only(
+      topLeft: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topLeft)),
+      ),
+      topRight: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topRight)),
+      ),
+      bottomLeft: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomLeft),
+        ),
+      ),
+      bottomRight: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomRight),
+        ),
+      ),
     );
   }
 
@@ -254,11 +210,11 @@ class SKTextFormField extends TextFormField {
 
     if (fontSize != null) {
       textStyle = textStyle.copyWith(
-        fontSize: _factory.createFontSize(fontSize),
+        fontSize: _factory.resolveFontSize(fontSize),
       );
     } else if (textStyle.fontSize != null) {
       textStyle = textStyle.copyWith(
-        fontSize: _factory.createFontSize(textStyle.fontSize!),
+        fontSize: _factory.resolveFontSize(textStyle.fontSize!),
       );
     }
 

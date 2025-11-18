@@ -23,49 +23,47 @@ class SKActionChip extends ActionChip {
     double? elevation,
     ShapeBorder? shape,
   }) : super(
-          padding: padding != null ? _scaleEdgeInsets(padding) : null,
-          labelPadding:
-              labelPadding != null ? _scaleEdgeInsets(labelPadding) : null,
-          shape: _createShape(borderRadius, shape),
-          elevation: elevation != null ? _factory.createWidth(elevation) : null,
-        );
+         padding: padding != null ? _scaleEdgeInsets(padding) : null,
+         labelPadding:
+             labelPadding != null ? _scaleEdgeInsets(labelPadding) : null,
+         shape: _createShape(borderRadius, shape),
+         elevation: elevation != null ? _factory.resolveWidth(elevation) : null,
+       );
 
-  static OutlinedBorder? _createShape(BorderRadius? borderRadius, ShapeBorder? shape) {
+  static OutlinedBorder? _createShape(
+    BorderRadius? borderRadius,
+    ShapeBorder? shape,
+  ) {
     if (borderRadius != null) {
       return RoundedRectangleBorder(
-        borderRadius: _factory.createBorderRadiusSafe(
-          topLeft: _extractRadiusValue(borderRadius.topLeft),
-          topRight: _extractRadiusValue(borderRadius.topRight),
-          bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-          bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-        ),
+        borderRadius: _scaleBorderRadius(borderRadius),
       );
     }
     return shape as OutlinedBorder?;
   }
 
   static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
+    return _factory.resolveEdgeInsets(insets);
+  }
+
+  static BorderRadius _scaleBorderRadius(BorderRadius borderRadius) {
+    return BorderRadius.only(
+      topLeft: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topLeft)),
+      ),
+      topRight: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topRight)),
+      ),
+      bottomLeft: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomLeft),
+        ),
+      ),
+      bottomRight: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomRight),
+        ),
+      ),
     );
   }
 
@@ -100,49 +98,47 @@ class SKFilterChip extends FilterChip {
     double? elevation,
     ShapeBorder? shape,
   }) : super(
-          padding: padding != null ? _scaleEdgeInsets(padding) : null,
-          labelPadding:
-              labelPadding != null ? _scaleEdgeInsets(labelPadding) : null,
-          shape: _createShape(borderRadius, shape),
-          elevation: elevation != null ? _factory.createWidth(elevation) : null,
-        );
+         padding: padding != null ? _scaleEdgeInsets(padding) : null,
+         labelPadding:
+             labelPadding != null ? _scaleEdgeInsets(labelPadding) : null,
+         shape: _createShape(borderRadius, shape),
+         elevation: elevation != null ? _factory.resolveWidth(elevation) : null,
+       );
 
-  static OutlinedBorder? _createShape(BorderRadius? borderRadius, ShapeBorder? shape) {
+  static OutlinedBorder? _createShape(
+    BorderRadius? borderRadius,
+    ShapeBorder? shape,
+  ) {
     if (borderRadius != null) {
       return RoundedRectangleBorder(
-        borderRadius: _factory.createBorderRadiusSafe(
-          topLeft: _extractRadiusValue(borderRadius.topLeft),
-          topRight: _extractRadiusValue(borderRadius.topRight),
-          bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-          bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-        ),
+        borderRadius: _scaleBorderRadius(borderRadius),
       );
     }
     return shape as OutlinedBorder?;
   }
 
   static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
+    return _factory.resolveEdgeInsets(insets);
+  }
+
+  static BorderRadius _scaleBorderRadius(BorderRadius borderRadius) {
+    return BorderRadius.only(
+      topLeft: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topLeft)),
+      ),
+      topRight: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topRight)),
+      ),
+      bottomLeft: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomLeft),
+        ),
+      ),
+      bottomRight: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomRight),
+        ),
+      ),
     );
   }
 
@@ -177,49 +173,47 @@ class SKChoiceChip extends ChoiceChip {
     double? elevation,
     ShapeBorder? shape,
   }) : super(
-          padding: padding != null ? _scaleEdgeInsets(padding) : null,
-          labelPadding:
-              labelPadding != null ? _scaleEdgeInsets(labelPadding) : null,
-          shape: _createShape(borderRadius, shape),
-          elevation: elevation != null ? _factory.createWidth(elevation) : null,
-        );
+         padding: padding != null ? _scaleEdgeInsets(padding) : null,
+         labelPadding:
+             labelPadding != null ? _scaleEdgeInsets(labelPadding) : null,
+         shape: _createShape(borderRadius, shape),
+         elevation: elevation != null ? _factory.resolveWidth(elevation) : null,
+       );
 
-  static OutlinedBorder? _createShape(BorderRadius? borderRadius, ShapeBorder? shape) {
+  static OutlinedBorder? _createShape(
+    BorderRadius? borderRadius,
+    ShapeBorder? shape,
+  ) {
     if (borderRadius != null) {
       return RoundedRectangleBorder(
-        borderRadius: _factory.createBorderRadiusSafe(
-          topLeft: _extractRadiusValue(borderRadius.topLeft),
-          topRight: _extractRadiusValue(borderRadius.topRight),
-          bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-          bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-        ),
+        borderRadius: _scaleBorderRadius(borderRadius),
       );
     }
     return shape as OutlinedBorder?;
   }
 
   static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
+    return _factory.resolveEdgeInsets(insets);
+  }
+
+  static BorderRadius _scaleBorderRadius(BorderRadius borderRadius) {
+    return BorderRadius.only(
+      topLeft: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topLeft)),
+      ),
+      topRight: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topRight)),
+      ),
+      bottomLeft: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomLeft),
+        ),
+      ),
+      bottomRight: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomRight),
+        ),
+      ),
     );
   }
 
@@ -256,49 +250,47 @@ class SKInputChip extends InputChip {
     ShapeBorder? shape,
     super.selected,
   }) : super(
-          padding: padding != null ? _scaleEdgeInsets(padding) : null,
-          labelPadding:
-              labelPadding != null ? _scaleEdgeInsets(labelPadding) : null,
-          shape: _createShape(borderRadius, shape),
-          elevation: elevation != null ? _factory.createWidth(elevation) : null,
-        );
+         padding: padding != null ? _scaleEdgeInsets(padding) : null,
+         labelPadding:
+             labelPadding != null ? _scaleEdgeInsets(labelPadding) : null,
+         shape: _createShape(borderRadius, shape),
+         elevation: elevation != null ? _factory.resolveWidth(elevation) : null,
+       );
 
-  static OutlinedBorder? _createShape(BorderRadius? borderRadius, ShapeBorder? shape) {
+  static OutlinedBorder? _createShape(
+    BorderRadius? borderRadius,
+    ShapeBorder? shape,
+  ) {
     if (borderRadius != null) {
       return RoundedRectangleBorder(
-        borderRadius: _factory.createBorderRadiusSafe(
-          topLeft: _extractRadiusValue(borderRadius.topLeft),
-          topRight: _extractRadiusValue(borderRadius.topRight),
-          bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-          bottomRight: _extractRadiusValue(borderRadius.bottomRight),
-        ),
+        borderRadius: _scaleBorderRadius(borderRadius),
       );
     }
     return shape as OutlinedBorder?;
   }
 
   static EdgeInsetsGeometry _scaleEdgeInsets(EdgeInsetsGeometry insets) {
-    if (insets is EdgeInsets) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-      );
-    } else if (insets is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: insets.top,
-        bottom: insets.bottom,
-        start: insets.start,
-        end: insets.end,
-      );
-    }
-    final resolved = insets.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
+    return _factory.resolveEdgeInsets(insets);
+  }
+
+  static BorderRadius _scaleBorderRadius(BorderRadius borderRadius) {
+    return BorderRadius.only(
+      topLeft: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topLeft)),
+      ),
+      topRight: Radius.circular(
+        _factory.resolveRadiusSafe(_extractRadiusValue(borderRadius.topRight)),
+      ),
+      bottomLeft: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomLeft),
+        ),
+      ),
+      bottomRight: Radius.circular(
+        _factory.resolveRadiusSafe(
+          _extractRadiusValue(borderRadius.bottomRight),
+        ),
+      ),
     );
   }
 

@@ -234,7 +234,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.3.1
+  flutter_scale_kit: ^1.5.0
 ```
 
 Then run:
@@ -260,6 +260,8 @@ Flutter Scale Kit provides multiple ways to create responsive UIs. Whether you p
 > - And many more! See [Optimized Layout Widgets](#optimized-layout-widgets) for the complete list.
 >
 > Your existing code will work exactly the same, but now with automatic responsive scaling applied! No need to refactor or change your code structure—just swap the widget classes.
+>
+> 💡 **Keep using extensions**: Even inside these widgets you can still write `width: 120`, `width: 120.w`, or `width: 0.5.swClamp(200, 360)`—the package detects extension outputs automatically so there’s no double scaling.
 
 All text-related APIs (extensions, `SKit.text*`, responsive themes) automatically apply your `FontConfig` when one is registered—otherwise they fall back to Flutter's default fonts so you can adopt the system gradually.
 
@@ -1150,7 +1152,9 @@ Column(
 
 <a id="optimized-layout-widgets"></a>
 
-### Optimized Layout Widgets (`SKPadding`, `SKMargin`, `SKContainer`, `SKText`, `SKIcon`, `SKCard`, `SKDivider`, `SKAppBar`, `SKListTile`, `SKSwitch`, `SKSwitchListTile`, `SKTextField`, `SKTextFormField`, `SKElevatedButton`, `SKTextButton`, `SKOutlinedButton`, `SKIconButton`, `SKActionChip`, `SKFilterChip`, `SKChoiceChip`, `SKInputChip`, `SKImage`)
+### Optimized Layout Widgets
+
+Includes: `SKPadding`, `SKMargin`, `SKContainer`, `SKText`, `SKIcon`, `SKCard`, `SKDivider`, `SKAppBar`, `SKListTile`, `SKSwitch`, `SKSwitchListTile`, `SKTextField`, `SKTextFormField`, `SKElevatedButton`, `SKTextButton`, `SKOutlinedButton`, `SKIconButton`, `SKActionChip`, `SKFilterChip`, `SKChoiceChip`, `SKInputChip`, `SKImage`.
 
 Minimize rebuild work with lightweight wrappers while keeping everything scaled automatically. These widgets automatically apply scaling to their properties without needing extension methods:
 
@@ -1241,6 +1245,8 @@ SKListTile(
   - **`SKImage.memory()`** - Load images from in-memory byte data (like `Image.memory`)
 
 All constructors automatically scale `width` and `height` parameters and support cache optimization via `cacheWidth` and `cacheHeight`.
+
+> 💡 **Mix raw doubles with `.w/.sw/.h/.r/.sp` seamlessly:** every SK widget inspects incoming numbers and only scales when needed. That means you can pass `width: 120`, `width: 120.wMax(240)`, or `borderRadius: BorderRadius.circular(24.r)` to the same widget without double-scaling or swapping back to Flutter's base widgets.
 
 **Usage Examples:**
 

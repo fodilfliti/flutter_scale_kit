@@ -1,8 +1,11 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/scale_value_factory.dart';
+import 'scaled_image_file_stub.dart'
+    if (dart.library.io) 'scaled_image_file_io.dart'
+    as file_support;
+
+typedef SKImageFile = file_support.SKImageFile;
 
 /// Scaled Image widget - extends Flutter's Image
 /// Automatically applies scaling to width and height
@@ -32,8 +35,8 @@ class SKImage extends Image {
     super.isAntiAlias = false,
     super.opacity,
   }) : super(
-         width: width != null ? _factory.createWidth(width) : null,
-         height: height != null ? _factory.createHeight(height) : null,
+         width: width != null ? _factory.resolveWidth(width) : null,
+         height: height != null ? _factory.resolveHeight(height) : null,
        );
 
   /// Creates an image widget from an asset bundle.
@@ -77,8 +80,8 @@ class SKImage extends Image {
                    scale: scale,
                  )
                  : AssetImage(name, bundle: bundle, package: package),
-         width: width != null ? _factory.createWidth(width) : null,
-         height: height != null ? _factory.createHeight(height) : null,
+         width: width != null ? _factory.resolveWidth(width) : null,
+         height: height != null ? _factory.resolveHeight(height) : null,
        );
 
   /// Creates an image widget from a network URL.
@@ -117,8 +120,8 @@ class SKImage extends Image {
            cacheWidth: cacheWidth,
            cacheHeight: cacheHeight,
          ),
-         width: width != null ? _factory.createWidth(width) : null,
-         height: height != null ? _factory.createHeight(height) : null,
+         width: width != null ? _factory.resolveWidth(width) : null,
+         height: height != null ? _factory.resolveHeight(height) : null,
        );
 
   /// Creates an image widget from a file.
@@ -127,7 +130,7 @@ class SKImage extends Image {
   ///
   /// Automatically applies scaling to [width] and [height] parameters.
   SKImage.file(
-    File file, {
+    SKImageFile file, {
     super.key,
     super.frameBuilder,
     super.errorBuilder,
@@ -149,14 +152,14 @@ class SKImage extends Image {
     int? cacheWidth,
     int? cacheHeight,
   }) : super(
-         image: _createFileImageProvider(
+         image: file_support.createFileImage(
            file: file,
            scale: scale,
            cacheWidth: cacheWidth,
            cacheHeight: cacheHeight,
          ),
-         width: width != null ? _factory.createWidth(width) : null,
-         height: height != null ? _factory.createHeight(height) : null,
+         width: width != null ? _factory.resolveWidth(width) : null,
+         height: height != null ? _factory.resolveHeight(height) : null,
        );
 
   /// Creates an image widget from in-memory image data.
@@ -193,8 +196,8 @@ class SKImage extends Image {
            cacheWidth: cacheWidth,
            cacheHeight: cacheHeight,
          ),
-         width: width != null ? _factory.createWidth(width) : null,
-         height: height != null ? _factory.createHeight(height) : null,
+         width: width != null ? _factory.resolveWidth(width) : null,
+         height: height != null ? _factory.resolveHeight(height) : null,
        );
 
   static ImageProvider _createNetworkImageProvider({
@@ -209,21 +212,6 @@ class SKImage extends Image {
       scale: scale ?? 1.0,
       headers: headers,
     );
-
-    if (cacheWidth != null || cacheHeight != null) {
-      provider = ResizeImage(provider, width: cacheWidth, height: cacheHeight);
-    }
-
-    return provider;
-  }
-
-  static ImageProvider _createFileImageProvider({
-    required File file,
-    required double scale,
-    int? cacheWidth,
-    int? cacheHeight,
-  }) {
-    ImageProvider provider = FileImage(file, scale: scale);
 
     if (cacheWidth != null || cacheHeight != null) {
       provider = ResizeImage(provider, width: cacheWidth, height: cacheHeight);

@@ -103,7 +103,7 @@ class SKText extends Text {
     // Scale fontSize if provided
     double? scaledFontSize;
     if (effectiveFontSize != null) {
-      scaledFontSize = _factory.createFontSize(effectiveFontSize);
+      scaledFontSize = _factory.resolveFontSize(effectiveFontSize);
     }
 
     // Build base TextStyle with scaled fontSize

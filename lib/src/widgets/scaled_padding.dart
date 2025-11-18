@@ -8,32 +8,5 @@ class SKPadding extends Padding {
   static final _factory = ScaleValueFactory.instance;
 
   SKPadding({super.key, required EdgeInsetsGeometry padding, super.child})
-    : super(padding: _scalePadding(padding));
-
-  /// Scales EdgeInsetsGeometry padding values
-  static EdgeInsetsGeometry _scalePadding(EdgeInsetsGeometry padding) {
-    if (padding is EdgeInsets) {
-      return _factory.createPadding(
-        top: padding.top,
-        bottom: padding.bottom,
-        left: padding.left,
-        right: padding.right,
-      );
-    } else if (padding is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: padding.top,
-        bottom: padding.bottom,
-        start: padding.start,
-        end: padding.end,
-      );
-    }
-    // For other EdgeInsetsGeometry types, try to extract values
-    final resolved = padding.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
-    );
-  }
+    : super(padding: _factory.resolveEdgeInsets(padding));
 }

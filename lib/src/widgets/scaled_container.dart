@@ -22,68 +22,16 @@ class SKContainer extends Container {
     super.child,
     super.clipBehavior,
   }) : super(
-         padding: padding != null ? _scalePadding(padding) : null,
-         margin: margin != null ? _scaleMargin(margin) : null,
+         padding: padding != null ? _factory.resolveEdgeInsets(padding) : null,
+         margin: margin != null ? _factory.resolveEdgeInsets(margin) : null,
          decoration: decoration != null ? _scaleDecoration(decoration) : null,
-         width: width != null ? _factory.createWidth(width) : null,
-         height: height != null ? _factory.createHeight(height) : null,
+         width: width != null ? _factory.resolveWidth(width) : null,
+         height: height != null ? _factory.resolveHeight(height) : null,
          constraints:
-             constraints != null ? _scaleConstraints(constraints) : null,
+             constraints != null
+                 ? _factory.resolveBoxConstraints(constraints)
+                 : null,
        );
-
-  /// Scales EdgeInsetsGeometry padding values
-  static EdgeInsetsGeometry _scalePadding(EdgeInsetsGeometry padding) {
-    if (padding is EdgeInsets) {
-      return _factory.createPadding(
-        top: padding.top,
-        bottom: padding.bottom,
-        left: padding.left,
-        right: padding.right,
-      );
-    } else if (padding is EdgeInsetsDirectional) {
-      return _factory.createPadding(
-        top: padding.top,
-        bottom: padding.bottom,
-        start: padding.start,
-        end: padding.end,
-      );
-    }
-    // For other EdgeInsetsGeometry types, try to extract values
-    final resolved = padding.resolve(TextDirection.ltr);
-    return _factory.createPadding(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
-    );
-  }
-
-  /// Scales EdgeInsetsGeometry margin values
-  static EdgeInsetsGeometry _scaleMargin(EdgeInsetsGeometry margin) {
-    if (margin is EdgeInsets) {
-      return _factory.createMargin(
-        top: margin.top,
-        bottom: margin.bottom,
-        left: margin.left,
-        right: margin.right,
-      );
-    } else if (margin is EdgeInsetsDirectional) {
-      return _factory.createMargin(
-        top: margin.top,
-        bottom: margin.bottom,
-        start: margin.start,
-        end: margin.end,
-      );
-    }
-    // For other EdgeInsetsGeometry types, try to extract values
-    final resolved = margin.resolve(TextDirection.ltr);
-    return _factory.createMargin(
-      top: resolved.top,
-      bottom: resolved.bottom,
-      left: resolved.left,
-      right: resolved.right,
-    );
-  }
 
   /// Scales BoxDecoration values including border radius and box shadows
   static Decoration _scaleDecoration(Decoration decoration) {
@@ -93,17 +41,33 @@ class SKContainer extends Container {
 
     final boxDecoration = decoration;
 
-    // Scale border radius using rSafe
+    // Scale border radius using rSafe with metadata awareness
     BorderRadius? scaledBorderRadius;
     if (boxDecoration.borderRadius != null) {
       final borderRadius = boxDecoration.borderRadius!;
       // Only scale if it's a BorderRadius (not BorderRadiusDirectional)
       if (borderRadius is BorderRadius) {
-        scaledBorderRadius = _factory.createBorderRadiusSafe(
-          topLeft: _extractRadiusValue(borderRadius.topLeft),
-          topRight: _extractRadiusValue(borderRadius.topRight),
-          bottomLeft: _extractRadiusValue(borderRadius.bottomLeft),
-          bottomRight: _extractRadiusValue(borderRadius.bottomRight),
+        scaledBorderRadius = BorderRadius.only(
+          topLeft: Radius.circular(
+            _factory.resolveRadiusSafe(
+              _extractRadiusValue(borderRadius.topLeft),
+            ),
+          ),
+          topRight: Radius.circular(
+            _factory.resolveRadiusSafe(
+              _extractRadiusValue(borderRadius.topRight),
+            ),
+          ),
+          bottomLeft: Radius.circular(
+            _factory.resolveRadiusSafe(
+              _extractRadiusValue(borderRadius.bottomLeft),
+            ),
+          ),
+          bottomRight: Radius.circular(
+            _factory.resolveRadiusSafe(
+              _extractRadiusValue(borderRadius.bottomRight),
+            ),
+          ),
         );
       }
       // For BorderRadiusDirectional, keep as is for now
@@ -119,11 +83,11 @@ class SKContainer extends Container {
             return BoxShadow(
               color: shadow.color,
               offset: Offset(
-                _factory.createWidth(shadow.offset.dx),
-                _factory.createHeight(shadow.offset.dy),
+                _factory.resolveWidth(shadow.offset.dx),
+                _factory.resolveHeight(shadow.offset.dy),
               ),
-              blurRadius: _factory.createRadiusSafe(shadow.blurRadius),
-              spreadRadius: _factory.createRadiusSafe(shadow.spreadRadius),
+              blurRadius: _factory.resolveRadiusSafe(shadow.blurRadius),
+              spreadRadius: _factory.resolveRadiusSafe(shadow.spreadRadius),
             );
           }).toList();
     }
@@ -138,7 +102,7 @@ class SKContainer extends Container {
               border.top != BorderSide.none
                   ? BorderSide(
                     color: border.top.color,
-                    width: _factory.createWidth(border.top.width),
+                    width: _factory.resolveWidth(border.top.width),
                     style: border.top.style,
                   )
                   : BorderSide.none,
@@ -146,7 +110,7 @@ class SKContainer extends Container {
               border.bottom != BorderSide.none
                   ? BorderSide(
                     color: border.bottom.color,
-                    width: _factory.createWidth(border.bottom.width),
+                    width: _factory.resolveWidth(border.bottom.width),
                     style: border.bottom.style,
                   )
                   : BorderSide.none,
@@ -154,7 +118,7 @@ class SKContainer extends Container {
               border.left != BorderSide.none
                   ? BorderSide(
                     color: border.left.color,
-                    width: _factory.createWidth(border.left.width),
+                    width: _factory.resolveWidth(border.left.width),
                     style: border.left.style,
                   )
                   : BorderSide.none,
@@ -162,7 +126,7 @@ class SKContainer extends Container {
               border.right != BorderSide.none
                   ? BorderSide(
                     color: border.right.color,
-                    width: _factory.createWidth(border.right.width),
+                    width: _factory.resolveWidth(border.right.width),
                     style: border.right.style,
                   )
                   : BorderSide.none,
@@ -190,32 +154,5 @@ class SKContainer extends Container {
     }
     // For elliptical radius, use average (or just x for simplicity)
     return radius.x;
-  }
-
-  /// Scales BoxConstraints values
-  static BoxConstraints _scaleConstraints(BoxConstraints constraints) {
-    final minWidth =
-        constraints.minWidth > 0
-            ? _factory.createWidth(constraints.minWidth)
-            : constraints.minWidth;
-    final maxWidth =
-        constraints.maxWidth < double.infinity
-            ? _factory.createWidth(constraints.maxWidth)
-            : constraints.maxWidth;
-    final minHeight =
-        constraints.minHeight > 0
-            ? _factory.createHeight(constraints.minHeight)
-            : constraints.minHeight;
-    final maxHeight =
-        constraints.maxHeight < double.infinity
-            ? _factory.createHeight(constraints.maxHeight)
-            : constraints.maxHeight;
-
-    return BoxConstraints(
-      minWidth: minWidth,
-      maxWidth: maxWidth,
-      minHeight: minHeight,
-      maxHeight: maxHeight,
-    );
   }
 }

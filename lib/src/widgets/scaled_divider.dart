@@ -15,12 +15,9 @@ class SKDivider extends Divider {
     double? endIndent,
     super.color,
   }) : super(
-          height: height != null ? _factory.createHeight(height) : null,
-          thickness:
-              thickness != null ? _factory.createWidth(thickness) : null,
-          indent: indent != null ? _factory.createWidth(indent) : null,
-          endIndent:
-              endIndent != null ? _factory.createWidth(endIndent) : null,
-        );
+         height: height != null ? _factory.resolveHeight(height) : null,
+         thickness: thickness != null ? _factory.resolveWidth(thickness) : null,
+         indent: indent != null ? _factory.resolveWidth(indent) : null,
+         endIndent: endIndent != null ? _factory.resolveWidth(endIndent) : null,
+       );
 }
-

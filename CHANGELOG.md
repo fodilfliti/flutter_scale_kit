@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.4.0] - 2025-11-13
+## [1.5.0] - 2025-11-18
 
 ### ✨ Added
 
@@ -25,6 +25,10 @@ All notable changes to this project will be documented in this file.
 - README "Optimized Layout Widgets" section updated with examples for all new widgets.
 - README now includes comprehensive `SKImage` usage examples for all image provider types (asset, network, file, memory).
 - Example app now includes a dedicated section showcasing SKIcon, SKCard, SKDivider, SKAppBar, and SKListTile with automatic scaling demonstrations.
+
+### 🔧 Changed
+
+- All automatic scaling widgets (`SKContainer`, `SKPadding`, `SKMargin`, `SKText`, `SKIcon`, `SKCard`, `SKDivider`, `SKAppBar`, `SKListTile`, `SKSwitch`, `SKSwitchListTile`, `SKTextField`, `SKTextFormField`, `SKElevatedButton`, `SKTextButton`, `SKOutlinedButton`, `SKIconButton`, all chip variants, and `SKImage`) now detect values produced by `.w`, `.sw`, `.h`, `.sh`, `.r`, `.sp`, and all constraint helpers. Pre-scaled numbers flow through unchanged, while raw doubles are still scaled internally—so you can freely mix `width: 120` and `width: 0.5.swClamp(200, 360)` without switching back to Flutter's base widgets.
 
 ## [1.3.1] - 2025-11-13
 
