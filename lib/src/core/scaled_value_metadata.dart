@@ -60,19 +60,24 @@ enum SKValueDomain { width, height, radius, fontSize }
 
 /// Tracks metadata for scaled numeric values using [Expando].
 class SKScaledValueTracker {
-  static final _metadata = Expando<SKScaledValueMetadata>(
-    'sk_scaled_value_metadata',
-  );
+  static final Expando<SKScaledValueMetadata>? _metadata =
+      _supportsExpando
+          ? Expando<SKScaledValueMetadata>('sk_scaled_value_metadata')
+          : null;
 
   /// Associates [value] with a [ScaleType] so widgets can detect pre-scaled numbers.
   static double mark(double value, ScaleType scaleType) {
-    _metadata[value] = SKScaledValueMetadata(scaleType);
+    final metadata = _metadata;
+    if (metadata != null) {
+      metadata[value] = SKScaledValueMetadata(scaleType);
+    }
     return value;
   }
 
   static SKScaledValueMetadata? metadata(Object? value) {
-    if (value == null) return null;
-    return _metadata[value];
+    final metadata = _metadata;
+    if (metadata == null || value == null) return null;
+    return metadata[value];
   }
 
   static bool matches(Object? value, SKValueDomain domain) {
@@ -80,4 +85,8 @@ class SKScaledValueTracker {
     if (meta == null) return false;
     return meta.matchesDomain(domain);
   }
+
+  static bool get _supportsExpando => !_isWebLike;
+
+  static bool get _isWebLike => identical(0, 0.0);
 }
