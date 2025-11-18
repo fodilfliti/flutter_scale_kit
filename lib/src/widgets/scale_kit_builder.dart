@@ -358,15 +358,8 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
       _previousOrientation = mediaQuery.orientation;
 
       // Safely get locale - may not be available during initialization
-      try {
-        _previousLocale = Localizations.localeOf(context);
-        // Initialize font config with current language
-        FontConfig.instance.setLanguage(_previousLocale!.languageCode);
-      } catch (e) {
-        // Localizations not available yet, use default
-        _previousLocale = const Locale('en');
-        FontConfig.instance.setLanguage('en');
-      }
+      _previousLocale = _localeFromContext(context);
+      FontConfig.instance.setLanguage(_previousLocale!.languageCode);
     }
   }
 
@@ -402,13 +395,7 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     final currentOrientation = mediaQuery.orientation;
 
     // Safely get locale
-    Locale? currentLocale;
-    try {
-      currentLocale = Localizations.localeOf(context);
-    } catch (e) {
-      // Localizations not available yet
-      currentLocale = _previousLocale ?? const Locale('en');
-    }
+    final currentLocale = _localeFromContext(context);
 
     if (!_isInitialized) {
       _initializeScaleManager();
@@ -470,13 +457,9 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
     ScaleValueCache.instance.clearCache();
 
     // Notify FontConfig listeners if language changed
-    try {
-      final currentLocale = Localizations.localeOf(context);
-      if (_previousLocale != null && currentLocale != _previousLocale) {
-        FontConfig.instance.onLanguageChanged?.call();
-      }
-    } catch (e) {
-      // Localizations not available
+    final currentLocale = _localeFromContext(context);
+    if (_previousLocale != null && currentLocale != _previousLocale) {
+      FontConfig.instance.onLanguageChanged?.call();
     }
 
     if (mounted) {
@@ -484,6 +467,11 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
         _rebuildTick++;
       });
     }
+  }
+
+  Locale _localeFromContext(BuildContext context) {
+    return Localizations.maybeLocaleOf(context) ??
+        WidgetsBinding.instance.platformDispatcher.locale;
   }
 
   @override
