@@ -8,9 +8,9 @@ import '../core/scale_manager.dart' show DeviceType;
 ///
 /// This mixin listens to binding events and keeps track of the current logical
 /// screen size along with derived helpers such as [isMobile], [isTablet],
-/// [isDesktop], [isMobilePlatform], [isDesktopPlatform], and [isWeb]. It can be
-/// applied to any [State] subclass to expose these helpers without relying on a
-/// `BuildContext`.
+/// [isDesktop], [isMobilePlatform], [isDesktopPlatform], [isWeb], [isAndroidPlatform],
+/// and [isIOSPlatform]. It can be applied to any [State] subclass to expose these
+/// helpers without relying on a `BuildContext`.
 mixin DeviceMetricsMixin<T extends StatefulWidget> on State<T> {
   Size _logicalScreenSize = Size.zero;
   double _devicePixelRatio = 1.0;
@@ -41,19 +41,35 @@ mixin DeviceMetricsMixin<T extends StatefulWidget> on State<T> {
   bool get isDesktop => _deviceType == DeviceType.desktop;
 
   /// Indicates if the current target platform is considered a mobile platform.
-  bool get isMobilePlatform =>
-      defaultTargetPlatform == TargetPlatform.android ||
-      defaultTargetPlatform == TargetPlatform.iOS;
+  bool get isMobilePlatform {
+    if (kIsWeb) return false;
+    return defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS;
+  }
 
   /// Indicates if the current target platform is considered a desktop platform.
-  bool get isDesktopPlatform =>
-      defaultTargetPlatform == TargetPlatform.macOS ||
-      defaultTargetPlatform == TargetPlatform.linux ||
-      defaultTargetPlatform == TargetPlatform.windows ||
-      defaultTargetPlatform == TargetPlatform.fuchsia;
+  bool get isDesktopPlatform {
+    if (kIsWeb) return true; // Web is considered a desktop platform
+    return defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.linux ||
+        defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.fuchsia;
+  }
 
   /// Indicates if the app is running on the web.
   bool get isWeb => kIsWeb;
+
+  /// Indicates if the app is running on Android platform.
+  bool get isAndroidPlatform {
+    if (kIsWeb) return false;
+    return defaultTargetPlatform == TargetPlatform.android;
+  }
+
+  /// Indicates if the app is running on iOS platform.
+  bool get isIOSPlatform {
+    if (kIsWeb) return false;
+    return defaultTargetPlatform == TargetPlatform.iOS;
+  }
 
   @override
   @mustCallSuper

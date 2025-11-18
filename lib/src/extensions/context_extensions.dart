@@ -172,6 +172,14 @@ extension ScaleContextExtension on BuildContext {
   bool get isWebPlatform =>
       scaleManager.platformCategory == PlatformCategory.web;
 
+  /// True when running on Android platform.
+  bool get isAndroidPlatform =>
+      scaleManager.platformCategory == PlatformCategory.android;
+
+  /// True when running on iOS platform.
+  bool get isIOSPlatform =>
+      scaleManager.platformCategory == PlatformCategory.ios;
+
   /// Screen size class based on the configured breakpoints.
   DeviceSizeClass get screenSizeClass => scaleManager.screenSizeClass;
 

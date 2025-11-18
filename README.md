@@ -401,7 +401,7 @@ class DashboardState extends State<Dashboard>
 }
 ```
 
-The mixin exposes `logicalScreenSize`, `devicePixelRatio`, `isMobile`, `isTablet`, `isDesktop`, and platform-specific helpers like `isMobilePlatform`, `isDesktopPlatform`, and `isWeb`. Keep using your existing responsive logic—this is just a lightweight shortcut when you need those values quickly.
+The mixin exposes `logicalScreenSize`, `devicePixelRatio`, `isMobile`, `isTablet`, `isDesktop`, and platform-specific helpers like `isMobilePlatform`, `isDesktopPlatform`, `isWeb`, `isAndroidPlatform`, and `isIOSPlatform`. Keep using your existing responsive logic—this is just a lightweight shortcut when you need those values quickly.
 
 #### 1. Extension Methods (Quick & Familiar)
 
@@ -674,7 +674,7 @@ Building for desktop and the web is trickier than phones or tablets: users resiz
   Widgets such as `SKResponsive`, `SKResponsiveBuilder`, and helpers like `SKit.responsiveInt` accept flags (`deviceTypeOverride`, `desktopAs`, `lockDesktopAsTablet`, etc.) so individual routes can deviate from the global configuration. Use them to keep a dense data table on desktop while forcing the settings screen to reuse the tablet layout.
 
 - **Platform-aware layouts inside each breakpoint**  
-  Device type is only half the story—`context.isDesktopPlatform`, `context.isMobilePlatform`, `context.isWebPlatform`, and `ScaleManager.platformCategory` let you branch on Android vs iOS vs Windows/macOS even when they share the same responsive width. Pair these helpers with `deviceTypeOverride` to deliver an iOS-specific sheet on tablets or a Windows-style toolbar on large monitors without duplicating your layout logic.
+  Device type is only half the story—`context.isDesktopPlatform`, `context.isMobilePlatform`, `context.isWebPlatform`, `context.isAndroidPlatform`, `context.isIOSPlatform`, and `ScaleManager.platformCategory` let you branch on Android vs iOS vs Windows/macOS even when they share the same responsive width. Pair these helpers with `deviceTypeOverride` to deliver an iOS-specific sheet on tablets or a Windows-style toolbar on large monitors without duplicating your layout logic.
 
 - **Width-only decisions without committing to layout swaps**  
   The context helpers (`context.isDesktopSize`, `context.isDesktopAtLeastTablet`, ...) and `ScaleManager.screenSizeClass` let you branch on pure size classes even after you lock the device type. This is ideal when you only want to tweak spacing or font scale for ultrawide monitors without switching the entire widget tree.
@@ -694,8 +694,11 @@ SKResponsiveBuilder(
 );
 
 Widget buildToolbar(BuildContext context) {
-  if (context.isMobilePlatform) {
-    return const MobileToolbar(); // Android/iOS specific actions
+  if (context.isAndroidPlatform) {
+    return const AndroidToolbar(); // Android-specific actions
+  }
+  if (context.isIOSPlatform) {
+    return const IOSToolbar(); // iOS-specific actions
   }
   if (context.isDesktopPlatform) {
     return const DesktopToolbar(); // macOS/Windows/Linux shortcuts
@@ -1839,6 +1842,9 @@ All constraint operations are cached to reduce calculations during UI rebuilds, 
 - `context.isTypeOfDesktop({source: DeviceClassificationSource.responsive, includeWeb: true})` - Check desktop classification, optionally treating web as desktop
 - `context.isDesktopPlatform` - True when running on Windows/macOS/Linux/Web
 - `context.isWebPlatform` - True when running on the web
+- `context.isMobilePlatform` - True when running on Android/iOS
+- `context.isAndroidPlatform` - True when running on Android
+- `context.isIOSPlatform` - True when running on iOS
 - `DeviceClassificationSource` lets you target the responsive result (default), the raw platform classification, or width-only size classification when using the helpers above.
 - `context.screenSizeClass` - Retrieve the current `DeviceSizeClass`
 - `context.isSmallMobileSize` / `isMobileSize` / `isLargeMobileSize` / `isTabletSize` / `isLargeTabletSize` / `isDesktopSize` / `isLargeDesktopSize` / `isExtraLargeDesktopSize` - Convenience checks for the expanded size classes
