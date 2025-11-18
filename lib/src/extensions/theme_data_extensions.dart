@@ -125,12 +125,7 @@ class ResponsiveThemeData {
     );
 
     // Get current language code safely
-    String languageCode = 'en'; // Default fallback
-    try {
-      languageCode = Localizations.localeOf(context).languageCode;
-    } catch (e) {
-      // Localizations not available yet, use default
-    }
+    final languageCode = _languageCodeFromContext(context);
     FontConfig.instance.setLanguage(languageCode);
 
     // Apply responsive text theme with font config if provided
@@ -162,12 +157,7 @@ class ResponsiveThemeData {
   }) {
     ScaleKitScope.watch(context);
     // Get current language code safely
-    String languageCode = 'en'; // Default fallback
-    try {
-      languageCode = Localizations.localeOf(context).languageCode;
-    } catch (e) {
-      // Localizations not available yet, use default
-    }
+    final languageCode = _languageCodeFromContext(context);
     FontConfig.instance.setLanguage(languageCode);
 
     final baseTheme = ThemeData(textTheme: baseTextTheme);
@@ -175,5 +165,12 @@ class ResponsiveThemeData {
       baseTextTheme,
       languageCode: languageCode,
     );
+  }
+
+  static String _languageCodeFromContext(BuildContext context) {
+    final locale =
+        Localizations.maybeLocaleOf(context) ??
+        WidgetsBinding.instance.platformDispatcher.locale;
+    return locale.languageCode;
   }
 }
