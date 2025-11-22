@@ -2,12 +2,12 @@
 class CacheKey {
   final Object value;
   final ScaleType scaleType;
-  final String deviceId; // device type + orientation + aspect ratio category
+  final int contextKey; // Integer hash of device state
 
   CacheKey({
     required this.value,
     required this.scaleType,
-    required this.deviceId,
+    required this.contextKey,
   });
 
   @override
@@ -16,11 +16,11 @@ class CacheKey {
     return other is CacheKey &&
         other.value == value &&
         other.scaleType == scaleType &&
-        other.deviceId == deviceId;
+        other.contextKey == contextKey;
   }
 
   @override
-  int get hashCode => Object.hash(value, scaleType, deviceId);
+  int get hashCode => Object.hash(value, scaleType, contextKey);
 }
 
 /// Scale type enum for different scaling operations

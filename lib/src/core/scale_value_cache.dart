@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'scale_manager.dart';
 import 'cache_key.dart';
-import 'device_detector.dart';
+
 import 'font_config.dart';
+import 'scaled_value_metadata.dart';
 
 /// Flyweight pattern cache for storing scaled values
 /// Reuses cached calculated values to minimize memory usage
@@ -48,15 +49,33 @@ class ScaleValueCache {
   final Map<CacheKey, double> _fontSizeClampCache = {};
 
   /// Get device ID string for cache key
-  String _getDeviceId() {
-    final manager = ScaleManager.instance;
-    final deviceType = DeviceDetector.detectDeviceType(manager.screenWidth);
-    final aspectCategory = DeviceDetector.getAspectRatioCategory(
-      manager.screenWidth,
-      manager.screenHeight,
-    );
+  int _getContextKey() {
+    return ScaleManager.instance.cacheContextKey;
+  }
 
-    return '${deviceType.name}_${manager.orientation.name}_${aspectCategory.name}';
+  static const int _maxCacheSize = 2000;
+
+  /// Puts a value into the cache with LRU eviction.
+  /// If the cache exceeds [_maxCacheSize], the oldest item is removed.
+  T _putWithEviction<T>(
+    Map<CacheKey, T> cache,
+    CacheKey key,
+    T Function() ifAbsent,
+  ) {
+    if (cache.containsKey(key)) {
+      // Move to end (mark as recently used)
+      final value = cache.remove(key) as T;
+      cache[key] = value;
+      return value;
+    }
+
+    final value = ifAbsent();
+    if (cache.length >= _maxCacheSize) {
+      // Remove oldest (first key)
+      cache.remove(cache.keys.first);
+    }
+    cache[key] = value;
+    return value;
   }
 
   /// Get cached width or calculate and cache
@@ -64,12 +83,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.width,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _widthCache.putIfAbsent(
+    return _putWithEviction(
+      _widthCache,
       key,
-      () => ScaleManager.instance.getWidth(value),
+      () => SKScaledValueTracker.mark(
+        ScaleManager.instance.getWidth(value),
+        ScaleType.width,
+      ),
     );
   }
 
@@ -78,12 +101,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.height,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _heightCache.putIfAbsent(
+    return _putWithEviction(
+      _heightCache,
       key,
-      () => ScaleManager.instance.getHeight(value),
+      () => SKScaledValueTracker.mark(
+        ScaleManager.instance.getHeight(value),
+        ScaleType.height,
+      ),
     );
   }
 
@@ -92,12 +119,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.fontSize,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _fontSizeCache.putIfAbsent(
+    return _putWithEviction(
+      _fontSizeCache,
       key,
-      () => ScaleManager.instance.getFontSize(value),
+      () => SKScaledValueTracker.mark(
+        ScaleManager.instance.getFontSize(value),
+        ScaleType.fontSize,
+      ),
     );
   }
 
@@ -106,12 +137,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.fontSizeWithFactor,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _fontSizeWithFactorCache.putIfAbsent(
+    return _putWithEviction(
+      _fontSizeWithFactorCache,
       key,
-      () => ScaleManager.instance.getFontSizeWithFactor(value),
+      () => SKScaledValueTracker.mark(
+        ScaleManager.instance.getFontSizeWithFactor(value),
+        ScaleType.fontSizeWithFactor,
+      ),
     );
   }
 
@@ -120,12 +155,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.radius,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _radiusCache.putIfAbsent(
+    return _putWithEviction(
+      _radiusCache,
       key,
-      () => ScaleManager.instance.getRadius(value),
+      () => SKScaledValueTracker.mark(
+        ScaleManager.instance.getRadius(value),
+        ScaleType.radius,
+      ),
     );
   }
 
@@ -134,12 +173,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.radiusSafe,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _safeRadiusCache.putIfAbsent(
+    return _putWithEviction(
+      _safeRadiusCache,
       key,
-      () => ScaleManager.instance.getRadiusSafe(value),
+      () => SKScaledValueTracker.mark(
+        ScaleManager.instance.getRadiusSafe(value),
+        ScaleType.radiusSafe,
+      ),
     );
   }
 
@@ -148,12 +191,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.radiusFixed,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _fixedRadiusCache.putIfAbsent(
+    return _putWithEviction(
+      _fixedRadiusCache,
       key,
-      () => ScaleManager.instance.getFixedRadius(value),
+      () => SKScaledValueTracker.mark(
+        ScaleManager.instance.getFixedRadius(value),
+        ScaleType.radiusFixed,
+      ),
     );
   }
 
@@ -162,12 +209,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.screenWidth,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _screenWidthCache.putIfAbsent(
+    return _putWithEviction(
+      _screenWidthCache,
       key,
-      () => ScaleManager.instance.getScreenWidth(value),
+      () => SKScaledValueTracker.mark(
+        ScaleManager.instance.getScreenWidth(value),
+        ScaleType.screenWidth,
+      ),
     );
   }
 
@@ -176,12 +227,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.screenHeight,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _screenHeightCache.putIfAbsent(
+    return _putWithEviction(
+      _screenHeightCache,
       key,
-      () => ScaleManager.instance.getScreenHeight(value),
+      () => SKScaledValueTracker.mark(
+        ScaleManager.instance.getScreenHeight(value),
+        ScaleType.screenHeight,
+      ),
     );
   }
 
@@ -213,10 +268,10 @@ class ScaleValueCache {
         useDirectional,
       ),
       scaleType: scaleType,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return cache.putIfAbsent(key, () {
+    return _putWithEviction(cache, key, () {
       final manager = ScaleManager.instance;
       double resolveValue(
         double? primary,
@@ -329,10 +384,10 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.borderRadius,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _borderRadiusCache.putIfAbsent(key, () {
+    return _putWithEviction(_borderRadiusCache, key, () {
       if (!manager.isEnabled) {
         return BorderRadius.only(
           topLeft: Radius.circular(topLeft ?? all ?? 0),
@@ -372,10 +427,10 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.borderRadiusSafe,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _borderRadiusSafeCache.putIfAbsent(key, () {
+    return _putWithEviction(_borderRadiusSafeCache, key, () {
       if (!manager.isEnabled) {
         return BorderRadius.only(
           topLeft: Radius.circular(topLeft ?? all ?? 0),
@@ -416,10 +471,10 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.borderRadiusFixed,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _borderRadiusFixedCache.putIfAbsent(key, () {
+    return _putWithEviction(_borderRadiusFixedCache, key, () {
       return BorderRadius.only(
         topLeft: Radius.circular(topLeft ?? all ?? 0),
         topRight: Radius.circular(topRight ?? all ?? 0),
@@ -464,10 +519,10 @@ class ScaleValueCache {
     final key = CacheKey(
       value: value,
       scaleType: ScaleType.fontSize,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _textStyleCache.putIfAbsent(key, () {
+    return _putWithEviction(_textStyleCache, key, () {
       final manager = ScaleManager.instance;
       final scaledFontSize = manager.getFontSize(fontSize);
 
@@ -501,10 +556,17 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, max),
       scaleType: ScaleType.widthMax,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _widthMaxCache.putIfAbsent(key, () => getWidth(value).clamp(0, max));
+    return _putWithEviction(
+      _widthMaxCache,
+      key,
+      () => SKScaledValueTracker.mark(
+        getWidth(value).clamp(0, max),
+        ScaleType.widthMax,
+      ),
+    );
   }
 
   /// Get cached width with min constraint or calculate and cache
@@ -512,12 +574,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min),
       scaleType: ScaleType.widthMin,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _widthMinCache.putIfAbsent(
+    return _putWithEviction(
+      _widthMinCache,
       key,
-      () => getWidth(value).clamp(min, double.infinity),
+      () => SKScaledValueTracker.mark(
+        getWidth(value).clamp(min, double.infinity),
+        ScaleType.widthMin,
+      ),
     );
   }
 
@@ -526,12 +592,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min, max),
       scaleType: ScaleType.widthClamp,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _widthClampCache.putIfAbsent(
+    return _putWithEviction(
+      _widthClampCache,
       key,
-      () => getWidth(value).clamp(min, max),
+      () => SKScaledValueTracker.mark(
+        getWidth(value).clamp(min, max),
+        ScaleType.widthClamp,
+      ),
     );
   }
 
@@ -540,12 +610,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, max),
       scaleType: ScaleType.heightMax,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _heightMaxCache.putIfAbsent(
+    return _putWithEviction(
+      _heightMaxCache,
       key,
-      () => getHeight(value).clamp(0, max),
+      () => SKScaledValueTracker.mark(
+        getHeight(value).clamp(0, max),
+        ScaleType.heightMax,
+      ),
     );
   }
 
@@ -554,12 +628,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min),
       scaleType: ScaleType.heightMin,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _heightMinCache.putIfAbsent(
+    return _putWithEviction(
+      _heightMinCache,
       key,
-      () => getHeight(value).clamp(min, double.infinity),
+      () => SKScaledValueTracker.mark(
+        getHeight(value).clamp(min, double.infinity),
+        ScaleType.heightMin,
+      ),
     );
   }
 
@@ -568,12 +646,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min, max),
       scaleType: ScaleType.heightClamp,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _heightClampCache.putIfAbsent(
+    return _putWithEviction(
+      _heightClampCache,
       key,
-      () => getHeight(value).clamp(min, max),
+      () => SKScaledValueTracker.mark(
+        getHeight(value).clamp(min, max),
+        ScaleType.heightClamp,
+      ),
     );
   }
 
@@ -582,12 +664,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, max),
       scaleType: ScaleType.screenWidthMax,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _screenWidthMaxCache.putIfAbsent(
+    return _putWithEviction(
+      _screenWidthMaxCache,
       key,
-      () => getScreenWidth(value).clamp(0, max),
+      () => SKScaledValueTracker.mark(
+        getScreenWidth(value).clamp(0, max),
+        ScaleType.screenWidthMax,
+      ),
     );
   }
 
@@ -596,12 +682,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min),
       scaleType: ScaleType.screenWidthMin,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _screenWidthMinCache.putIfAbsent(
+    return _putWithEviction(
+      _screenWidthMinCache,
       key,
-      () => getScreenWidth(value).clamp(min, double.infinity),
+      () => SKScaledValueTracker.mark(
+        getScreenWidth(value).clamp(min, double.infinity),
+        ScaleType.screenWidthMin,
+      ),
     );
   }
 
@@ -610,12 +700,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min, max),
       scaleType: ScaleType.screenWidthClamp,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _screenWidthClampCache.putIfAbsent(
+    return _putWithEviction(
+      _screenWidthClampCache,
       key,
-      () => getScreenWidth(value).clamp(min, max),
+      () => SKScaledValueTracker.mark(
+        getScreenWidth(value).clamp(min, max),
+        ScaleType.screenWidthClamp,
+      ),
     );
   }
 
@@ -624,12 +718,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, max),
       scaleType: ScaleType.screenHeightMax,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _screenHeightMaxCache.putIfAbsent(
+    return _putWithEviction(
+      _screenHeightMaxCache,
       key,
-      () => getScreenHeight(value).clamp(0, max),
+      () => SKScaledValueTracker.mark(
+        getScreenHeight(value).clamp(0, max),
+        ScaleType.screenHeightMax,
+      ),
     );
   }
 
@@ -638,12 +736,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min),
       scaleType: ScaleType.screenHeightMin,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _screenHeightMinCache.putIfAbsent(
+    return _putWithEviction(
+      _screenHeightMinCache,
       key,
-      () => getScreenHeight(value).clamp(min, double.infinity),
+      () => SKScaledValueTracker.mark(
+        getScreenHeight(value).clamp(min, double.infinity),
+        ScaleType.screenHeightMin,
+      ),
     );
   }
 
@@ -652,12 +754,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min, max),
       scaleType: ScaleType.screenHeightClamp,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _screenHeightClampCache.putIfAbsent(
+    return _putWithEviction(
+      _screenHeightClampCache,
       key,
-      () => getScreenHeight(value).clamp(min, max),
+      () => SKScaledValueTracker.mark(
+        getScreenHeight(value).clamp(min, max),
+        ScaleType.screenHeightClamp,
+      ),
     );
   }
 
@@ -666,12 +772,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, max),
       scaleType: ScaleType.radiusMax,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _radiusMaxCache.putIfAbsent(
+    return _putWithEviction(
+      _radiusMaxCache,
       key,
-      () => getRadius(value).clamp(0, max),
+      () => SKScaledValueTracker.mark(
+        getRadius(value).clamp(0, max),
+        ScaleType.radiusMax,
+      ),
     );
   }
 
@@ -680,12 +790,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min),
       scaleType: ScaleType.radiusMin,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _radiusMinCache.putIfAbsent(
+    return _putWithEviction(
+      _radiusMinCache,
       key,
-      () => getRadius(value).clamp(min, double.infinity),
+      () => SKScaledValueTracker.mark(
+        getRadius(value).clamp(min, double.infinity),
+        ScaleType.radiusMin,
+      ),
     );
   }
 
@@ -694,12 +808,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min, max),
       scaleType: ScaleType.radiusClamp,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _radiusClampCache.putIfAbsent(
+    return _putWithEviction(
+      _radiusClampCache,
       key,
-      () => getRadius(value).clamp(min, max),
+      () => SKScaledValueTracker.mark(
+        getRadius(value).clamp(min, max),
+        ScaleType.radiusClamp,
+      ),
     );
   }
 
@@ -708,12 +826,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, max),
       scaleType: ScaleType.fontSizeMax,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _fontSizeMaxCache.putIfAbsent(
+    return _putWithEviction(
+      _fontSizeMaxCache,
       key,
-      () => getFontSize(value).clamp(0, max),
+      () => SKScaledValueTracker.mark(
+        getFontSize(value).clamp(0, max),
+        ScaleType.fontSizeMax,
+      ),
     );
   }
 
@@ -722,12 +844,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min),
       scaleType: ScaleType.fontSizeMin,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _fontSizeMinCache.putIfAbsent(
+    return _putWithEviction(
+      _fontSizeMinCache,
       key,
-      () => getFontSize(value).clamp(min, double.infinity),
+      () => SKScaledValueTracker.mark(
+        getFontSize(value).clamp(min, double.infinity),
+        ScaleType.fontSizeMin,
+      ),
     );
   }
 
@@ -736,12 +862,16 @@ class ScaleValueCache {
     final key = CacheKey(
       value: Object.hash(value, min, max),
       scaleType: ScaleType.fontSizeClamp,
-      deviceId: _getDeviceId(),
+      contextKey: _getContextKey(),
     );
 
-    return _fontSizeClampCache.putIfAbsent(
+    return _putWithEviction(
+      _fontSizeClampCache,
       key,
-      () => getFontSize(value).clamp(min, max),
+      () => SKScaledValueTracker.mark(
+        getFontSize(value).clamp(min, max),
+        ScaleType.fontSizeClamp,
+      ),
     );
   }
 

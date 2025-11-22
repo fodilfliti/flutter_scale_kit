@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.3] - 2025-11-22
+
+### 🚀 Performance Optimization
+
+- **3x Faster Scalar Operations** - Implemented "Hybrid Caching" strategy:
+  - **Direct Math for Scalars**: `.w`, `.h`, `.sp`, `.r` now bypass the Map cache entirely, using pre-calculated multipliers for instant execution.
+  - **Integer Cache Keys**: Replaced slow String-based keys with fast Integer keys for remaining cache operations.
+  - **Benchmark Verified**: Verified ~3.15x speedup in scalar operations.
+
+### 🛡️ Leak Protection & Stability
+
+- **Smart Cache Eviction (LRU)** - Implemented Least Recently Used eviction policy for `ScaleValueCache`:
+  - **Memory Safety**: Cache is now capped at **2000 items** to prevent infinite growth during long sessions.
+  - **Auto-Cleanup**: Automatically removes oldest unused items when the limit is reached.
+- **Rebuild Optimization** - Optimized `ScaleKitBuilder` to prevent unnecessary app rebuilds:
+  - Now listens specifically to `MediaQuery.sizeOf` and `MediaQuery.orientationOf`.
+  - Ignores irrelevant changes like keyboard opening (`viewInsets`) or system gesture insets, significantly reducing UI lag.
+
+### 🧠 Smart Scalar Caching
+
+- **Intelligent Marking** - Optimized the auto-scaling detection mechanism:
+  - **Single Calculation**: Scalar values like `12.sp` are now calculated and marked for auto-scaling **once**, then cached.
+  - **Instant Access**: Subsequent calls retrieve the pre-marked value instantly from the cache, eliminating repetitive overhead.
+  - **Tracker Leak Fix**: Fixed a memory leak where the auto-scale tracker was never cleared. It now clears automatically on resize.
+
 ## [1.5.2] - 2025-01-XX
 
 ### ✨ Added

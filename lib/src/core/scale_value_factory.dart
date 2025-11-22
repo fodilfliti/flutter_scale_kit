@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'cache_key.dart';
+
 import 'scale_value_cache.dart';
 import 'scaled_value_metadata.dart';
 
@@ -31,7 +31,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled width based on the current device's screen size.
   double createWidth(double width) {
-    return SKScaledValueTracker.mark(_cache.getWidth(width), ScaleType.width);
+    return _cache.getWidth(width);
   }
 
   /// Creates a scaled height value.
@@ -41,10 +41,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled height based on the current device's screen size.
   double createHeight(double height) {
-    return SKScaledValueTracker.mark(
-      _cache.getHeight(height),
-      ScaleType.height,
-    );
+    return _cache.getHeight(height);
   }
 
   /// Creates a scaled font size value.
@@ -54,10 +51,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled font size based on device type and orientation.
   double createFontSize(double fontSize) {
-    return SKScaledValueTracker.mark(
-      _cache.getFontSize(fontSize),
-      ScaleType.fontSize,
-    );
+    return _cache.getFontSize(fontSize);
   }
 
   /// Creates a scaled font size value with system text scale factor applied.
@@ -70,10 +64,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled font size with system factor applied.
   double createFontSizeWithFactor(double fontSize) {
-    return SKScaledValueTracker.mark(
-      _cache.getFontSizeWithFactor(fontSize),
-      ScaleType.fontSizeWithFactor,
-    );
+    return _cache.getFontSizeWithFactor(fontSize);
   }
 
   /// Creates a scaled radius value.
@@ -83,10 +74,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled radius based on the current device's screen size.
   double createRadius(double radius) {
-    return SKScaledValueTracker.mark(
-      _cache.getRadius(radius),
-      ScaleType.radius,
-    );
+    return _cache.getRadius(radius);
   }
 
   /// Creates a gently clamped radius value (cached).
@@ -94,10 +82,7 @@ class ScaleValueFactory {
   /// This keeps rounded corners from becoming too circular on large screens
   /// while still adapting slightly to scale changes.
   double createRadiusSafe(double radius) {
-    return SKScaledValueTracker.mark(
-      _cache.getRadiusSafe(radius),
-      ScaleType.radiusSafe,
-    );
+    return _cache.getRadiusSafe(radius);
   }
 
   /// Creates an unscaled radius value (cached).
@@ -107,10 +92,7 @@ class ScaleValueFactory {
   ///
   /// Returns the original radius while leveraging cache for reuse.
   double createFixedRadius(double radius) {
-    return SKScaledValueTracker.mark(
-      _cache.getFixedRadius(radius),
-      ScaleType.radiusFixed,
-    );
+    return _cache.getFixedRadius(radius);
   }
 
   /// Creates a screen width percentage value.
@@ -120,10 +102,7 @@ class ScaleValueFactory {
   ///
   /// Returns the calculated screen width percentage.
   double createScreenWidth(double percentage) {
-    return SKScaledValueTracker.mark(
-      _cache.getScreenWidth(percentage),
-      ScaleType.screenWidth,
-    );
+    return _cache.getScreenWidth(percentage);
   }
 
   /// Creates a screen height percentage value.
@@ -133,10 +112,7 @@ class ScaleValueFactory {
   ///
   /// Returns the calculated screen height percentage.
   double createScreenHeight(double percentage) {
-    return SKScaledValueTracker.mark(
-      _cache.getScreenHeight(percentage),
-      ScaleType.screenHeight,
-    );
+    return _cache.getScreenHeight(percentage);
   }
 
   /// Creates a scaled width value with maximum constraint (cached).
@@ -147,10 +123,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled width clamped to the maximum value.
   double createWidthMax(double width, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getWidthMax(width, max),
-      ScaleType.widthMax,
-    );
+    return _cache.getWidthMax(width, max);
   }
 
   /// Creates a scaled width value with minimum constraint (cached).
@@ -161,10 +134,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled width clamped to the minimum value.
   double createWidthMin(double width, double min) {
-    return SKScaledValueTracker.mark(
-      _cache.getWidthMin(width, min),
-      ScaleType.widthMin,
-    );
+    return _cache.getWidthMin(width, min);
   }
 
   /// Creates a scaled width value with clamp constraint (cached).
@@ -176,10 +146,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled width clamped between min and max.
   double createWidthClamp(double width, double min, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getWidthClamp(width, min, max),
-      ScaleType.widthClamp,
-    );
+    return _cache.getWidthClamp(width, min, max);
   }
 
   /// Creates a scaled height value with maximum constraint (cached).
@@ -190,10 +157,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled height clamped to the maximum value.
   double createHeightMax(double height, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getHeightMax(height, max),
-      ScaleType.heightMax,
-    );
+    return _cache.getHeightMax(height, max);
   }
 
   /// Creates a scaled height value with minimum constraint (cached).
@@ -204,10 +168,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled height clamped to the minimum value.
   double createHeightMin(double height, double min) {
-    return SKScaledValueTracker.mark(
-      _cache.getHeightMin(height, min),
-      ScaleType.heightMin,
-    );
+    return _cache.getHeightMin(height, min);
   }
 
   /// Creates a scaled height value with clamp constraint (cached).
@@ -219,10 +180,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled height clamped between min and max.
   double createHeightClamp(double height, double min, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getHeightClamp(height, min, max),
-      ScaleType.heightClamp,
-    );
+    return _cache.getHeightClamp(height, min, max);
   }
 
   /// Creates a screen width percentage value with maximum constraint (cached).
@@ -233,10 +191,7 @@ class ScaleValueFactory {
   ///
   /// Returns the calculated screen width percentage clamped to the maximum value.
   double createScreenWidthMax(double percentage, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getScreenWidthMax(percentage, max),
-      ScaleType.screenWidthMax,
-    );
+    return _cache.getScreenWidthMax(percentage, max);
   }
 
   /// Creates a screen width percentage value with minimum constraint (cached).
@@ -247,10 +202,7 @@ class ScaleValueFactory {
   ///
   /// Returns the calculated screen width percentage clamped to the minimum value.
   double createScreenWidthMin(double percentage, double min) {
-    return SKScaledValueTracker.mark(
-      _cache.getScreenWidthMin(percentage, min),
-      ScaleType.screenWidthMin,
-    );
+    return _cache.getScreenWidthMin(percentage, min);
   }
 
   /// Creates a screen width percentage value with clamp constraint (cached).
@@ -262,10 +214,7 @@ class ScaleValueFactory {
   ///
   /// Returns the calculated screen width percentage clamped between min and max.
   double createScreenWidthClamp(double percentage, double min, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getScreenWidthClamp(percentage, min, max),
-      ScaleType.screenWidthClamp,
-    );
+    return _cache.getScreenWidthClamp(percentage, min, max);
   }
 
   /// Creates a screen height percentage value with maximum constraint (cached).
@@ -276,10 +225,7 @@ class ScaleValueFactory {
   ///
   /// Returns the calculated screen height percentage clamped to the maximum value.
   double createScreenHeightMax(double percentage, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getScreenHeightMax(percentage, max),
-      ScaleType.screenHeightMax,
-    );
+    return _cache.getScreenHeightMax(percentage, max);
   }
 
   /// Creates a screen height percentage value with minimum constraint (cached).
@@ -290,10 +236,7 @@ class ScaleValueFactory {
   ///
   /// Returns the calculated screen height percentage clamped to the minimum value.
   double createScreenHeightMin(double percentage, double min) {
-    return SKScaledValueTracker.mark(
-      _cache.getScreenHeightMin(percentage, min),
-      ScaleType.screenHeightMin,
-    );
+    return _cache.getScreenHeightMin(percentage, min);
   }
 
   /// Creates a screen height percentage value with clamp constraint (cached).
@@ -305,10 +248,7 @@ class ScaleValueFactory {
   ///
   /// Returns the calculated screen height percentage clamped between min and max.
   double createScreenHeightClamp(double percentage, double min, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getScreenHeightClamp(percentage, min, max),
-      ScaleType.screenHeightClamp,
-    );
+    return _cache.getScreenHeightClamp(percentage, min, max);
   }
 
   /// Creates a scaled radius value with maximum constraint (cached).
@@ -319,10 +259,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled radius clamped to the maximum value.
   double createRadiusMax(double radius, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getRadiusMax(radius, max),
-      ScaleType.radiusMax,
-    );
+    return _cache.getRadiusMax(radius, max);
   }
 
   /// Creates a scaled radius value with minimum constraint (cached).
@@ -333,10 +270,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled radius clamped to the minimum value.
   double createRadiusMin(double radius, double min) {
-    return SKScaledValueTracker.mark(
-      _cache.getRadiusMin(radius, min),
-      ScaleType.radiusMin,
-    );
+    return _cache.getRadiusMin(radius, min);
   }
 
   /// Creates a scaled radius value with clamp constraint (cached).
@@ -348,10 +282,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled radius clamped between min and max.
   double createRadiusClamp(double radius, double min, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getRadiusClamp(radius, min, max),
-      ScaleType.radiusClamp,
-    );
+    return _cache.getRadiusClamp(radius, min, max);
   }
 
   /// Creates a scaled font size value with maximum constraint (cached).
@@ -362,10 +293,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled font size clamped to the maximum value.
   double createFontSizeMax(double fontSize, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getFontSizeMax(fontSize, max),
-      ScaleType.fontSizeMax,
-    );
+    return _cache.getFontSizeMax(fontSize, max);
   }
 
   /// Creates a scaled font size value with minimum constraint (cached).
@@ -376,10 +304,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled font size clamped to the minimum value.
   double createFontSizeMin(double fontSize, double min) {
-    return SKScaledValueTracker.mark(
-      _cache.getFontSizeMin(fontSize, min),
-      ScaleType.fontSizeMin,
-    );
+    return _cache.getFontSizeMin(fontSize, min);
   }
 
   /// Creates a scaled font size value with clamp constraint (cached).
@@ -391,10 +316,7 @@ class ScaleValueFactory {
   ///
   /// Returns the scaled font size clamped between min and max.
   double createFontSizeClamp(double fontSize, double min, double max) {
-    return SKScaledValueTracker.mark(
-      _cache.getFontSizeClamp(fontSize, min, max),
-      ScaleType.fontSizeClamp,
-    );
+    return _cache.getFontSizeClamp(fontSize, min, max);
   }
 
   /// Creates responsive [EdgeInsets] padding.

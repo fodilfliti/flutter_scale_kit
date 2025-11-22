@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'scaled_value_metadata.dart';
 import 'package:flutter/foundation.dart';
 import 'aspect_ratio_adapter.dart';
 import 'device_detector.dart';
@@ -510,7 +512,12 @@ class ScaleManager {
     _statusBarHeight = viewPadding.top;
 
     _calculateScaleFactors();
+    _updateCacheContextKey();
   }
+
+  double _finalScaleWidth = 1.0;
+  double _finalScaleHeight = 1.0;
+  double _finalScaleFontSize = 1.0;
 
   void _calculateScaleFactors() {
     _scaleWidth = _screenWidth / _designWidth;
@@ -519,6 +526,44 @@ class ScaleManager {
     final (minScale, maxScale) = _getScaleLimits();
     _scaleWidth = _scaleWidth.clamp(minScale, maxScale);
     _scaleHeight = _scaleHeight.clamp(minScale, maxScale);
+
+    // Pre-calculate final multipliers including boosts
+    final sizeBoost =
+        (_autoScale && _shouldApplySizeBoostForOrientation())
+            ? _getSizeBoost()
+            : 1.0;
+
+    _finalScaleWidth = _scaleWidth * sizeBoost;
+    _finalScaleHeight = _scaleHeight * sizeBoost;
+
+    // Pre-calculate font scale
+    _finalScaleFontSize = _getFontScaleFactor();
+  }
+
+  int _cacheContextKey = 0;
+
+  /// Current cache context key.
+  ///
+  /// This integer hash represents the current device state (orientation, type, aspect ratio).
+  /// It is used by [ScaleValueCache] to invalidate or key cached values efficiently.
+  int get cacheContextKey => _cacheContextKey;
+
+  void _updateCacheContextKey() {
+    final deviceType = this.deviceType;
+    final aspectCategory = DeviceDetector.getAspectRatioCategory(
+      _screenWidth,
+      _screenHeight,
+    );
+    // Create a stable hash based on the factors that influence scaling
+    _cacheContextKey = Object.hash(
+      deviceType,
+      _orientation,
+      aspectCategory,
+      _enabled,
+      _autoScale,
+      _autoScaleLandscape,
+      _autoScalePortrait,
+    );
   }
 
   /// Intelligently determines optimal scale limits based on device type,
@@ -768,11 +813,7 @@ class ScaleManager {
   /// Returns the scaled width based on the current scale factor.
   double getWidth(double width) {
     if (!_enabled) return width;
-    final sizeBoost =
-        (_autoScale && _shouldApplySizeBoostForOrientation())
-            ? _getSizeBoost()
-            : 1.0;
-    return width * _scaleWidth * sizeBoost;
+    return width * _finalScaleWidth;
   }
 
   /// Gets a scaled height value.
@@ -783,11 +824,7 @@ class ScaleManager {
   /// Returns the scaled height based on the current scale factor.
   double getHeight(double height) {
     if (!_enabled) return height;
-    final sizeBoost =
-        (_autoScale && _shouldApplySizeBoostForOrientation())
-            ? _getSizeBoost()
-            : 1.0;
-    return height * _scaleHeight * sizeBoost;
+    return height * _finalScaleHeight;
   }
 
   /// Gets a scaled font size value.
@@ -802,8 +839,7 @@ class ScaleManager {
   /// Returns the scaled font size.
   double getFontSize(double fontSize) {
     if (!_enabled) return fontSize;
-    final fontScale = _getFontScaleFactor();
-    return fontSize * fontScale;
+    return fontSize * _finalScaleFontSize;
   }
 
   /// Gets a scaled font size value with system text scale factor applied.
@@ -817,8 +853,7 @@ class ScaleManager {
   /// Returns the scaled font size with system factor applied.
   double getFontSizeWithFactor(double fontSize) {
     if (!_enabled) return fontSize;
-    final fontScale = _getFontScaleFactor();
-    return fontSize * fontScale * _textScaleFactor;
+    return fontSize * _finalScaleFontSize * _textScaleFactor;
   }
 
   double _getFontScaleFactor() {
@@ -1086,6 +1121,8 @@ class ScaleManager {
   /// not be called directly.
   void clearCache() {
     // Cache clearing is handled by ScaleValueCache
+    // We also need to clear the tracker cache to prevent memory leaks
+    SKScaledValueTracker.clearCache();
   }
 
   double _computeRadiusMultiplier() {

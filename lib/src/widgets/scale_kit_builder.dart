@@ -353,9 +353,8 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
 
       _attachEnabledListenable();
 
-      final mediaQuery = MediaQuery.of(context);
-      _previousSize = mediaQuery.size;
-      _previousOrientation = mediaQuery.orientation;
+      _previousSize = MediaQuery.sizeOf(context);
+      _previousOrientation = MediaQuery.orientationOf(context);
 
       // Safely get locale - may not be available during initialization
       _previousLocale = _localeFromContext(context);
@@ -390,9 +389,8 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
   }
 
   void _checkForChanges() {
-    final mediaQuery = MediaQuery.of(context);
-    final currentSize = mediaQuery.size;
-    final currentOrientation = mediaQuery.orientation;
+    final currentSize = MediaQuery.sizeOf(context);
+    final currentOrientation = MediaQuery.orientationOf(context);
 
     // Safely get locale
     final currentLocale = _localeFromContext(context);
