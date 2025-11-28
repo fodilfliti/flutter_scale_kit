@@ -27,6 +27,14 @@ All notable changes to this project will be documented in this file.
   - **Instant Access**: Subsequent calls retrieve the pre-marked value instantly from the cache, eliminating repetitive overhead.
   - **Tracker Leak Fix**: Fixed a memory leak where the auto-scale tracker was never cleared. It now clears automatically on resize.
 
+### 📚 Documentation Overhaul
+
+- **Complete Restructure**: Reorganized README for better flow, prioritizing "Getting Started" and "Core APIs".
+- **Refined API Reference**: Condensed extension methods and grouped layout helpers for better readability.
+- **Simplified Quick Start**: Streamlined setup steps and added "Design System Tokens" guide.
+- **Clearer Examples**: Improved code snippets with "copy-paste" ready examples and clearer explanations.
+- **Performance Section**: Added detailed explanation of the new caching and optimization strategies.
+
 ## [1.5.2] - 2025-01-XX
 
 ### ✨ Added
