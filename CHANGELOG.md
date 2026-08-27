@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.6.0] - 2026-08-27
 
 ### Added
 
@@ -12,8 +12,7 @@ All notable changes to this project will be documented in this file.
 
 - Replaced deprecated `FontWeight.index` with `FontWeight.value` in the text-style cache key.
 - Stopped forwarding deprecated `Switch.activeColor` / `SwitchListTile.activeColor`; map `activeColor` / `activeThumbColor` through `thumbColor` instead.
-
-## [1.5.3] - 2025-11-22
+- Set the real Flutter floor to `>=3.29.0` (matches Dart `^3.7.2`). Dart constraint is unchanged so Flutter 3.29–3.47 apps still work.
 
 ### 🚀 Performance Optimization
 

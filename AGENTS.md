@@ -18,6 +18,10 @@ This is a **published Flutter package** (`flutter_scale_kit` on pub.dev), not an
 - After behavior changes: update `spec/` (and `CHANGELOG.md` when it is a user-visible release change). README only if the user-facing API/docs changed.
 - Public API changes must also update `skills/flutter-scale-kit/` (consumer Agent Skill used in other IDEs).
 
+## Flutter SDK
+
+The maintainer switches Flutter with **FVM** (`fvm`). This repo is pinned in `.fvmrc` to **3.35.7**. Use `fvm flutter` / `fvm dart`, not global `flutter`. Never run `flutter upgrade` / `flutter channel` on `C:\Users\lemsa\Documents\flutter`. Keep package constraints at Dart `^3.7.2` and Flutter `>=3.29.0`.
+
 ## Out of scope unless asked
 
 Publishing to pub.dev, bumping version, or rewriting README marketing copy.

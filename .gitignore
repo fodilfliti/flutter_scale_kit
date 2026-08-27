@@ -24,6 +24,9 @@ migrate_working_dir/
 # Local codebase-memory MCP graph (machine index; spec/ is the git source of truth)
 .codebase-memory/
 
+# FVM (pin is .fvmrc; SDK symlink is local)
+.fvm/
+
 # Flutter/Dart/Pub related
 # Libraries should not include pubspec.lock, per https://dart.dev/guides/libraries/private-files#pubspeclock.
 /pubspec.lock
