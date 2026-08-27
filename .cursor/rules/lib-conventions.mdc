@@ -1,0 +1,14 @@
+---
+description: Conventions when editing flutter_scale_kit library Dart code
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# Library Dart
+
+- Public API = exports from `lib/flutter_scale_kit.dart`. New user-facing types must be exported there (or via an already-exported barrel such as `const_widgets.dart`).
+- SK widgets: scale through `ScaleValueFactory.resolve*` so raw doubles and `.w/.sp` both work without double scaling.
+- Use `ScaleManager.instance` / `ScaleValueFactory.instance`; do not construct parallel engines.
+- Deprecated names: `SKitTheme` → `ScaleKitDesignValues`, `SKitThemeValues` → `ScaleKitDesignValuesSet`. Do not reintroduce the old names in new code.
+- Keep `google_fonts` out of `pubspec.yaml`; `FontConfig` accepts caller-supplied font builders.
+- Prefer extending existing tests in `test/` over example-only verification.

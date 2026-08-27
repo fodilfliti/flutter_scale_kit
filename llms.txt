@@ -1,0 +1,18 @@
+# flutter_scale_kit
+
+Pub: https://pub.dev/packages/flutter_scale_kit
+Repo: https://github.com/fodilfliti/flutter_scale_kit
+
+Responsive Flutter scaling (ScreenUtil alternative). Wrap the app with ScaleKitBuilder (designWidth/designHeight). Prefer SK* widgets (SKContainer, SKText) and SKit tokens (SKSize, ScaleKitDesignValues). Do not double-scale (no 120.w inside SKContainer).
+
+## Agent skill (install in the consumer app)
+
+npx skills add fodilfliti/flutter_scale_kit
+
+Then: "Init Flutter Scale Kit with defaults."
+
+If scale_kit.yaml is missing, the agent asks once for style (design_system recommended | drop_in | extensions | hybrid) and writes the file.
+
+Skill files: skills/flutter-scale-kit/SKILL.md
+User docs: README.md
+Author/agent internals: spec/

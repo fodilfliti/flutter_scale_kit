@@ -1,0 +1,24 @@
+---
+description: How agents load Flutter Scale Kit context and where truth lives
+alwaysApply: true
+---
+
+# Flutter Scale Kit — session memory
+
+This repo is the **flutter_scale_kit** pub package (responsive scaling). It is not an app.
+
+## Where to look (in order)
+
+1. `spec/` — product, architecture, invariants, decisions. Start at `spec/README.md`.
+2. `lib/` — implementation truth.
+3. Codebase Memory MCP project **`flutter_scale_kit`** — symbols, callers, clusters. Index if `list_projects` does not list it.
+4. `CHANGELOG.md` — recent behavior.
+5. `README.md` — user docs only. Do not load the whole file into context.
+
+## Hard rules
+
+- Do not double-scale: SK widgets must `resolve*` already-marked `.w/.h/.sp` values.
+- Extension methods return FFI-safe plain doubles (Map tracker, never Expando on the number).
+- `ScaleValueCache` stays LRU-capped; clear cache + tracker together on resize.
+- Platform detection stays web/Wasm-safe (`kIsWeb` first).
+- If you change behavior, update `spec/` in the same change.

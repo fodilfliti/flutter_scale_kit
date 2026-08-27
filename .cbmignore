@@ -1,0 +1,11 @@
+# Keep the code graph on package source, not generated Flutter platform glue
+example/**/ephemeral/
+example/android/
+example/ios/
+example/linux/
+example/macos/
+example/windows/
+example/web/
+screenshots/
+**/*.png
+**/*.g.dart

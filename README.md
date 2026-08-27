@@ -20,6 +20,7 @@ A high-performance responsive design package for Flutter that helps you create a
 - **Zero-Config**: `SKContainer`, `SKText` scale automatically without `.w`/`.h`.
 - **Familiar API**: `.w`, `.h`, `.sp` work exactly like `flutter_screenutil`.
 - **Design System**: Define tokens once (`ScaleKitDesignValues`) and use them everywhere.
+- **AI Skill**: Agent skill for Cursor, Claude, Copilot, and other IDEs — init + design-system usage.
 
 ### 📱 Cross-Platform
 - **Universal**: Phones, tablets, desktop, and web support.
@@ -64,6 +65,7 @@ Jump to any section:
 
 - [✨ Key Features](#key-features)
 - [📦 Installation](#installation)
+- [🤖 AI agent skill](#ai-agent-skill)
 - [🚀 Getting Started](#quick-start-guide)
 - [Device Metrics Mixin](#device-metrics-mixin)
 - [ScaleKitDesignValues - Centralized Design System](#scalekitdesignvalues)
@@ -183,6 +185,63 @@ Then run:
 ```bash
 flutter pub get
 ```
+
+<a id="ai-agent-skill"></a>
+
+## 🤖 AI agent skill
+
+Your coding agent can use Flutter Scale Kit **like a design-system expert** (init `ScaleKitBuilder`, tokens, `SK*` widgets, no double-scaling). The skill follows the open [Agent Skills](https://agentskills.io) format, so it works in **Cursor, Claude Code, GitHub Copilot, Codex, OpenCode, Windsurf, Gemini CLI**, and other compatible tools.
+
+### Pull it into any project
+
+```bash
+# Current project (shared with the team)
+npx skills add fodilfliti/flutter_scale_kit
+
+# All projects on this machine
+npx skills add fodilfliti/flutter_scale_kit -g
+
+# This skill only
+npx skills add fodilfliti/flutter_scale_kit --skill flutter-scale-kit
+```
+
+Manual copy (if you do not use the CLI): copy `skills/flutter-scale-kit/` from this repo into your agent's skills folder (for example `.agents/skills/flutter-scale-kit/`, `.claude/skills/flutter-scale-kit/`, or `~/.cursor/skills/flutter-scale-kit/`).
+
+Then ask:
+
+```text
+Init Flutter Scale Kit with defaults.
+```
+
+The agent **checks `scale_kit.yaml`** in your project. If that file is missing, it **asks once** which style to use (then saves the file so it does not ask again).
+
+### Pick a style (agent will ask)
+
+**Recommended: `design_system`** — tokens + `SK*` widgets (best of the package, still short):
+
+```dart
+SKit.paddingSize(
+  all: SKSize.md,
+  child: SKText('Hello', fontSize: 16),
+)
+```
+
+| Style | Use when | Example |
+| --- | --- | --- |
+| **design_system** (recommended) | New apps, design tokens | `SKit.paddingSize(all: SKSize.md, child: SKText('Hi', fontSize: 16))` |
+| **drop_in** | Fast migrate: swap `Container` → `SKContainer` | `SKContainer(width: 120, child: SKText('Hi', fontSize: 16))` |
+| **extensions** | Keep Flutter widgets, ScreenUtil-like | `Container(width: 120.w, child: Text('Hi', style: TextStyle(fontSize: 16.sp)))` |
+| **hybrid** | New UI = design_system, old widgets = `.w` | `SKText` + `SizedBox(width: 200.wMax(360), child: LegacyChart())` |
+
+Say **defaults** to skip the interview (`design_system`, 375×812).
+
+The agent writes `scale_kit.yaml` at the project root, adds the dependency, creates `lib/core/scale_kit.dart`, and wraps `main.dart` with `ScaleKitBuilder`. Later chats follow that `style` automatically.
+
+After init: “Build this screen with Scale Kit” or “Migrate this page from ScreenUtil”.
+
+To change style later, edit `scale_kit.yaml` or tell the agent: “Switch this project to extensions.”
+
+Skill source: [`skills/flutter-scale-kit/`](https://github.com/fodilfliti/flutter_scale_kit/tree/master/skills/flutter-scale-kit)
 
 <a id="quick-start-guide"></a>
 

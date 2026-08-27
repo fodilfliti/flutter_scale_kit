@@ -1,0 +1,12 @@
+# Copy to the Flutter app root as scale_kit.yaml (or .scalekit.yaml).
+# AI agents read this and follow `style` without asking again.
+# Docs: https://pub.dev/packages/flutter_scale_kit#ai-agent-skill
+
+style: design_system # design_system | drop_in | extensions | hybrid
+
+design_width: 375
+design_height: 812
+design_type: mobile # mobile | tablet | desktop
+
+tokens: recommended # recommended | material3 | tailwind
+desktop: auto # auto | lock_tablet | lock_mobile
