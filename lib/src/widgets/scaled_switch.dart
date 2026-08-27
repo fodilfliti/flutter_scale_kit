@@ -12,13 +12,14 @@ class SKSwitch extends Switch {
     super.key,
     required super.value,
     required super.onChanged,
-    super.activeColor,
+    Color? activeColor,
+    Color? activeThumbColor,
     super.activeTrackColor,
     super.inactiveThumbColor,
     super.inactiveTrackColor,
     super.activeThumbImage,
     super.inactiveThumbImage,
-    super.thumbColor,
+    WidgetStateProperty<Color?>? thumbColor,
     super.trackColor,
     super.trackOutlineColor,
     super.overlayColor,
@@ -29,6 +30,9 @@ class SKSwitch extends Switch {
     super.focusNode,
     DragStartBehavior? dragStartBehavior,
   }) : super(
+         thumbColor:
+             thumbColor ??
+             _selectedThumbColor(activeThumbColor ?? activeColor),
          splashRadius:
              splashRadius != null
                  ? _factory.resolveRadiusSafe(splashRadius)
@@ -55,13 +59,14 @@ class SKSwitchListTile extends SwitchListTile {
     super.shape,
     EdgeInsetsGeometry? contentPadding,
     super.selected,
-    super.activeColor,
+    Color? activeColor,
+    Color? activeThumbColor,
     super.activeTrackColor,
     super.inactiveThumbColor,
     super.inactiveTrackColor,
     super.tileColor,
     super.selectedTileColor,
-    super.thumbColor,
+    WidgetStateProperty<Color?>? thumbColor,
     super.trackColor,
     super.trackOutlineColor,
     super.activeThumbImage,
@@ -73,6 +78,9 @@ class SKSwitchListTile extends SwitchListTile {
     super.materialTapTargetSize,
     super.visualDensity,
   }) : super(
+         thumbColor:
+             thumbColor ??
+             _selectedThumbColor(activeThumbColor ?? activeColor),
          contentPadding:
              contentPadding != null
                  ? _factory.resolveEdgeInsets(contentPadding)
@@ -83,4 +91,16 @@ class SKSwitchListTile extends SwitchListTile {
                  : null,
          dragStartBehavior: dragStartBehavior ?? DragStartBehavior.start,
        );
+}
+
+WidgetStateProperty<Color?>? _selectedThumbColor(Color? color) {
+  if (color == null) {
+    return null;
+  }
+  return WidgetStateProperty.resolveWith((states) {
+    if (states.contains(WidgetState.selected)) {
+      return color;
+    }
+    return null;
+  });
 }

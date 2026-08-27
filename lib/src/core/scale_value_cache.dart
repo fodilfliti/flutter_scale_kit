@@ -504,7 +504,7 @@ class ScaleValueCache {
     // Create a unique key based on TextStyle parameters including language
     final value =
         fontSize +
-        (fontWeight?.index ?? 0) * 1000 +
+        (fontWeight?.value ?? 0) * 1000 +
         (fontStyle?.index ?? 0) * 100 +
         (color != null ? color.toARGB32().toDouble() : 0) * 0.001 +
         (fontFamily?.hashCode ?? 0) * 0.000001 +

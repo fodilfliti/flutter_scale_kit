@@ -8,6 +8,11 @@ All notable changes to this project will be documented in this file.
 
 - **Agent Skill** (`skills/flutter-scale-kit/`) for Cursor, Claude, Copilot, and other Agent Skills IDEs: init ScaleKitBuilder + design-system tokens, install via `npx skills add fodilfliti/flutter_scale_kit`. Documented on README (pub.dev).
 
+### Fixed
+
+- Replaced deprecated `FontWeight.index` with `FontWeight.value` in the text-style cache key.
+- Stopped forwarding deprecated `Switch.activeColor` / `SwitchListTile.activeColor`; map `activeColor` / `activeThumbColor` through `thumbColor` instead.
+
 ## [1.5.3] - 2025-11-22
 
 ### 🚀 Performance Optimization
