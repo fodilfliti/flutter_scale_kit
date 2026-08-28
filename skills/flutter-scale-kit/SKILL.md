@@ -99,7 +99,7 @@ child: Builder(
 ```
 
 - **Do not** set `theme: ResponsiveThemeData.create(...)` — that **drops** card/button/input themes from Theme Kit.
-- Align radius in the app: `setRadiusSizes(md: 12)` and `STRadius(md: 12)`.
+- Align radius in the app: `setRadiusSizes(SizeValues.custom(md: 12))` and `STRadius(md: 12)`.
 - Load the Theme Kit skill when present: `skills` from `flutter_scale_theme_kit` (`npx skills add fodilfliti/flutter_scale_theme_kit`).
 
 The two packages live as **sibling folders** (`flutter_scale_kit` + `flutter_scale_theme_kit`). Neither `lib/` imports the other.

@@ -12,6 +12,51 @@ Pairs with the look companion [`flutter_scale_theme_kit`](https://pub.dev/packag
 - Merge recipe: keep `appST.light` / `appST.dark` and scale fonts with `createResponsiveTextTheme` under `ScaleKitBuilder`. Do **not** replace the theme with `ResponsiveThemeData.create` (drops component themes).
 - Consumer skill + AGENTS: detect `flutter_scale_theme_kit` in the app pubspec and merge on init.
 
+### Documentation
+
+- **README restructured** — device screenshots and a before/after code comparison now open the
+  page, followed by a grouped table of contents and a complete runnable `main.dart`. The page stays
+  self-sufficient: every feature is documented inline, so no link needs to be followed.
+- **Quick start expanded** into three parts: a runnable `main.dart`, a table documenting **every**
+  `ScaleKitBuilder` parameter with its default (plus a tuned example combining scale limits,
+  desktop locks, custom breakpoints, and landscape boosts), and four optional setup steps covering
+  design tokens, `setDefault*` values, the full `FontConfig` language and language-group example,
+  and a `ScaleKitDesignValues` token set.
+- **New "whole package in 60 seconds" tour** near the top, covering every major feature in short
+  examples grouped under Sizing, Widgets, Design system, Look, Responsive layout, Tuning the
+  engine, and Tooling — extensions and geometry/gap scaling, drop-in widgets and `SKImage`, `SKit`
+  helpers, tokens and `ScaleKitDesignValues`, full text control, locale fonts, responsive themes
+  and the look companion, responsive values and widgets, desktop locks, device queries and
+  `DeviceMetricsMixin`, scale limits, breakpoints, orientation boosts, rebuild sensitivity, the
+  runtime toggle, testing, and Device Preview. Each entry deep-links to its full section, so the
+  breadth of the package is visible without scrolling.
+- **New sections**: an agent-skill callout near the top for readers who'd rather have their AI set
+  the package up, a "choose your approach" decision table (which API for which job, plus what *not*
+  to reach for), a Gotchas section (double-scaling, radius modes, builder placement, theme
+  context), inline testing guidance, and a flutter_screenutil migration walkthrough.
+- Documented `FontConfig` resolution order (exact language → language group → default → Flutter
+  default) and the full `ScaleKitDesignValuesSet` return types.
+- Removed three duplicate copies of the extension reference and two of the context-extension and
+  performance sections that made the previous README hard to navigate.
+- **New [starter app guide](doc/starter-app.md)** — a complete first-time setup using
+  `flutter_scale_kit` **and** `flutter_scale_theme_kit` together, in four copyable files
+  (`pubspec.yaml`, a colors file, a Scale Kit config file, `main.dart`) plus one real dashboard
+  screen. Includes the same card written in all four usage styles (`design_system`, `drop_in`,
+  `extensions`, `hybrid`) and the rules that keep size and look from conflicting. Linked from the
+  table of contents, Install, "choose your approach", the look-companion section, and the guides
+  table.
+- Added a widget-level example and a light/dark toggle snippet to the look-companion section, so
+  the "colors from `context.st`, sizes from Scale Kit" split is visible in the README itself.
+- **New `doc/` supplements** for readers who want more depth:
+  [API reference](doc/api-reference.md), [scaling engine](doc/scaling-engine.md),
+  [design system](doc/design-system.md), [desktop & web](doc/desktop-web.md),
+  [recipes](doc/recipes.md), [migration guide](doc/migration-screenutil.md).
+- Fixed docs that showed `setRadiusSizes(md: 12)`; the setter takes a `SizeValues`, so the correct
+  form is `setRadiusSizes(SizeValues.custom(md: 12))`.
+- Fixed a malformed `SKit` code sample, a `Device Metrics Mixin` anchor that pointed at the wrong
+  section, and a stale "New in v1.3.0" note.
+- Added `.pubignore` so `README_old.md`, `spec/`, and `AGENTS.md` stay out of the published archive.
+
 ## [1.6.0] - 2026-08-27
 
 ### Added

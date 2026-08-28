@@ -1,0 +1,41 @@
+# Files excluded from the published pub.dev archive.
+# NOTE: pub uses this file INSTEAD of .gitignore, so the ignore rules that
+# matter for packaging are repeated here.
+
+# Superseded documentation (kept in git for history, not shipped)
+README_old.md
+
+# Maintainer-only context (agent memory, not user documentation)
+AGENTS.md
+spec/
+.cursor/
+
+# Local tooling
+.fvmrc
+.vscode/
+.codebase-memory/
+.fvm/
+
+# Build and tool output
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+**/doc/api/
+/pubspec.lock
+
+# Editor / OS noise
+*.iml
+*.ipr
+*.iws
+.idea/
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/

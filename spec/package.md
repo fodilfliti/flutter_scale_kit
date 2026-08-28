@@ -23,7 +23,66 @@ lib/src/mixins/                    DeviceMetricsMixin
 lib/src/widgets/                    ScaleKitBuilder, SK*, SKit, responsive
 example/                           interactive demo (not shipped as library code)
 test/                              package tests (thin today)
+doc/                               user-facing deep-dive docs linked from README
 ```
+
+## Documentation layout
+
+**Core rule: `README.md` must be self-sufficient.** pub.dev users read the package page and rarely
+click through to repo files, so no required knowledge may live only in `doc/`. A reader who scrolls
+the README top to bottom and never follows a link must still be able to use every feature.
+
+`README.md` (~1940 lines) carries the full narrative in one scroll:
+
+1. Hero — pitch, device screenshots, live demo link (visual hook before any prose)
+2. Before/after code comparison, then a "why developers pick it" table
+3. "The whole package in 60 seconds" — a capability tour covering **every** major feature, grouped
+   under Sizing / Widgets / Design system / Look / Responsive layout / Tuning the engine / Tooling.
+   Each entry is 2–6 lines of code with a deep link to its full section. This exists so a reader who
+   never scrolls past the fold still knows the package does responsive values and widgets, desktop
+   locks, device queries, locale fonts, theming, engine tuning, and testing — not just `.w` scaling.
+   **When a feature section is added below, add a tour entry for it too**; the tour's value is that
+   it is exhaustive.
+4. Agent-skill callout (`npx skills add …`) placed **above** the TOC, so readers learn the package
+   can install itself before they commit to reading; it deep-links to the full section at the bottom
+5. Table of contents (grouped: get running / core APIs / responsive / how it works / extras)
+6. Install → Quick start → decision table → gotchas
+
+Quick start has three numbered parts: (1) a complete runnable `main.dart`, (2) a table of **every**
+`ScaleKitBuilder` parameter with defaults plus one tuned example, (3) four optional setup steps —
+design tokens, `setDefault*` values, the full `FontConfig` language/group example, and a
+`ScaleKitDesignValues` token set. The later Typography and Design-system sections deliberately do
+**not** repeat those two examples; they link back to Quick start and add only what is new
+(font resolution order, the remaining `ScaleKitDesignValues` fields).
+5. Every API inline: extensions, `SK*` widgets, `SKit`, tokens, typography, theme, companion
+6. Responsive, desktop/web, device queries, breakpoints
+7. Engine: limits, boosts, auto-config, performance
+8. Testing, runtime toggle, Device Preview, agent skill, screenutil migration
+9. Advanced-guides table, FAQ, support
+
+`doc/` files are **optional supplements** — exhaustive tables and deep math for readers who want
+more, never a prerequisite:
+
+| File | Holds |
+| --- | --- |
+| `doc/starter-app.md` | First-time setup with **both** packages: `pubspec.yaml`, `core/design.dart` (`STTheme`), `core/scale_kit.dart` (`initScaleKit`), `main.dart` wiring, one real screen, the four usage styles, and the size-vs-look rules |
+| `doc/api-reference.md` | Exhaustive per-member reference (every property, method, enum) |
+| `doc/scaling-engine.md` | Full formulas, per-device boost tuning, benchmark detail |
+| `doc/design-system.md` | Extended token and font recipes |
+| `doc/desktop-web.md` | Every lock/override/fallback combination |
+| `doc/recipes.md` | Cards, grids, RTL, testing patterns |
+| `doc/migration-screenutil.md` | Three migration strategies plus gotcha list |
+
+Constraints when editing docs:
+
+- Do **not** use `<details>` / `<summary>` for collapsing. pub.dev's HTML sanitizer does not render
+  them reliably (open FIXME tests in `dart-lang/pub-dev`), so content inside would vanish.
+- Repeating a concept between README and `doc/` is fine; repeating it **twice inside the README**
+  is the failure mode that made the pre-2.0 version unreadable.
+- Keep visual content near the top — Dart's own package-page guidance calls a wall of text
+  intimidating.
+- `README_old.md` is the pre-2.0 version, kept in git for history and excluded from the pub archive
+  by `.pubignore`.
 
 ## Runtime architecture
 

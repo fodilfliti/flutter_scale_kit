@@ -179,7 +179,7 @@ Prefer wrapping `MaterialApp` with Theme Kit’s `STThemeModeScope` when the use
 
 **Do not** use `ResponsiveThemeData.create(colorScheme: appST.light.colorScheme)` as `theme:` — component themes (Card, buttons, inputs) disappear.
 
-Align `setRadiusSizes(md: …)` with `STRadius(md: …)`.
+Align `setRadiusSizes(SizeValues.custom(md: …))` with `STRadius(md: …)`.
 
 ## Checklist
 
