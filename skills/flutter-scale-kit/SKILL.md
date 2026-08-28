@@ -10,7 +10,7 @@ description: >
 license: MIT
 metadata:
   author: fodilfliti
-  version: "1.6.0"
+  version: "2.0.0"
   homepage: https://pub.dev/packages/flutter_scale_kit
   repo: https://github.com/fodilfliti/flutter_scale_kit
 ---
@@ -66,7 +66,7 @@ Use these unless the user overrides:
 | Widgets | `SK*` drop-ins + `SKit` helpers; tokens via `SKSize` / `ScaleKitDesignValues` |
 | Desktop/web | Auto-detect (no lock) |
 | Fonts | Skip `FontConfig` unless they use `google_fonts` or named a family |
-| Theme | `ResponsiveThemeData.create` only if they already have a `ThemeData` you can wrap |
+| Theme | `ResponsiveThemeData.create` only if they already have a `ThemeData` **and** do **not** use `flutter_scale_theme_kit`. If `pubspec.yaml` lists `flutter_scale_theme_kit`, **use it** (see below). |
 
 Always:
 
@@ -74,6 +74,28 @@ Always:
 2. Call token setup in `main()` **before** `runApp`
 3. Wrap the root app with `ScaleKitBuilder` **above** `MaterialApp` / `GetMaterialApp` / `CupertinoApp`
 4. Create `lib/core/scale_kit.dart` (or `lib/app/scale_kit.dart`) so tokens live in one file
+
+## Look companion (`flutter_scale_theme_kit`)
+
+If the app `pubspec.yaml` contains **`flutter_scale_theme_kit`** (or the user asks to add look/theme tokens):
+
+- **Use it.** Look = `STTheme` / `context.st` / `appST.light` / `appST.dark`. Size stays this package.
+- **Merge** under `ScaleKitBuilder` + `Builder`:
+
+```dart
+theme: appST.light.copyWith(
+  textTheme: appST.light.createResponsiveTextTheme(appST.light.textTheme),
+),
+darkTheme: appST.dark.copyWith(
+  textTheme: appST.dark.createResponsiveTextTheme(appST.dark.textTheme),
+),
+```
+
+- **Do not** set `theme: ResponsiveThemeData.create(...)` — that **drops** card/button/input themes from Theme Kit.
+- Align radius in the app: `setRadiusSizes(md: 12)` and `STRadius(md: 12)`.
+- Load the Theme Kit skill when present: `skills` from `flutter_scale_theme_kit` (`npx skills add fodilfliti/flutter_scale_theme_kit`).
+
+The two packages live as **sibling folders** (`flutter_scale_kit` + `flutter_scale_theme_kit`). Neither `lib/` imports the other.
 
 ## Best strategy (small code, strongest APIs)
 

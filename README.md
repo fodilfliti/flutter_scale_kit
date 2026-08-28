@@ -20,7 +20,8 @@ A high-performance responsive design package for Flutter that helps you create a
 - **Zero-Config**: `SKContainer`, `SKText` scale automatically without `.w`/`.h`.
 - **Familiar API**: `.w`, `.h`, `.sp` work exactly like `flutter_screenutil`.
 - **Design System**: Define tokens once (`ScaleKitDesignValues`) and use them everywhere.
-- **AI Skill**: Agent skill for Cursor, Claude, Copilot, and other IDEs — init + design-system usage.
+- **Look companion**: Optional [`flutter_scale_theme_kit`](https://pub.dev/packages/flutter_scale_theme_kit) (sibling package) for colors and `ThemeData`. Independent — this package stays size-only.
+- **AI Skill**: Agent skill for Cursor, Claude, Copilot, and other IDEs — init + design-system usage. If Theme Kit is in the app, the skill **uses it**.
 
 ### 📱 Cross-Platform
 - **Universal**: Phones, tablets, desktop, and web support.
@@ -65,6 +66,7 @@ Jump to any section:
 
 - [✨ Key Features](#key-features)
 - [📦 Installation](#installation)
+- [🎨 Look companion (theme kit)](#look-companion)
 - [🤖 AI agent skill](#ai-agent-skill)
 - [🚀 Getting Started](#quick-start-guide)
 - [Device Metrics Mixin](#device-metrics-mixin)
@@ -177,7 +179,7 @@ flutter:
   sdk: flutter
 
 dependencies:
-  flutter_scale_kit: ^1.6.0
+  flutter_scale_kit: ^2.0.0
 ```
 
 Then run:
@@ -186,11 +188,57 @@ Then run:
 flutter pub get
 ```
 
+Optional **look** (colors / `ThemeData`) — add the sibling package, no extra coupling in Scale Kit itself:
+
+```yaml
+dependencies:
+  flutter_scale_kit: ^2.0.0
+  flutter_scale_theme_kit: ^1.0.1
+```
+
+<a id="look-companion"></a>
+
+## 🎨 Look companion (theme kit)
+
+Scale Kit is **size**. For semantic colors, light/dark, and Material look, use **[`flutter_scale_theme_kit`](https://pub.dev/packages/flutter_scale_theme_kit)** (same author, **same folder level** as this repo: `flutter_scale_kit` + `flutter_scale_theme_kit`).
+
+- Neither package depends on the other at runtime.
+- If you add Theme Kit, **use it** (`STTheme`, `context.st`). Do not keep a second hardcoded color system.
+- Merge fonts under `ScaleKitBuilder` (context must see Scale Kit). **Do not** replace `theme:` with `ResponsiveThemeData.create` — that drops card/button/input themes:
+
+```dart
+ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  child: Builder(
+    builder: (context) {
+      return MaterialApp(
+        theme: appST.light.copyWith(
+          textTheme: appST.light.createResponsiveTextTheme(
+            appST.light.textTheme,
+          ),
+        ),
+        darkTheme: appST.dark.copyWith(
+          textTheme: appST.dark.createResponsiveTextTheme(
+            appST.dark.textTheme,
+          ),
+        ),
+        home: const HomePage(),
+      );
+    },
+  ),
+);
+```
+
+Align radius in the app: `setRadiusSizes(md: 12)` and Theme Kit `STRadius(md: 12)`.
+
+Theme Kit skill: `npx skills add fodilfliti/flutter_scale_theme_kit`
+
 <a id="ai-agent-skill"></a>
 
 ## 🤖 AI agent skill
 
-Your coding agent can use Flutter Scale Kit **like a design-system expert** (init `ScaleKitBuilder`, tokens, `SK*` widgets, no double-scaling). The skill follows the open [Agent Skills](https://agentskills.io) format, so it works in **Cursor, Claude Code, GitHub Copilot, Codex, OpenCode, Windsurf, Gemini CLI**, and other compatible tools.
+Your coding agent can use Flutter Scale Kit **like a design-system expert** (init `ScaleKitBuilder`, tokens, `SK*` widgets, no double-scaling). If the app also has **`flutter_scale_theme_kit`**, the skill **uses it** for look and merges `createResponsiveTextTheme` onto `appST.light` / `appST.dark`. The skill follows the open [Agent Skills](https://agentskills.io) format, so it works in **Cursor, Claude Code, GitHub Copilot, Codex, OpenCode, Windsurf, Gemini CLI**, and other compatible tools.
 
 ### Pull it into any project
 
@@ -242,6 +290,8 @@ After init: “Build this screen with Scale Kit” or “Migrate this page from 
 To change style later, edit `scale_kit.yaml` or tell the agent: “Switch this project to extensions.”
 
 Skill source: [`skills/flutter-scale-kit/`](https://github.com/fodilfliti/flutter_scale_kit/tree/master/skills/flutter-scale-kit)
+
+Look companion skill: [`flutter_scale_theme_kit` skills](https://github.com/fodilfliti/flutter_scale_theme_kit/tree/main/skills/flutter-scale-theme-kit)
 
 <a id="quick-start-guide"></a>
 

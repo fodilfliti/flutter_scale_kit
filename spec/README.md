@@ -8,6 +8,7 @@ It is not user documentation. Do not copy `README.md` here.
 | [package.md](package.md) | Starting a task: what the package is, layers, public surface |
 | [invariants.md](invariants.md) | Changing scaling, widgets, cache, or platform detection |
 | [decisions.md](decisions.md) | Changing architecture, cache, or FFI tracking |
+| [companion.md](companion.md) | Dual-package use with `flutter_scale_theme_kit` |
 
 ## Truth order
 
@@ -22,3 +23,5 @@ When code and spec disagree, **fix the spec** after confirming the code is inten
 ## Consumer apps (other IDEs)
 
 Agents **using** this package inside another Flutter app should load `skills/flutter-scale-kit/` (Agent Skills / `npx skills add fodilfliti/flutter_scale_kit`). That skill is usage + init, not package internals. If you change a public API, update the consumer skill in the same change.
+
+Look companion: sibling `flutter_scale_theme_kit`. If the app adds it, the Scale Kit skill must use it (see [companion.md](companion.md)).

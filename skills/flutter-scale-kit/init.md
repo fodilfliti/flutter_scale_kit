@@ -32,6 +32,8 @@ After answers (or defaults), **write `scale_kit.yaml`** at the app root using [s
 5. Wrap the existing root widget with `ScaleKitBuilder` — do not replace routing/state. Keep their `MaterialApp` as the child
 6. Optionally set `theme: ResponsiveThemeData.create(context: context, ...)` **inside** a builder that has `ScaleKitBuilder` above it (context must see Scale Kit). If `MaterialApp` is the direct child, pass theme from a small `Builder` or keep their theme and rely on `.sp` / `SKText`
 
+**If `flutter_scale_theme_kit` is in pubspec (or you just added it):** skip `ResponsiveThemeData.create`. Use Theme Kit `appST` and scale fonts only — see [Merge with Theme Kit](#merge-with-theme-kit) below.
+
 ## Template — `lib/core/scale_kit.dart`
 
 ```dart
@@ -138,6 +140,41 @@ setSpacingSizes(SizeValues.material3());
 
 (`material3` = xs=4, sm=8, md=12, lg=16, xl=24, xxl=32)
 
+## Merge with Theme Kit
+
+When the app also has `flutter_scale_theme_kit`, **use it** for look. Keep `initScaleKit()` + `ScaleKitBuilder`. Pass Theme Kit `ThemeData` and scale the **text theme** (not a second ColorScheme):
+
+```dart
+return ScaleKitBuilder(
+  designWidth: 375,
+  designHeight: 812,
+  designType: DeviceType.mobile,
+  child: Builder(
+    builder: (context) {
+      return MaterialApp(
+        theme: appST.light.copyWith(
+          textTheme: appST.light.createResponsiveTextTheme(
+            appST.light.textTheme,
+          ),
+        ),
+        darkTheme: appST.dark.copyWith(
+          textTheme: appST.dark.createResponsiveTextTheme(
+            appST.dark.textTheme,
+          ),
+        ),
+        home: const HomePage(),
+      );
+    },
+  ),
+);
+```
+
+Prefer wrapping `MaterialApp` with Theme Kit’s `STThemeModeScope` when the user wants in-app light/dark switch (`context.stMode`).
+
+**Do not** use `ResponsiveThemeData.create(colorScheme: appST.light.colorScheme)` as `theme:` — component themes (Card, buttons, inputs) disappear.
+
+Align `setRadiusSizes(md: …)` with `STRadius(md: …)`.
+
 ## Checklist
 
 - [ ] `scale_kit.yaml` at app root (`style` set)
@@ -146,3 +183,4 @@ setSpacingSizes(SizeValues.material3());
 - [ ] `ScaleKitBuilder` above the app widget
 - [ ] No second builder nested later
 - [ ] Existing `MediaQuery` / Router / localization unchanged
+- [ ] If Theme Kit is installed: `theme:` is `appST.light.copyWith(textTheme: …createResponsiveTextTheme…)` (same for dark), not `ResponsiveThemeData.create` alone

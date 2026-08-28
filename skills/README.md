@@ -23,3 +23,5 @@ Then ask the agent:
 > Init Flutter Scale Kit with defaults.
 
 If `scale_kit.yaml` is missing, the agent asks once for a **style** (`design_system` recommended, or `drop_in` / `extensions` / `hybrid`) and writes that file. See [flutter-scale-kit/styles.md](flutter-scale-kit/styles.md).
+
+**Look companion:** if the app also uses `flutter_scale_theme_kit`, the Scale Kit skill **uses it** (merge `createResponsiveTextTheme` onto `appST.light` / `appST.dark`). Install that skill too: `npx skills add fodilfliti/flutter_scale_theme_kit`.

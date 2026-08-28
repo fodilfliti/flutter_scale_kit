@@ -4,7 +4,7 @@ This is a **published Flutter package** (`flutter_scale_kit` on pub.dev), not an
 
 ## Load context
 
-1. Read `spec/README.md`, then the spec file that matches the task (`package.md`, `invariants.md`, `decisions.md`).
+1. Read `spec/README.md`, then the spec file that matches the task (`package.md`, `invariants.md`, `decisions.md`, `companion.md`).
 2. Use **code** under `lib/` as implementation truth.
 3. If Codebase Memory MCP is available: `list_projects` → use project `flutter_scale_kit` (index with `index_repository` if missing). Prefer `search_graph` / `get_architecture` / `trace_path` over dumping files.
 4. Do **not** ingest `README.md` as working memory. It is user documentation. Open a section only when writing user-facing docs.
@@ -17,6 +17,16 @@ This is a **published Flutter package** (`flutter_scale_kit` on pub.dev), not an
 - Touch `example/` for demos only; do not import it from `lib/`.
 - After behavior changes: update `spec/` (and `CHANGELOG.md` when it is a user-visible release change). README only if the user-facing API/docs changed.
 - Public API changes must also update `skills/flutter-scale-kit/` (consumer Agent Skill used in other IDEs).
+
+## Companion (look)
+
+`flutter_scale_theme_kit` is a **sibling folder** (`../flutter_scale_theme_kit`), same parent as this repo. **Size** stays here. Do **not** import theme-kit from `lib/` and do **not** add it as a runtime dependency.
+
+If a **consumer app** lists `flutter_scale_theme_kit` in pubspec (or the user adds it), agents **must use it** for look: `STTheme` / `context.st`. Merge fonts with:
+
+`appST.light.copyWith(textTheme: appST.light.createResponsiveTextTheme(appST.light.textTheme))`
+
+(same for `dark`). Never `ResponsiveThemeData.create` as the full `theme:` (drops component themes). Keep `skills/flutter-scale-kit/` in sync with that recipe.
 
 ## Flutter SDK
 

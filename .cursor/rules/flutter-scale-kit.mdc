@@ -22,3 +22,4 @@ This repo is the **flutter_scale_kit** pub package (responsive scaling). It is n
 - `ScaleValueCache` stays LRU-capped; clear cache + tracker together on resize.
 - Platform detection stays web/Wasm-safe (`kIsWeb` first).
 - If you change behavior, update `spec/` in the same change.
+- Sibling package `flutter_scale_theme_kit` is look-only. Do not import it from `lib/`. If a consumer app depends on it, merge via `createResponsiveTextTheme` on `appST.light` / `appST.dark`; do not use `ResponsiveThemeData.create` as the full theme.

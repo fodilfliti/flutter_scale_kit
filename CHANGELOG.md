@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2026-08-28
+
+Pairs with the look companion [`flutter_scale_theme_kit`](https://pub.dev/packages/flutter_scale_theme_kit) **1.0.1**. Scale Kit **size** APIs are unchanged (not a breaking widget/extension rewrite).
+
+### Added
+
+- Documented **look companion** (sibling package, no runtime dependency): if the app adds `flutter_scale_theme_kit`, agents **use it** for colors/`ThemeData`.
+- Merge recipe: keep `appST.light` / `appST.dark` and scale fonts with `createResponsiveTextTheme` under `ScaleKitBuilder`. Do **not** replace the theme with `ResponsiveThemeData.create` (drops component themes).
+- Consumer skill + AGENTS: detect `flutter_scale_theme_kit` in the app pubspec and merge on init.
+
 ## [1.6.0] - 2026-08-27
 
 ### Added

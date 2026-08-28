@@ -82,6 +82,11 @@ Flags: `deviceTypeOverride`, `desktopAs`, `lockDesktopAsTablet`, `lockDesktopAsM
 
 `ResponsiveThemeData.create(context: context, colorScheme: ..., useMaterial3: true)`
 
+If the app uses **`flutter_scale_theme_kit`**: do **not** use `ResponsiveThemeData.create` as the full theme. Use:
+
+`appST.light.copyWith(textTheme: appST.light.createResponsiveTextTheme(appST.light.textTheme))`  
+(same for `appST.dark`). Requires a `BuildContext` under `ScaleKitBuilder`.
+
 ## Engine (rarely)
 
 `ScaleManager.instance.getWidth/getHeight/getFontSize/getRadius`  

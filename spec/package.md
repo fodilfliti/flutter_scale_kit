@@ -1,10 +1,12 @@
 # Flutter Scale Kit
 
-Pub package `flutter_scale_kit` (current: **1.6.0**). High-performance responsive scaling for Flutter: phones, tablets, desktop, web. Positioned as a faster, more controllable alternative to `flutter_screenutil`.
+Pub package `flutter_scale_kit` (current: **2.0.0**). High-performance responsive scaling for Flutter: phones, tablets, desktop, web. Positioned as a faster, more controllable alternative to `flutter_screenutil`.
 
 Constraints: Dart `^3.7.2`, Flutter `>=3.29.0`. Do not raise the Dart floor to 3.13 — Flutter 3.29–3.47 apps must still resolve this package.
 
 Design size is typically **375×812 mobile**. Apps wrap the tree with `ScaleKitBuilder` so every route inherits scale.
+
+Look is a **sibling package** (`../flutter_scale_theme_kit`, pub `flutter_scale_theme_kit` **1.0.1**). Do not import it from `lib/`. If a consumer app depends on it, merge via `createResponsiveTextTheme` on `appST.light` / `dark`.
 
 ## What it is / is not
 
