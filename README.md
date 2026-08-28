@@ -204,31 +204,44 @@ Scale Kit is **size**. For semantic colors, light/dark, and Material look, use *
 
 - Neither package depends on the other at runtime.
 - If you add Theme Kit, **use it** (`STTheme`, `context.st`). Do not keep a second hardcoded color system.
+- Define tokens once (e.g. `lib/core/design.dart`): `final appST = STTheme(colors: STColors(...), radius: const STRadius(md: 12));`
 - Merge fonts under `ScaleKitBuilder` (context must see Scale Kit). **Do not** replace `theme:` with `ResponsiveThemeData.create` — that drops card/button/input themes:
 
 ```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_scale_kit/flutter_scale_kit.dart';
+import 'package:flutter_scale_theme_kit/flutter_scale_theme_kit.dart';
+import 'core/design.dart'; // appST
+
 ScaleKitBuilder(
   designWidth: 375,
   designHeight: 812,
   child: Builder(
     builder: (context) {
-      return MaterialApp(
-        theme: appST.light.copyWith(
-          textTheme: appST.light.createResponsiveTextTheme(
-            appST.light.textTheme,
-          ),
-        ),
-        darkTheme: appST.dark.copyWith(
-          textTheme: appST.dark.createResponsiveTextTheme(
-            appST.dark.textTheme,
-          ),
-        ),
-        home: const HomePage(),
+      return STThemeModeScope(
+        builder: (context, mode) {
+          return MaterialApp(
+            theme: appST.light.copyWith(
+              textTheme: appST.light.createResponsiveTextTheme(
+                appST.light.textTheme,
+              ),
+            ),
+            darkTheme: appST.dark.copyWith(
+              textTheme: appST.dark.createResponsiveTextTheme(
+                appST.dark.textTheme,
+              ),
+            ),
+            themeMode: mode.mode,
+            home: const HomePage(),
+          );
+        },
       );
     },
   ),
 );
 ```
+
+`createResponsiveTextTheme` is a **Scale Kit** extension on `ThemeData` — keep both packages in `pubspec.yaml`.
 
 Align radius in the app: `setRadiusSizes(md: 12)` and Theme Kit `STRadius(md: 12)`.
 
@@ -349,22 +362,26 @@ class MyApp extends StatelessWidget {
       // Optional: control rebuild threshold (default: 0.05 for mobile/tablet, 0.0 for desktop/web)
       // sizeChangeThreshold: 0.01, // 1% threshold
       // sizeChangeThreshold: 0.0,   // Rebuild on any change
-      child: MaterialApp(
-        title: 'My App',
-        // Optional: create a responsive theme once ScaleKitBuilder is in place
-        theme: ResponsiveThemeData.create(
-          context: context,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: HomePage(),
+      child: Builder(
+        builder: (context) {
+          return MaterialApp(
+            title: 'My App',
+            // Optional: responsive theme (context must be under ScaleKitBuilder)
+            theme: ResponsiveThemeData.create(
+              context: context,
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            home: HomePage(),
+          );
+        },
       ),
     );
   }
 }
 ```
 
-> 💡 **Tip**: You can also configure design system values (padding, radius, etc.) and fonts. See [Configuration](#size-system-configuration) for details.
+> **Using Theme Kit?** See [Look companion (theme kit)](#look-companion) — use `appST.light` / `appST.dark` with `createResponsiveTextTheme`, not `ResponsiveThemeData.create` as the full `theme:`.
 
 <a id="scalekitdesignvalues"></a>
 
@@ -984,23 +1001,29 @@ final headerStyle = SKit.textStyleFull(
 
 #### ThemeData Integration
 
-Use responsive scaling in your theme:
+**Scale Kit only** — responsive `ThemeData` when you are **not** using `flutter_scale_theme_kit`:
 
 ```dart
 ScaleKitBuilder(
   designWidth: 375,
   designHeight: 812,
   designType: DeviceType.mobile,
-  child: MaterialApp(
-    theme: ResponsiveThemeData.create(
-      context: context,
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      useMaterial3: true,
-    ),
-    home: HomePage(),
+  child: Builder(
+    builder: (context) {
+      return MaterialApp(
+        theme: ResponsiveThemeData.create(
+          context: context,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: HomePage(),
+      );
+    },
   ),
 )
 ```
+
+**With Theme Kit** — keep `appST.light` / `appST.dark` and merge scaled fonts only. See [Look companion (theme kit)](#look-companion).
 
 <a id="font-configuration"></a>
 

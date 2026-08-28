@@ -83,11 +83,18 @@ If the app `pubspec.yaml` contains **`flutter_scale_theme_kit`** (or the user as
 - **Merge** under `ScaleKitBuilder` + `Builder`:
 
 ```dart
-theme: appST.light.copyWith(
-  textTheme: appST.light.createResponsiveTextTheme(appST.light.textTheme),
-),
-darkTheme: appST.dark.copyWith(
-  textTheme: appST.dark.createResponsiveTextTheme(appST.dark.textTheme),
+child: Builder(
+  builder: (context) {
+    return MaterialApp(
+      theme: appST.light.copyWith(
+        textTheme: appST.light.createResponsiveTextTheme(appST.light.textTheme),
+      ),
+      darkTheme: appST.dark.copyWith(
+        textTheme: appST.dark.createResponsiveTextTheme(appST.dark.textTheme),
+      ),
+      home: const HomePage(),
+    );
+  },
 ),
 ```
 

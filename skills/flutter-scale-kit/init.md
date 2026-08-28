@@ -30,9 +30,7 @@ After answers (or defaults), **write `scale_kit.yaml`** at the app root using [s
 3. Write `lib/core/scale_kit.dart` (template below)
 4. Call `initScaleKit()` at the top of `main()` before `runApp`
 5. Wrap the existing root widget with `ScaleKitBuilder` — do not replace routing/state. Keep their `MaterialApp` as the child
-6. Optionally set `theme: ResponsiveThemeData.create(context: context, ...)` **inside** a builder that has `ScaleKitBuilder` above it (context must see Scale Kit). If `MaterialApp` is the direct child, pass theme from a small `Builder` or keep their theme and rely on `.sp` / `SKText`
-
-**If `flutter_scale_theme_kit` is in pubspec (or you just added it):** skip `ResponsiveThemeData.create`. Use Theme Kit `appST` and scale fonts only — see [Merge with Theme Kit](#merge-with-theme-kit) below.
+6. Theme — if `pubspec.yaml` lists **`flutter_scale_theme_kit`**, use Theme Kit merge ([Merge with Theme Kit](#merge-with-theme-kit)); skip `ResponsiveThemeData.create`. Otherwise, optionally set `theme: ResponsiveThemeData.create(context: context, ...)` **inside** a `Builder` under `ScaleKitBuilder` (context must see Scale Kit). If you keep their existing theme, `.sp` / `SKText` still scale.
 
 ## Template — `lib/core/scale_kit.dart`
 
@@ -142,27 +140,35 @@ setSpacingSizes(SizeValues.material3());
 
 ## Merge with Theme Kit
 
-When the app also has `flutter_scale_theme_kit`, **use it** for look. Keep `initScaleKit()` + `ScaleKitBuilder`. Pass Theme Kit `ThemeData` and scale the **text theme** (not a second ColorScheme):
+When the app also has `flutter_scale_theme_kit`, **use it** for look. Keep `initScaleKit()` + `ScaleKitBuilder`. Define `appST` in `lib/core/design.dart` (`STTheme` + `STColors` + `STRadius`). Pass Theme Kit `ThemeData` and scale the **text theme** (not a second ColorScheme):
 
 ```dart
+import 'package:flutter_scale_theme_kit/flutter_scale_theme_kit.dart';
+import 'core/design.dart'; // appST
+
 return ScaleKitBuilder(
   designWidth: 375,
   designHeight: 812,
   designType: DeviceType.mobile,
   child: Builder(
     builder: (context) {
-      return MaterialApp(
-        theme: appST.light.copyWith(
-          textTheme: appST.light.createResponsiveTextTheme(
-            appST.light.textTheme,
-          ),
-        ),
-        darkTheme: appST.dark.copyWith(
-          textTheme: appST.dark.createResponsiveTextTheme(
-            appST.dark.textTheme,
-          ),
-        ),
-        home: const HomePage(),
+      return STThemeModeScope(
+        builder: (context, mode) {
+          return MaterialApp(
+            theme: appST.light.copyWith(
+              textTheme: appST.light.createResponsiveTextTheme(
+                appST.light.textTheme,
+              ),
+            ),
+            darkTheme: appST.dark.copyWith(
+              textTheme: appST.dark.createResponsiveTextTheme(
+                appST.dark.textTheme,
+              ),
+            ),
+            themeMode: mode.mode,
+            home: const HomePage(),
+          );
+        },
       );
     },
   ),
