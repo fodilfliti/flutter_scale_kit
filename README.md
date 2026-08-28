@@ -343,10 +343,10 @@ open [Agent Skills](https://agentskills.io) format.
 **Get running**
 
 - [Install](#install)
+- 📂 [**Starter app**](#starter-app) — copy a real, runnable app: Scale Kit **+** Theme Kit in 4 files
 - [Quick start](#quick-start) — runnable `main.dart`, every `ScaleKitBuilder` option, fonts, tokens
 - [Choose your approach](#choose-your-approach) — which API for which job
 - [⚠️ Gotchas](#gotchas) — read before you ship
-- 📂 [Starter app](doc/starter-app.md) — a real app in 4 files, Scale Kit **+** Theme Kit
 
 **Core APIs**
 
@@ -404,10 +404,31 @@ dependencies:
   flutter_scale_theme_kit: ^1.0.1
 ```
 
-> 📂 **Setting up both packages?** The
-> **[starter app](doc/starter-app.md)** is a complete first-time setup you can copy file by file:
-> `pubspec.yaml`, a colors file, a Scale Kit config file, `main.dart` wiring both together, and one
-> real screen — plus the same card written in all four usage styles.
+---
+
+<a id="starter-app"></a>
+
+## 📂 Starter app — copy a real app, not snippets
+
+[![Open the starter app](https://img.shields.io/badge/Open%20the%20starter%20app-Scale%20Kit%20%2B%20Theme%20Kit-6750A4?style=for-the-badge&logo=flutter&logoColor=white)](doc/starter-app.md)
+
+**[→ doc/starter-app.md](doc/starter-app.md)** is a complete first-time setup you can copy file by
+file into a new project. Not fragments — an app that runs.
+
+| File | What it holds |
+| --- | --- |
+| `pubspec.yaml` | Both dependencies |
+| `lib/core/design.dart` | Colors and radius tokens (`STTheme`) |
+| `lib/core/scale_kit.dart` | Size tokens, defaults, and fonts in one `initScaleKit()` |
+| `lib/main.dart` | Both packages wired together, in the order that actually works |
+| `lib/pages/home_page.dart` | A real dashboard — responsive grid, themed cards, dark-mode toggle |
+
+It also writes **the same card in all four usage styles** (`design_system`, `drop_in`,
+`extensions`, `hybrid`) so you can compare them side by side, and lists the rules that keep sizing
+and theming from stepping on each other.
+
+Using Scale Kit on its own? The same files apply — just skip `design.dart` and the `context.st`
+colors.
 
 ---
 

@@ -46,7 +46,12 @@ the README top to bottom and never follows a link must still be able to use ever
 4. Agent-skill callout (`npx skills add …`) placed **above** the TOC, so readers learn the package
    can install itself before they commit to reading; it deep-links to the full section at the bottom
 5. Table of contents (grouped: get running / core APIs / responsive / how it works / extras)
-6. Install → Quick start → decision table → gotchas
+6. Install → **Starter app** → Quick start → decision table → gotchas
+
+The starter app is a **top-level `##` section with a shields.io button and a file table**, not a
+blockquote callout, sitting between Install and Quick start. It is the one place that points at a
+runnable app rather than snippets, so it is deliberately the most visually prominent link on the
+page; keep it that way.
 
 Quick start has three numbered parts: (1) a complete runnable `main.dart`, (2) a table of **every**
 `ScaleKitBuilder` parameter with defaults plus one tuned example, (3) four optional setup steps —
