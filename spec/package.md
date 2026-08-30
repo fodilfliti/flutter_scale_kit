@@ -1,6 +1,6 @@
 # Flutter Scale Kit
 
-Pub package `flutter_scale_kit` (current: **2.0.0**). High-performance responsive scaling for Flutter: phones, tablets, desktop, web. Positioned as a faster, more controllable alternative to `flutter_screenutil`.
+Pub package `flutter_scale_kit` (current: **2.0.1**). High-performance responsive scaling for Flutter: phones, tablets, desktop, web. Positioned as a faster, more controllable alternative to `flutter_screenutil`.
 
 Constraints: Dart `^3.7.2`, Flutter `>=3.29.0`. Do not raise the Dart floor to 3.13 — Flutter 3.29–3.47 apps must still resolve this package.
 
@@ -80,6 +80,10 @@ more, never a prerequisite:
 
 Constraints when editing docs:
 
+- **pub.dev in-page anchors:** linked sections must use plain `## Title` headings **without a leading
+  emoji** (e.g. `## Extension methods`, not `## 📐 Extension methods`). pub.dev auto-generates IDs
+  from heading text; emoji-first headings produce broken IDs like `#-install`. Do not use raw
+  `<h2 id="...">` — it does not scroll reliably on pub.dev. Keep `doc/` links relative.
 - Do **not** use `<details>` / `<summary>` for collapsing. pub.dev's HTML sanitizer does not render
   them reliably (open FIXME tests in `dart-lang/pub-dev`), so content inside would vanish.
 - Repeating a concept between README and `doc/` is fine; repeating it **twice inside the README**

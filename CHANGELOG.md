@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 2026-08-30
+
+### Documentation
+
+- Fixed pub.dev in-page links (`[more →](#…)`, table of contents): linked sections now use plain
+  ASCII `##` headings so auto-generated anchor IDs match (emoji-first headings produced broken IDs
+  like `#-extension-methods`).
+- Added [starter app](doc/starter-app.md) guide and prominent README entry for Scale Kit + Theme Kit
+  first-time setup.
+- Excluded maintainer `tool/` scripts from the published archive.
+
 ## [2.0.0] - 2026-08-28
 
 Pairs with the look companion [`flutter_scale_theme_kit`](https://pub.dev/packages/flutter_scale_theme_kit) **1.0.1**. Scale Kit **size** APIs are unchanged (not a breaking widget/extension rewrite).
@@ -14,6 +25,9 @@ Pairs with the look companion [`flutter_scale_theme_kit`](https://pub.dev/packag
 
 ### Documentation
 
+- Fixed in-page anchor links on pub.dev: emoji-first `##` headings and raw `<h2 id>` tags produced
+  IDs that `[details]` / TOC links could not scroll to. Linked sections now use plain ASCII
+  `## Title` headings (e.g. `## Extension methods`) whose auto-generated IDs match the links.
 - **README restructured** — device screenshots and a before/after code comparison now open the
   page, followed by a grouped table of contents and a complete runnable `main.dart`. The page stays
   self-sufficient: every feature is documented inline, so no link needs to be followed.

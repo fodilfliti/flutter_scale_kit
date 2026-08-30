@@ -15,6 +15,7 @@ spec/
 .vscode/
 .codebase-memory/
 .fvm/
+tool/
 
 # Build and tool output
 .dart_tool/

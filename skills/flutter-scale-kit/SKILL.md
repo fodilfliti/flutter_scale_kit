@@ -10,7 +10,7 @@ description: >
 license: MIT
 metadata:
   author: fodilfliti
-  version: "2.0.0"
+  version: "2.0.1"
   homepage: https://pub.dev/packages/flutter_scale_kit
   repo: https://github.com/fodilfliti/flutter_scale_kit
 ---

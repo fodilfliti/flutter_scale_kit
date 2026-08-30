@@ -98,7 +98,7 @@ longer treatment further down.
 
 ### Sizing
 
-**Scale any number** — [details](#extension-methods)
+**Scale any number** — [more →](#extension-methods)
 
 ```dart
 200.w;              // width      100.h;            // height
@@ -107,7 +107,7 @@ longer treatment further down.
 16.spClamp(14, 20); // scaled, but never outside 14–20 (great for desktop)
 ```
 
-**Scale whole geometry objects and gaps** — no field-by-field conversion — [details](#extension-methods)
+**Scale whole geometry objects and gaps** — no field-by-field conversion — [more →](#extension-methods)
 
 ```dart
 EdgeInsets.only(left: 12, right: 12).w;
@@ -119,7 +119,7 @@ Column(children: [header, 16.verticalSpace, body]);
 
 ### Widgets
 
-**Drop-in widgets that scale themselves** — pass raw design numbers, [details](#sk-widgets)
+**Drop-in widgets that scale themselves** — pass raw design numbers, [more →](#sk-widgets)
 
 ```dart
 SKContainer(
@@ -133,14 +133,14 @@ SKContainer(
 22 replacements in total — `SKCard`, `SKAppBar`, `SKTextField`, `SKElevatedButton`, `SKListTile`,
 `SKIcon`, `SKDivider`, the chips, and more. Migration is search-and-replace.
 
-**Images from any source, scaled** — [details](#sk-widgets)
+**Images from any source, scaled** — [more →](#sk-widgets)
 
 ```dart
 SKImage.asset('assets/logo.png', width: 100, height: 100);
 SKImage.network(url, width: 200, height: 200, cacheWidth: 400);
 ```
 
-**Layout helpers for the code you write most** — [details](#skit-helpers)
+**Layout helpers for the code you write most** — [more →](#skit-helpers)
 
 ```dart
 SKit.padding(start: 24, end: 12, child: widget); // RTL-aware, one definition
@@ -150,7 +150,7 @@ SKit.vSpace(12);
 
 ### Design system
 
-**Tokens instead of magic numbers** — [details](#design-system)
+**Tokens instead of magic numbers** — [more →](#design-system)
 
 ```dart
 setPaddingSizes(SizeValues.custom(sm: 8, md: 16, lg: 24));
@@ -158,7 +158,7 @@ setPaddingSizes(SizeValues.custom(sm: 8, md: 16, lg: 24));
 SKit.paddingSize(all: SKSize.md, child: SKit.text('Hi', textSize: SKTextSize.s16));
 ```
 
-**Compute a whole screen's tokens in one call** — [details](#design-system)
+**Compute a whole screen's tokens in one call** — [more →](#design-system)
 
 ```dart
 const appDesign = ScaleKitDesignValues(textMd: 14, paddingMd: 16, radiusMd: 12);
@@ -167,7 +167,7 @@ final v = appDesign.compute();  // ready EdgeInsets, BorderRadius, TextStyle
 SKPadding(padding: v.paddingMd!, child: Text('Hi', style: v.textMd));
 ```
 
-**Full text control in one call** — every `Text` attribute, all scaled — [details](#typography)
+**Full text control in one call** — every `Text` attribute, all scaled — [more →](#typography)
 
 ```dart
 SKit.textFull('Hello', fontSize: 18, color: Colors.blue, letterSpacing: 0.5, maxLines: 2);
@@ -177,7 +177,7 @@ final style = SKit.textStyleFull(fontSize: 24, fontWeight: FontWeight.bold, heig
 
 ### Look
 
-**Fonts that follow the locale** — set once, applied everywhere — [details](#typography)
+**Fonts that follow the locale** — set once, applied everywhere — [more →](#typography)
 
 ```dart
 FontConfig.instance
@@ -190,7 +190,7 @@ FontConfig.instance
   );
 ```
 
-**A responsive ThemeData** — [details](#theme-integration)
+**A responsive ThemeData** — [more →](#theme-integration)
 
 ```dart
 MaterialApp(
@@ -198,7 +198,7 @@ MaterialApp(
 );
 ```
 
-**Or add the look companion** for semantic colors and dark mode — [details](#look-companion)
+**Or add the look companion** for semantic colors and dark mode — [more →](#look-companion)
 
 ```dart
 // flutter_scale_theme_kit: colors + ThemeData, Scale Kit keeps the sizing
@@ -211,7 +211,7 @@ appST.light.copyWith(
 
 ### Responsive layout
 
-**Responsive values — when only a _number_ changes** — [details](#responsive-layout)
+**Responsive values — when only a _number_ changes** — [more →](#responsive-layout)
 
 ```dart
 final columns = SKit.responsiveInt(
@@ -222,7 +222,7 @@ final columns = SKit.responsiveInt(
 GridView.count(crossAxisCount: columns, children: [...]);
 ```
 
-**Responsive widgets — when the _layout_ changes** — [details](#responsive-layout)
+**Responsive widgets — when the _layout_ changes** — [more →](#responsive-layout)
 
 ```dart
 SKResponsive(
@@ -232,7 +232,7 @@ SKResponsive(
 );
 ```
 
-**Desktop and web on your terms** — [details](#desktop-web)
+**Desktop and web on your terms** — [more →](#desktop-web)
 
 ```dart
 // Globally: make desktop and web reuse your tablet layout
@@ -242,7 +242,7 @@ ScaleKitBuilder(lockDesktopPlatforms: true, lockDesktopAsTablet: true, ...);
 SKResponsiveBuilder(desktopAs: DesktopAs.tablet, ...);
 ```
 
-**Ask the device anything** — [details](#device-queries)
+**Ask the device anything** — [more →](#device-queries)
 
 ```dart
 if (context.isTablet) ...            // layout classification
@@ -250,7 +250,7 @@ if (context.isIOSPlatform) ...       // OS chrome, web and Wasm safe
 if (context.isDesktopAtLeastTablet)  // width only, no layout swap
 ```
 
-**…even without a BuildContext** — [details](#device-queries)
+**…even without a BuildContext** — [more →](#device-queries)
 
 ```dart
 class _S extends State<Page> with DeviceMetricsMixin<Page> {
@@ -263,13 +263,13 @@ ScaleManager.instance.screenWidth; // or read the engine directly
 
 ### Tuning the engine
 
-**Guard rails so nothing explodes on a big screen** — [details](#scale-limits)
+**Guard rails so nothing explodes on a big screen** — [more →](#scale-limits)
 
 ```dart
 ScaleKitBuilder(minScale: 0.9, maxScale: 1.2, ...);
 ```
 
-**Your own breakpoints** — defaults are `600 / 1200 / 1600 / 1920` — [details](#breakpoints)
+**Your own breakpoints** — defaults are `600 / 1200 / 1600 / 1920` — [more →](#breakpoints)
 
 ```dart
 ScaleKitBuilder(
@@ -278,7 +278,7 @@ ScaleKitBuilder(
 );
 ```
 
-**Orientation boosts, applied after clamping** — [details](#orientation-boosts)
+**Orientation boosts, applied after clamping** — [more →](#orientation-boosts)
 
 ```dart
 ScaleKitBuilder(
@@ -292,7 +292,7 @@ ScaleKitBuilder(
 Leave all of the above unset and [auto-configuration](#auto-configuration) picks a range per device,
 orientation, and aspect ratio — including foldables, ultrawide monitors, and small windows.
 
-**Rebuild sensitivity** — [details](#performance)
+**Rebuild sensitivity** — [more →](#performance)
 
 ```dart
 ScaleKitBuilder(sizeChangeThreshold: 0.01, ...); // rebuild after a 1% window change
@@ -300,20 +300,20 @@ ScaleKitBuilder(sizeChangeThreshold: 0.01, ...); // rebuild after a 1% window ch
 
 ### Tooling
 
-**Compare against raw Flutter at runtime** — [details](#enable-disable)
+**Compare against raw Flutter at runtime** — [more →](#enable-disable)
 
 ```dart
 ScaleKitBuilder(enabledListenable: myToggle, ...); // flip scaling on and off live
 ```
 
-**Test scaled widgets at any screen size** — [details](#testing)
+**Test scaled widgets at any screen size** — [more →](#testing)
 
 ```dart
 tester.view.physicalSize = const Size(1200, 800);
 await tester.pumpWidget(ScaleKitBuilder(designWidth: 375, designHeight: 812, child: ...));
 ```
 
-**Works inside Device Preview** — [details](#device-preview)
+**Works inside Device Preview** — [more →](#device-preview)
 
 ```dart
 ScaleManager.setDevicePreviewPlatformGetter((c) => DevicePreview.platformOf(c));
@@ -383,13 +383,11 @@ open [Agent Skills](https://agentskills.io) format.
 
 ---
 
-<a id="install"></a>
-
-## 📦 Install
+## Install
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^2.0.0
+  flutter_scale_kit: ^2.0.1
 ```
 
 ```bash
@@ -400,19 +398,17 @@ Optional **look** companion for colors and `ThemeData` (see [below](#look-compan
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^2.0.0
+  flutter_scale_kit: ^2.0.1
   flutter_scale_theme_kit: ^1.0.1
 ```
 
 ---
 
-<a id="starter-app"></a>
-
-## 📂 Starter app — copy a real app, not snippets
+## Starter app
 
 [![Open the starter app](https://img.shields.io/badge/Open%20the%20starter%20app-Scale%20Kit%20%2B%20Theme%20Kit-6750A4?style=for-the-badge&logo=flutter&logoColor=white)](doc/starter-app.md)
 
-**[→ doc/starter-app.md](doc/starter-app.md)** is a complete first-time setup you can copy file by
+**[→ Open the starter app](doc/starter-app.md)** is a complete first-time setup you can copy file by
 file into a new project. Not fragments — an app that runs.
 
 | File | What it holds |
@@ -432,9 +428,7 @@ colors.
 
 ---
 
-<a id="quick-start"></a>
-
-## 🚀 Quick start
+## Quick start
 
 **In a hurry?** `npx skills add fodilfliti/flutter_scale_kit`, then tell your agent
 _"Init Flutter Scale Kit with defaults."_ — [details below](#ai-agent-skill). Otherwise, read on.
@@ -519,18 +513,18 @@ each one is auto-detected or has a sensible default.
 | `child` | *required* | Your app — put `MaterialApp` here |
 | `designType` | `DeviceType.mobile` | Which device your design was drawn for |
 | `deviceTypeOverride` | auto | Force a classification instead of detecting it |
-| `minScale` **·** `maxScale` | auto | Clamp range, so nothing explodes on a big screen — [details](#scale-limits) |
+| `minScale` **·** `maxScale` | auto | Clamp range, so nothing explodes on a big screen — [more →](#scale-limits) |
 | `autoScale` | `true` | Master switch for automatic limits |
 | `autoScaleLandscape` | `true` | Apply landscape boosts on rotate |
 | `autoScalePortrait` | `false` | Apply portrait boosts too |
-| `breakpoints` | `600 / 1200 / 1600 / 1920` | Your own device thresholds — [details](#breakpoints) |
+| `breakpoints` | `600 / 1200 / 1600 / 1920` | Your own device thresholds — [more →](#breakpoints) |
 | `lockDesktopPlatforms` | `false` | Pin desktop and web to a chosen breakpoint |
 | `lockDesktopAsTablet` | `false` | …specifically the tablet branch |
 | `lockDesktopAsMobile` | `false` | …specifically the mobile branch |
 | `enabled` | `true` | Turn scaling off to compare against raw Flutter |
-| `enabledListenable` | `null` | `ValueListenable<bool>` for a runtime toggle — [details](#enable-disable) |
+| `enabledListenable` | `null` | `ValueListenable<bool>` for a runtime toggle — [more →](#enable-disable) |
 | `sizeChangeThreshold` | `0.05` mobile, `0` desktop | How much the window must change before a rebuild |
-| `{mobile,tablet,desktop}{Landscape,Portrait}{Font,Size}Boost` | auto | 12 fine-grained multipliers — [details](#orientation-boosts) |
+| `{mobile,tablet,desktop}{Landscape,Portrait}{Font,Size}Boost` | auto | 12 fine-grained multipliers — [more →](#orientation-boosts) |
 
 A tuned example — strict scale range, tablet layout reused on desktop, custom breakpoints:
 
@@ -572,9 +566,9 @@ before `runApp`, or in a single `lib/core/scale_kit.dart` file.
 **a. Design tokens** — decide what `sm` / `md` / `lg` mean once:
 
 ```dart
-setPaddingSizes(SizeValues.custom(xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48));
-setMarginSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
-setRadiusSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
+  setPaddingSizes(SizeValues.custom(xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48));
+  setMarginSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
+  setRadiusSizes(SizeValues.custom(xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24));
 setSpacingSizes(SizeValues.custom(xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24));
 setTextSizes(TextSizeValues.material3());
 ```
@@ -584,8 +578,8 @@ Defaults if you skip it: `xs: 2, sm: 4, md: 8, lg: 12, xl: 16, xxl: 24`.
 **b. Default values** — so shorthand helpers need no arguments:
 
 ```dart
-setDefaultPadding(16);
-setDefaultMargin(8);
+  setDefaultPadding(16);
+  setDefaultMargin(8);
 setDefaultRadius(12);
 setDefaultSpacing(8);
 setDefaultTextSize(14);
@@ -599,20 +593,20 @@ call site, and the right font is picked from the active locale:
 ```dart
 import 'package:google_fonts/google_fonts.dart';
 
-FontConfig.instance
-  ..setDefaultFont(googleFont: GoogleFonts.inter)
-  ..setLanguageFont(
-    const LanguageFontConfig(
-      languageCode: 'ja',
-      googleFont: GoogleFonts.notoSansJp,
-    ),
-  )
-  ..setLanguageGroupFont(
-    const LanguageGroupFontConfig(
-      languageCodes: ['ar', 'fa', 'ur'],
-      googleFont: GoogleFonts.almarai,
-    ),
-  );
+  FontConfig.instance
+    ..setDefaultFont(googleFont: GoogleFonts.inter)
+    ..setLanguageFont(
+      const LanguageFontConfig(
+        languageCode: 'ja',
+        googleFont: GoogleFonts.notoSansJp,
+      ),
+    )
+    ..setLanguageGroupFont(
+      const LanguageGroupFontConfig(
+        languageCodes: ['ar', 'fa', 'ur'],
+        googleFont: GoogleFonts.almarai,
+      ),
+    );
 ```
 
 Extensions, `SKText`, `SKit.text*`, and responsive themes all pick this up. A custom family works
@@ -633,8 +627,8 @@ const appDesign = ScaleKitDesignValues(
 ```
 
 ```dart
-@override
-Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
   final v = appDesign.compute(); // one calculation for the whole screen
 
   return SKPadding(
@@ -655,9 +649,7 @@ Widget build(BuildContext context) {
 
 ---
 
-<a id="choose-your-approach"></a>
-
-## 🧭 Choose your approach
+## Choose your approach
 
 Four ways to use Scale Kit. **Mix them freely** — pick per situation, not per project.
 
@@ -693,9 +685,7 @@ Four ways to use Scale Kit. **Mix them freely** — pick per situation, not per 
 
 ---
 
-<a id="gotchas"></a>
-
-## ⚠️ Gotchas
+## Gotchas
 
 Four rules. They cover almost every issue people hit.
 
@@ -748,9 +738,7 @@ ScaleKitBuilder(
 
 ---
 
-<a id="extension-methods"></a>
-
-## 📐 Extension methods
+## Extension methods
 
 Familiar if you come from `flutter_screenutil`. Works on any `num`.
 
@@ -819,9 +807,7 @@ Column(
 
 ---
 
-<a id="sk-widgets"></a>
-
-## 🧩 Drop-in SK widgets
+## SK widgets
 
 Replacements for Flutter widgets that scale their own properties. **Pass raw design numbers.**
 
@@ -930,9 +916,7 @@ SKImage.memory(imageBytes, width: 120, height: 120);
 
 ---
 
-<a id="skit-helpers"></a>
-
-## 🔧 SKit helpers
+## SKit helpers
 
 Shortcuts for the layout code you write most often.
 
@@ -1030,9 +1014,7 @@ SKit.v()        // vertical gap 8
 
 ---
 
-<a id="design-system"></a>
-
-## 🎨 Design system tokens
+## Design system
 
 Define your scale once, then use names instead of numbers everywhere.
 
@@ -1103,9 +1085,7 @@ they get resolved, not scaled twice.
 
 ---
 
-<a id="typography"></a>
-
-## 🔤 Typography & fonts
+## Typography
 
 ### Text widgets
 
@@ -1178,9 +1158,7 @@ FontConfig.instance
 
 ---
 
-<a id="theme-integration"></a>
-
-## 🖌️ ThemeData integration
+## Theme integration
 
 Use `ResponsiveThemeData.create` when you are **not** using `flutter_scale_theme_kit`. The context
 must sit under `ScaleKitBuilder`, so wrap it in a `Builder`:
@@ -1192,11 +1170,11 @@ ScaleKitBuilder(
   child: Builder(
     builder: (context) {
       return MaterialApp(
-        theme: ResponsiveThemeData.create(
-          context: context,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
+    theme: ResponsiveThemeData.create(
+      context: context,
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      useMaterial3: true,
+    ),
         home: const HomePage(),
       );
     },
@@ -1206,9 +1184,7 @@ ScaleKitBuilder(
 
 ---
 
-<a id="look-companion"></a>
-
-## 🎨 Look companion (theme kit)
+## Look companion
 
 Scale Kit is **size**. For semantic colors, light/dark, and Material look, add the sibling package
 **[`flutter_scale_theme_kit`](https://pub.dev/packages/flutter_scale_theme_kit)**.
@@ -1287,9 +1263,7 @@ Theme Kit skill: `npx skills add fodilfliti/flutter_scale_theme_kit`
 
 ---
 
-<a id="responsive-layout"></a>
-
-## 📱 Responsive widgets & values
+## Responsive layout
 
 ### Responsive values — for numbers
 
@@ -1373,9 +1347,7 @@ Shared by every responsive widget and value helper:
 
 ---
 
-<a id="desktop-web"></a>
-
-## 🖥️ Desktop & web freedom
+## Desktop web
 
 Desktop and web are harder than phones: users resize windows constantly, ultrawide monitors sit
 next to tiny browser panes, and some screens read better borrowing a tablet or even a mobile
@@ -1458,9 +1430,7 @@ final cols = SKit.responsiveInt(
 
 ---
 
-<a id="device-queries"></a>
-
-## 🔍 Device queries
+## Device queries
 
 ### Context extensions
 
@@ -1539,9 +1509,7 @@ scale.platformCategory;   scale.screenSizeClass;
 
 ---
 
-<a id="breakpoints"></a>
-
-## 📏 Breakpoints & size classes
+## Breakpoints
 
 Defaults are `600 / 1200 / 1600 / 1920`. Override them to match your design system:
 
@@ -1566,9 +1534,7 @@ ScaleKitBuilder(
 
 ---
 
-<a id="scale-limits"></a>
-
-## 🎚️ Scale limits
+## Scale limits
 
 `minScale` and `maxScale` are guard rails that stop a layout from exploding on a big screen. **You
 can leave them unset** — Scale Kit picks a range per device type and orientation.
@@ -1608,9 +1574,7 @@ Good starting point for a gentle tablet clamp that leaves phones untouched: `0.9
 
 ---
 
-<a id="orientation-boosts"></a>
-
-## 🔄 Orientation boosts
+## Orientation boosts
 
 Gentle multipliers applied **after** clamping, so content stays readable when a device rotates.
 Limits always win first.
@@ -1663,9 +1627,7 @@ Worked example — iPhone 14 landscape (852×390) against a 375×812 design:
 
 ---
 
-<a id="auto-configuration"></a>
-
-## 🧠 Auto-configuration
+## Auto-configuration
 
 Scale Kit detects the environment and picks limits and boosts for you. **About 95% of projects
 never override anything.**
@@ -1690,9 +1652,7 @@ brand-critical screens), or a deliberately different feel.
 
 ---
 
-<a id="performance"></a>
-
-## ⚡ Performance
+## Performance
 
 | Optimization | Result |
 | --- | --- |
@@ -1725,9 +1685,7 @@ resolves values) → `ScaleValueCache` (flyweight, LRU-capped).
 
 ---
 
-<a id="testing"></a>
-
-## 🧪 Testing
+## Testing
 
 Widgets that use `.w`, `.sp`, or `SK*` need a `ScaleKitBuilder` ancestor:
 
@@ -1739,8 +1697,8 @@ Future<void> pumpScaled(WidgetTester tester, Widget child) {
   return tester.pumpWidget(
     MaterialApp(
       home: ScaleKitBuilder(
-        designWidth: 375,
-        designHeight: 812,
+  designWidth: 375,
+  designHeight: 812,
         designType: DeviceType.mobile,
         child: Scaffold(body: child),
       ),
@@ -1768,9 +1726,7 @@ Want raw numbers in a test? Use `ScaleKitBuilder(enabled: false, ...)`.
 
 ---
 
-<a id="enable-disable"></a>
-
-## 🔀 Enable/disable at runtime
+## Enable disable
 
 Useful for comparing Scale Kit against vanilla Flutter sizing:
 
@@ -1805,9 +1761,7 @@ Toggle both live in the example app via the tune icon.
 
 ---
 
-<a id="device-preview"></a>
-
-## 📲 Device Preview integration
+## Device preview
 
 If you use [`device_preview`](https://pub.dev/packages/device_preview), share its simulated
 platform so detection stays correct inside the preview surface:
@@ -1832,9 +1786,7 @@ Optional — the package works fine without it.
 
 ---
 
-<a id="ai-agent-skill"></a>
-
-## 🤖 AI agent skill
+## AI agent skill
 
 Your coding agent can use Scale Kit like a design-system expert — init `ScaleKitBuilder`, use
 tokens, avoid double-scaling. It follows the open [Agent Skills](https://agentskills.io) format, so
@@ -1864,9 +1816,7 @@ Manual install: copy `skills/flutter-scale-kit/` into your agent's skills folder
 
 ---
 
-<a id="migration"></a>
-
-## 🔄 Migrating from flutter_screenutil
+## Migration
 
 Most screenutil code keeps working after a mechanical swap.
 
@@ -1907,13 +1857,11 @@ factor. Here, `.r` is *fully* scaled with no clamp, which can over-round a card 
 Optionally continue by swapping widgets (`Container` → `SKContainer`) and **removing the extension
 suffixes as you go** — `SKContainer(width: 200)`, not `SKContainer(width: 200.w)`.
 
-Full guide with strategies: [doc/migration-screenutil.md](doc/migration-screenutil.md)
+Full guide with strategies: [migration guide](doc/migration-screenutil.md)
 
 ---
 
-<a id="advanced-guides"></a>
-
-## 📚 Advanced guides
+## Advanced guides
 
 Everything you need is above. These go deeper on specific topics:
 
@@ -1929,9 +1877,7 @@ Everything you need is above. These go deeper on specific topics:
 
 ---
 
-<a id="faq"></a>
-
-## ❓ FAQ
+## FAQ
 
 **Why choose Scale Kit over `flutter_screenutil`?**
 Compute-once patterns, automatic font selection by language, orientation-aware scaling controls,
@@ -1969,9 +1915,7 @@ pass builders in yourself, so apps that don't need it carry no extra weight.
 
 ---
 
-<a id="support"></a>
-
-## 💙 Support
+## Support
 
 If Scale Kit helps you, please **[like it on pub.dev](https://pub.dev/packages/flutter_scale_kit)** —
 it genuinely improves discoverability and ranking.
@@ -1990,8 +1934,6 @@ Contributions are welcome. Please open an issue or submit a pull request.
 Huge thanks to the authors and contributors of `flutter_screenutil` and similar responsive
 packages. We used them extensively, learned from their ideas, and built Scale Kit as an alternative
 tuned for our own apps' performance and developer experience.
-
-<a id="license"></a>
 
 ## License
 
