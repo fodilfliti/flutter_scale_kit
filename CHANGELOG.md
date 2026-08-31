@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [2.0.2] - 2026-08-31
 
 ### Fixed
 
@@ -13,8 +13,11 @@ All notable changes to this project will be documented in this file.
 - **Portrait design on landscape phones:** When screen orientation differs from the design artboard,
   effective design width/height are swapped for scaling so fonts and layout sizes stay consistent
   (e.g. 402×874 design on a 914×411 phone no longer shrinks text to ~half size).
-- **Device classification docs:** Added `isResponsiveMobile` / `isMobileViewport` aliases and clearer
-  docs on `context.isMobile` (width-only; false in landscape on phones). Skill guide:
+
+### Added
+
+- **`isResponsiveMobile` / `isMobileViewport` aliases** and clearer docs on `context.isMobile`
+  (width-only; false in landscape on phones). Skill guide:
   `skills/flutter-scale-kit/device-classification.md`.
 
 ## [2.0.1] - 2026-08-30

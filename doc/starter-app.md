@@ -27,7 +27,7 @@ They don't depend on each other. Use either alone, or both like this.
 dependencies:
   flutter:
     sdk: flutter
-  flutter_scale_kit: ^2.0.1
+  flutter_scale_kit: ^2.0.2
   flutter_scale_theme_kit: ^1.0.1
   google_fonts: ^6.2.1 # optional, only if you want custom fonts
 ```

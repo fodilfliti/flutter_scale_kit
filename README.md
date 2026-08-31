@@ -388,7 +388,7 @@ open [Agent Skills](https://agentskills.io) format.
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^2.0.1
+  flutter_scale_kit: ^2.0.2
 ```
 
 ```bash
@@ -399,7 +399,7 @@ Optional **look** companion for colors and `ThemeData` (see [below](#look-compan
 
 ```yaml
 dependencies:
-  flutter_scale_kit: ^2.0.1
+  flutter_scale_kit: ^2.0.2
   flutter_scale_theme_kit: ^1.0.1
 ```
 

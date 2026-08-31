@@ -1,6 +1,6 @@
 # Companion: flutter_scale_theme_kit
 
-Look lives in the **sibling** repo `../flutter_scale_theme_kit` (pub **1.0.1**). This package is **size** only (**2.0.1**).
+Look lives in the **sibling** repo `../flutter_scale_theme_kit` (pub **1.0.1**). This package is **size** only (**2.0.2**).
 
 Do **not** import theme-kit from `lib/`. Do **not** add it as a runtime dependency.
 
