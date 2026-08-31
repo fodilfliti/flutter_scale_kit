@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- **iPhone landscape misclassified as tablet:** On iOS/Android, platform device type now uses the
+  shortest logical side vs `mobileMaxWidth` (default 600), not the current width. Landscape phones
+  (e.g. 874×402) no longer get tablet scale limits while `mobileLandscape` layout runs — fixes
+  tiny `SKText` on rotated iPhones. iPad behavior is unchanged.
+- **Portrait design on landscape phones:** When screen orientation differs from the design artboard,
+  effective design width/height are swapped for scaling so fonts and layout sizes stay consistent
+  (e.g. 402×874 design on a 914×411 phone no longer shrinks text to ~half size).
+- **Device classification docs:** Added `isResponsiveMobile` / `isMobileViewport` aliases and clearer
+  docs on `context.isMobile` (width-only; false in landscape on phones). Skill guide:
+  `skills/flutter-scale-kit/device-classification.md`.
+
 ## [2.0.1] - 2026-08-30
 
 ### Documentation

@@ -245,9 +245,10 @@ SKResponsiveBuilder(desktopAs: DesktopAs.tablet, ...);
 **Ask the device anything** — [more →](#device-queries)
 
 ```dart
-if (context.isTablet) ...            // layout classification
-if (context.isIOSPlatform) ...       // OS chrome, web and Wasm safe
-if (context.isDesktopAtLeastTablet)  // width only, no layout swap
+if (context.isResponsiveMobile) ...   // scaling / device class (phones stay true in landscape)
+if (context.isMobileViewport) ...      // width ≤ breakpoint only — false on landscape phones
+if (context.isIOSPlatform) ...         // OS chrome, web and Wasm safe
+if (context.isDesktopAtLeastTablet)    // width only, no layout swap
 ```
 
 **…even without a BuildContext** — [more →](#device-queries)
@@ -1432,19 +1433,28 @@ final cols = SKit.responsiveInt(
 
 ## Device queries
 
+Three axes — do not mix them: **responsive device class** (scaling, `SKResponsiveBuilder`),
+**platform** (Android/iOS/desktop OS), **viewport width** (CSS-like breakpoints). A phone in
+landscape often has `context.isMobileViewport == false` while `context.isResponsiveMobile` stays
+`true`. Full guide: [skills/flutter-scale-kit/device-classification.md](skills/flutter-scale-kit/device-classification.md).
+
 ### Context extensions
 
 ```dart
-// Layout structure — respects overrides and desktop locks
-context.isMobile      context.isTablet       context.isDesktop
+// Responsive device class — scaling, SKResponsiveBuilder (phones stay mobile in landscape)
+context.isResponsiveMobile   context.isResponsiveTablet   context.isResponsiveDesktop
+context.isTypeOfMobile()     // same; optional source: responsive | platform | size
 
-// OS chrome — web and Wasm safe
+// OS / hardware — orientation-independent
 context.isMobilePlatform   context.isAndroidPlatform   context.isIOSPlatform
 context.isDesktopPlatform  context.isWebPlatform
 
-// Width only
+// Viewport width only — changes when rotated (alias: isMobile == isMobileViewport)
+context.isMobileViewport   context.isTabletViewport   context.isDesktopViewport
 context.screenSizeClass    context.isMobileSize   context.isTabletSize   context.isDesktopSize
 ```
+
+`designType` on `ScaleKitBuilder` is **not applied** yet. Use `deviceTypeOverride` to force mobile/tablet/desktop detection.
 
 Scaling helpers are on `context` too:
 
@@ -1477,9 +1487,10 @@ class DashboardState extends State<Dashboard>
     with DeviceMetricsMixin<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    if (isDesktop) return const DesktopDashboard();
-    if (isTablet) return const TabletDashboard();
-    return const MobileDashboard();
+    // Prefer context under ScaleKitBuilder for responsive device class:
+    if (context.isResponsiveMobile) return const MobileDashboard();
+    if (context.isResponsiveTablet) return const TabletDashboard();
+    return const DesktopDashboard();
   }
 
   @override
@@ -1489,7 +1500,8 @@ class DashboardState extends State<Dashboard>
 }
 ```
 
-Exposes `logicalScreenSize`, `devicePixelRatio`, `isMobile`, `isTablet`, `isDesktop`,
+Exposes `logicalScreenSize`, `devicePixelRatio`, width-based `isMobile` / `isTablet` / `isDesktop`
+(viewport width — see [device-classification](skills/flutter-scale-kit/device-classification.md)),
 `isMobilePlatform`, `isDesktopPlatform`, `isWeb`, `isAndroidPlatform`, `isIOSPlatform`, and the
 `onDeviceMetricsChanged` hook. Values stay in sync with `WidgetsBinding`.
 

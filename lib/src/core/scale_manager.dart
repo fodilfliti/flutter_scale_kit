@@ -519,9 +519,23 @@ class ScaleManager {
   double _finalScaleHeight = 1.0;
   double _finalScaleFontSize = 1.0;
 
+  /// When the screen orientation differs from the design artboard (e.g. portrait
+  /// Figma 402×874 on a landscape phone), swap design width/height so scaling
+  /// compares like-with-like instead of crushing fonts via the short screen edge.
+  (double width, double height) _effectiveDesignDimensions() {
+    final designPortrait = _designHeight >= _designWidth;
+    final screenPortrait = _screenHeight >= _screenWidth;
+    if (designPortrait != screenPortrait) {
+      return (_designHeight, _designWidth);
+    }
+    return (_designWidth, _designHeight);
+  }
+
   void _calculateScaleFactors() {
-    _scaleWidth = _screenWidth / _designWidth;
-    _scaleHeight = _screenHeight / _designHeight;
+    final (effectiveDesignWidth, effectiveDesignHeight) =
+        _effectiveDesignDimensions();
+    _scaleWidth = _screenWidth / effectiveDesignWidth;
+    _scaleHeight = _screenHeight / effectiveDesignHeight;
 
     final (minScale, maxScale) = _getScaleLimits();
     _scaleWidth = _scaleWidth.clamp(minScale, maxScale);
@@ -586,8 +600,10 @@ class ScaleManager {
     final platform = platformCategory;
 
     // Calculate how much the screen differs from design
-    final rawScaleW = _screenWidth / _designWidth;
-    final rawScaleH = _screenHeight / _designHeight;
+    final (effectiveDesignWidth, effectiveDesignHeight) =
+        _effectiveDesignDimensions();
+    final rawScaleW = _screenWidth / effectiveDesignWidth;
+    final rawScaleH = _screenHeight / effectiveDesignHeight;
     final maxRawScale = rawScaleW > rawScaleH ? rawScaleW : rawScaleH;
     final minRawScale = rawScaleW < rawScaleH ? rawScaleW : rawScaleH;
 
@@ -721,14 +737,17 @@ class ScaleManager {
     }
 
     // On Android/iOS (including emulators and device_preview simulation),
-    // classify as mobile/tablet by width only
+    // classify as mobile/tablet by shortest side — not current width.
+    // Using width alone misclassifies phones in landscape (e.g. 874×402 → tablet).
     if (!kIsWeb &&
         (platform == TargetPlatform.android ||
             platform == TargetPlatform.iOS)) {
-      if (_screenWidth < 600) {
+      final shortestSide =
+          _screenWidth < _screenHeight ? _screenWidth : _screenHeight;
+      if (shortestSide <= _breakpoints.mobileMaxWidth) {
         return DeviceType.mobile;
       }
-      return DeviceType.tablet; // treat large phones/tablets as tablet
+      return DeviceType.tablet;
     }
 
     // Web treated distinctly

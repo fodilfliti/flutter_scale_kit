@@ -40,7 +40,11 @@ class ScaleKitBuilder extends StatefulWidget {
   /// Design height in logical pixels.
   final double designHeight;
 
-  /// Design device type.
+  /// Design device type from the artboard (mobile/tablet/desktop).
+  ///
+  /// **Not wired yet:** accepted for API stability but does not change
+  /// [ScaleManager] detection or scale limits. Use [deviceTypeOverride] to force
+  /// a device class until `designType` is implemented.
   final DeviceType designType;
 
   /// Optional override for device detection (null = auto-detect).

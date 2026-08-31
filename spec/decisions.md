@@ -28,6 +28,8 @@ Record *why*. Update this file when you change the trade-off.
 
 **Why:** A small Chrome window on Windows is not a phone. An iPad width is not iOS-vs-Android. Callers need both CSS-like width queries and OS branching.
 
+**Native phones in landscape:** On iOS/Android, responsive **platform** classification uses the **shortest** logical side vs `mobileMaxWidth` (default 600), not the current width. Width-only checks misclassified iPhone landscape (e.g. 874×402) as tablet, which tightened scale limits and shrank `SKText` even when `mobileLandscape` layout was used.
+
 ## D5 — Drop-in SK widgets with resolve gates
 
 **Choice:** `SKContainer` et al. accept raw doubles **or** already-scaled extension output.
@@ -45,3 +47,9 @@ Record *why*. Update this file when you change the trade-off.
 **Choice:** Agents read `spec/` + code (+ optional codebase-memory graph). `README.md` stays user-facing.
 
 **Why:** README is long, promotional, and duplicates recipes. Spec is short, structured, and versioned with git so every agent/session/machine sees it.
+
+## D8 — `designType` on `ScaleKitBuilder` is not wired yet
+
+**Choice:** `designType` is accepted in the API but not stored or used by `ScaleManager` today. Detection and scale limits follow detected platform/size, not this field.
+
+**Why:** Callers often assume `designType: DeviceType.mobile` forces mobile scaling on iPad/desktop previews — it does not. Use `deviceTypeOverride` until `designType` is implemented, or rely on shortest-side phone detection (D4).

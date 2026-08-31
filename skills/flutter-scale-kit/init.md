@@ -118,7 +118,11 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-Custom design size: set `designWidth` / `designHeight` / `designType` from the interview.
+Custom design size: set `designWidth` / `designHeight` from the interview. `designType` is optional
+(documentation only today — does **not** change detection; use `deviceTypeOverride` to force).
+
+Device queries: see [device-classification.md](device-classification.md) — do not use `context.isMobile`
+for “phone vs tablet” (width-only; false in landscape).
 
 Desktop lock examples:
 

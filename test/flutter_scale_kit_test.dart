@@ -563,6 +563,88 @@ void main() {
     },
   );
 
+  testWidgets('iPhone landscape stays mobile for platform device type', (
+    WidgetTester tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    final originalSize = tester.view.physicalSize;
+    final originalPixelRatio = tester.view.devicePixelRatio;
+    tester.view.physicalSize = const Size(874, 402);
+    tester.view.devicePixelRatio = 1.0;
+
+    try {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ScaleKitBuilder(
+            designWidth: 402,
+            designHeight: 874,
+            designType: DeviceType.mobile,
+            child: Builder(
+              builder: (context) {
+                final scale = ScaleManager.instance;
+                expect(scale.platformDeviceType, DeviceType.mobile);
+                expect(scale.deviceType, DeviceType.mobile);
+                expect(scale.sizeDeviceType, DeviceType.tablet);
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+      tester.view.physicalSize = originalSize;
+      tester.view.devicePixelRatio = originalPixelRatio;
+    }
+  });
+
+  testWidgets('iPhone landscape font scale matches portrait design', (
+    WidgetTester tester,
+  ) async {
+    final originalSize = tester.view.physicalSize;
+    final originalPixelRatio = tester.view.devicePixelRatio;
+    addTearDown(() {
+      tester.view.physicalSize = originalSize;
+      tester.view.devicePixelRatio = originalPixelRatio;
+    });
+
+    tester.view.devicePixelRatio = 1.0;
+
+    late double portraitFont;
+    late double landscapeFont;
+
+    Future<void> pumpAt(Size size) async {
+      tester.view.physicalSize = size;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ScaleKitBuilder(
+            designWidth: 402,
+            designHeight: 874,
+            child: Builder(
+              builder: (context) {
+                final scale = ScaleManager.instance;
+                if (size.height > size.width) {
+                  portraitFont = scale.getFontSize(16);
+                } else {
+                  landscapeFont = scale.getFontSize(16);
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    await pumpAt(const Size(411, 914));
+    await pumpAt(const Size(914, 411));
+
+    expect(landscapeFont, greaterThan(14));
+    expect(landscapeFont / portraitFont, closeTo(1.2, 0.15));
+  });
+
   testWidgets('SKResponsive rebuilds with orientation changes', (
     WidgetTester tester,
   ) async {

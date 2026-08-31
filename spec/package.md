@@ -141,6 +141,17 @@ Three **different** questions; do not mix them:
 
 Default breakpoints: mobile ≤ **600**, tablet ≤ **1200**, desktop ≤ **1600**, large desktop ≤ **1920**.
 
+**Device query cheat sheet** (agents + users): `skills/flutter-scale-kit/device-classification.md`.
+
+| Goal | API |
+| --- | --- |
+| Phone OS | `context.isMobilePlatform` |
+| Scaling / `SKResponsiveBuilder` | `context.isResponsiveMobile` / `isTypeOfMobile()` |
+| Viewport width bucket | `context.isMobileViewport` (`isMobile` alias) — **false on landscape phones** |
+| Layout by orientation | `SKResponsiveBuilder(mobile:, mobileLandscape:)` |
+
+`designType` on `ScaleKitBuilder` is **not wired** — use `deviceTypeOverride` to force.
+
 Desktop/web can be remapped with `lockDesktopPlatforms` + `lockDesktopAsTablet` / `lockDesktopAsMobile`. Remap still respects live window width (a wide locked-as-mobile window can stay desktop). Per-widget flags: `deviceTypeOverride`, `desktopAs`, lock flags.
 
 ## Scaling pipeline (defaults)

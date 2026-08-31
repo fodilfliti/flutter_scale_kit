@@ -6,7 +6,7 @@ Import: `package:flutter_scale_kit/flutter_scale_kit.dart`
 
 `ScaleKitBuilder` — required ancestor.
 
-Important fields: `designWidth`, `designHeight`, `designType` (default mobile), `minScale` / `maxScale` (omit for auto), `autoScaleLandscape` (default true), `autoScalePortrait` (default false), `enabled` / `enabledListenable`, `lockDesktopPlatforms`, `lockDesktopAsTablet`, `lockDesktopAsMobile`, `breakpoints` (`ScaleBreakpoints`), `sizeChangeThreshold`.
+Important fields: `designWidth`, `designHeight`, `designType` (**accepted, not applied yet** — use `deviceTypeOverride` to force), `deviceTypeOverride`, `minScale` / `maxScale` (omit for auto), `autoScaleLandscape` (default true), `autoScalePortrait` (default false), `enabled` / `enabledListenable`, `lockDesktopPlatforms`, `lockDesktopAsTablet`, `lockDesktopAsMobile`, `breakpoints` (`ScaleBreakpoints`), `sizeChangeThreshold`.
 
 ## Extensions (`num`)
 
@@ -66,10 +66,21 @@ Flags: `deviceTypeOverride`, `desktopAs`, `lockDesktopAsTablet`, `lockDesktopAsM
 
 ## Device queries
 
-`context.isMobile` `isTablet` `isDesktop`  
-`context.isMobilePlatform` `isAndroidPlatform` `isIOSPlatform` `isDesktopPlatform` `isWebPlatform`  
-`context.screenSizeClass` and `isMobileSize` / `isTabletSize` / `isDesktopSize` / …  
-`DeviceMetricsMixin` on `State` for the same flags without extra context plumbing.
+**Read [device-classification.md](device-classification.md) before using `isMobile`.**
+
+| Need | API |
+| --- | --- |
+| Phone OS | `context.isMobilePlatform` |
+| Scaling / SKResponsive device class | `context.isResponsiveMobile` / `isTypeOfMobile()` |
+| Viewport width bucket (CSS-like) | `context.isMobileViewport` / `isMobileSize` |
+| Layout portrait vs landscape | `SKResponsiveBuilder(mobile:, mobileLandscape:)` |
+
+Legacy width names (same as viewport): `context.isMobile` `isTablet` `isDesktop`  
+Platform: `context.isMobilePlatform` `isAndroidPlatform` `isIOSPlatform` `isDesktopPlatform` `isWebPlatform`  
+Size class: `context.screenSizeClass` `isMobileSize` / `isTabletSize` / `isDesktopSize` / …  
+Explicit source: `context.isTypeOfMobile(source: DeviceClassificationSource.platform)`  
+
+`DeviceMetricsMixin` — width-only `isMobile`/`isTablet`; prefer `context` under `ScaleKitBuilder` for responsive type.
 
 `DeviceType`: mobile, tablet, desktop, web  
 `DeviceClassificationSource`: responsive, platform, size

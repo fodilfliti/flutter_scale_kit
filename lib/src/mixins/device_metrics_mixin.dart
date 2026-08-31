@@ -28,16 +28,19 @@ mixin DeviceMetricsMixin<T extends StatefulWidget> on State<T> {
   /// Shortest logical side of the screen.
   double get logicalShortestSide => _logicalScreenSize.shortestSide;
 
-  /// Indicates if the current device is categorized as mobile according
-  /// to the configured ScaleKit breakpoints.
+  /// Indicates if the viewport **width** classifies as mobile (breakpoint bucket).
+  ///
+  /// **Not** phone hardware — uses width only via [DeviceDetector.detectDeviceType].
+  /// Phones in landscape often return `false`. Prefer [isMobilePlatform] or read
+  /// [ScaleManager.instance.deviceType] under [ScaleKitBuilder].
   bool get isMobile => _deviceType == DeviceType.mobile;
 
-  /// Indicates if the current device is categorized as tablet according
-  /// to the configured ScaleKit breakpoints.
+  /// Indicates if the viewport **width** classifies as tablet (breakpoint bucket).
+  ///
+  /// See [isMobile] for landscape caveats.
   bool get isTablet => _deviceType == DeviceType.tablet;
 
-  /// Indicates if the current device is categorized as desktop according
-  /// to the configured ScaleKit breakpoints.
+  /// Indicates if the viewport **width** classifies as desktop (breakpoint bucket).
   bool get isDesktop => _deviceType == DeviceType.desktop;
 
   /// Indicates if the current target platform is considered a mobile platform.

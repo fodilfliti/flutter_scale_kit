@@ -10,7 +10,7 @@ description: >
 license: MIT
 metadata:
   author: fodilfliti
-  version: "2.0.1"
+  version: "2.0.2"
   homepage: https://pub.dev/packages/flutter_scale_kit
   repo: https://github.com/fodilfliti/flutter_scale_kit
 ---
@@ -24,6 +24,7 @@ Read extra files only when needed:
 - Init / `main.dart` wiring → [init.md](init.md)
 - Style modes + examples → [styles.md](styles.md)
 - API cheat sheet → [api.md](api.md)
+- **Device classification (isMobile vs landscape)** → [device-classification.md](device-classification.md)
 - Screen patterns → [patterns.md](patterns.md)
 
 ## Project style (check first)
@@ -157,7 +158,9 @@ Cards: `.rSafe` / `SKRadiusMode.safe`. Pills/avatars: `.r`.
 
 - Do search-replace drop-ins: `Container` → `SKContainer`, `Text` → `SKText`, `Padding` → `SKPadding`, etc.
 - Do keep one design system: no magic `EdgeInsets.all(13)` when `SKSize.md` exists
-- Do use `context.isMobile` / `isTablet` / `isDesktop` for structure; use platform helpers (`isIOSPlatform`) only for OS-specific chrome
+- Do use **`context.isResponsiveMobile`** / **`isTypeOfMobile()`** for scaling and device-class branches; **`context.isMobilePlatform`** for OS chrome; **`SKResponsiveBuilder`** (`mobile` + `mobileLandscape`) for layout structure — see [device-classification.md](device-classification.md)
+- Do **not** use `context.isMobile` / `isMobileViewport` for “is this a phone?” — width-only; **false in landscape** on many phones
+- Do **not** rely on `designType:` on `ScaleKitBuilder` — not wired; use `deviceTypeOverride` only when forcing detection
 - Don't copy `flutter_screenutil` `ScreenUtilInit` — use `ScaleKitBuilder`
 - Don't add `google_fonts` unless the user wants it (pass `GoogleFonts.*` into `FontConfig`; the package does not depend on it)
 - Don't subscribe to full `MediaQuery` for scaling; the builder already handles size/orientation

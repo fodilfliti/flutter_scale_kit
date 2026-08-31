@@ -115,24 +115,62 @@ extension ScaleContextExtension on BuildContext {
     );
   }
 
-  /// Check if device is mobile
+  /// Whether the viewport **width** is in the mobile breakpoint bucket
+  /// (≤ [ScaleBreakpoints.mobileMaxWidth], default 600).
+  ///
+  /// This is **not** “is this a phone?”. A phone in landscape often returns
+  /// `false` because the long edge becomes the width. For phone hardware use
+  /// [isMobilePlatform]. For scaling and [SKResponsiveBuilder] device class use
+  /// [isResponsiveMobile] or [isTypeOfMobile].
+  ///
+  /// Alias: [isMobileViewport].
   bool get isMobile =>
       scaleManager.deviceTypeFor(DeviceClassificationSource.size) ==
       DeviceType.mobile;
 
-  /// Check if device is tablet
+  /// Whether the viewport **width** is in the tablet breakpoint bucket.
+  ///
+  /// See [isMobile] for landscape caveats. Prefer [isResponsiveTablet] for
+  /// scaling/layout device class.
+  ///
+  /// Alias: [isTabletViewport].
   bool get isTablet =>
       scaleManager.deviceTypeFor(DeviceClassificationSource.size) ==
       DeviceType.tablet;
 
-  /// Check if device is desktop
+  /// Whether the viewport **width** is in the desktop breakpoint bucket.
+  ///
+  /// Alias: [isDesktopViewport].
   bool get isDesktop =>
       scaleManager.deviceTypeFor(DeviceClassificationSource.size) ==
       DeviceType.desktop;
 
+  /// Explicit alias for [isMobile] — width bucket only.
+  bool get isMobileViewport => isMobile;
+
+  /// Explicit alias for [isTablet] — width bucket only.
+  bool get isTabletViewport => isTablet;
+
+  /// Explicit alias for [isDesktop] — width bucket only.
+  bool get isDesktopViewport => isDesktop;
+
+  /// Responsive device class is mobile (scaling, [SKResponsiveBuilder], overrides).
+  ///
+  /// Same as [isTypeOfMobile] with default [DeviceClassificationSource.responsive].
+  /// Stays `true` on phones in landscape after platform shortest-side detection.
+  bool get isResponsiveMobile => isTypeOfMobile();
+
+  /// Responsive device class is tablet.
+  bool get isResponsiveTablet => isTypeOfTablet();
+
+  /// Responsive device class is desktop (or web when [isTypeOfDesktop] includes web).
+  bool get isResponsiveDesktop => isTypeOfDesktop();
+
   /// Check if the responsive classification resolves to mobile/tablet/desktop.
   ///
-  /// Use [source] to control which classification is consulted (responsive/platform/size).
+  /// Default [source] is [DeviceClassificationSource.responsive] (scaling +
+  /// [SKResponsiveBuilder]). Use [DeviceClassificationSource.size] only for
+  /// width-breakpoint checks (same as [isMobileViewport]).
   bool isTypeOfMobile({
     DeviceClassificationSource source = DeviceClassificationSource.responsive,
   }) => scaleManager.deviceTypeFor(source) == DeviceType.mobile;
