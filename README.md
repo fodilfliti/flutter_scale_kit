@@ -324,8 +324,16 @@ ScaleManager.setDevicePreviewPlatformGetter((c) => DevicePreview.platformOf(c));
 
 ## 🤖 Don't want to read all this? Let your AI agent set it up
 
+From this repo on GitHub:
+
 ```bash
 npx skills add fodilfliti/flutter_scale_kit
+```
+
+Or install the full Lemsa family (includes this skill **and** Theme Kit):
+
+```bash
+npx skills add fodilfliti/lemsa-skills
 ```
 
 Then ask your agent: **"Init Flutter Scale Kit with defaults."**

@@ -6,16 +6,20 @@ Package authors: keep `spec/` for internals. When you change a public API, updat
 
 ## Install (any compatible agent)
 
-From GitHub (installs into the current project, or add `-g` for all projects):
+**From this package’s GitHub** (canonical):
 
 ```bash
 npx skills add fodilfliti/flutter_scale_kit
+npx skills add fodilfliti/flutter_scale_kit --skill flutter-scale-kit
 ```
 
-One skill only:
+Repo: [https://github.com/fodilfliti/flutter_scale_kit](https://github.com/fodilfliti/flutter_scale_kit)
+
+**Or with the full Lemsa family** (this skill is also bundled there):
 
 ```bash
-npx skills add fodilfliti/flutter_scale_kit --skill flutter-scale-kit
+npx skills add fodilfliti/lemsa-skills
+# or: npx skills add fodilfliti/lemsa-skills --skill flutter-scale-kit
 ```
 
 Then ask the agent:
@@ -24,4 +28,9 @@ Then ask the agent:
 
 If `scale_kit.yaml` is missing, the agent asks once for a **style** (`design_system` recommended, or `drop_in` / `extensions` / `hybrid`) and writes that file. See [flutter-scale-kit/styles.md](flutter-scale-kit/styles.md).
 
-**Look companion:** if the app also uses `flutter_scale_theme_kit`, the Scale Kit skill **uses it** (merge `createResponsiveTextTheme` onto `appST.light` / `appST.dark`). Install that skill too: `npx skills add fodilfliti/flutter_scale_theme_kit`.
+**Look companion:** if the app also uses `flutter_scale_theme_kit`, the Scale Kit skill **uses it** (merge `createResponsiveTextTheme` onto `appST.light` / `appST.dark`). Install that skill too:
+
+```bash
+npx skills add fodilfliti/flutter_scale_theme_kit
+# or via family: npx skills add fodilfliti/lemsa-skills --skill flutter-scale-theme-kit
+```

@@ -7,8 +7,8 @@ issue_tracker: https://github.com/fodilfliti/flutter_scale_kit/issues
 documentation: https://github.com/fodilfliti/flutter_scale_kit#readme
 
 environment:
-  sdk: ^3.7.2
-  flutter: ">=3.29.0"
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
 
 dependencies:
   flutter:

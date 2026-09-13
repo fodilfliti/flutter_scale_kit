@@ -240,7 +240,7 @@ class _MyAppState extends State<MyApp> with DeviceMetricsMixin<MyApp> {
           useMaterial3: true,
         ).copyWith(
           scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-          cardTheme: CardTheme(
+          cardTheme: CardThemeData(
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
