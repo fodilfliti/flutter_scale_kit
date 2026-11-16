@@ -729,6 +729,73 @@ void main() {
     await tester.pumpAndSettle();
     expect(resolved, 6);
   });
+
+  testWidgets(
+    'ScaleKitBuilder applies its config before the first scale computation',
+    (WidgetTester tester) async {
+      final originalSize = tester.view.physicalSize;
+      final originalPixelRatio = tester.view.devicePixelRatio;
+      addTearDown(() {
+        tester.view.physicalSize = originalSize;
+        tester.view.devicePixelRatio = originalPixelRatio;
+        ScaleManager.instance.setAutoScaleOrientation(
+          landscape: true,
+          portrait: false,
+        );
+        ScaleManager.instance.setScaleLimits();
+        ScaleValueCache.instance.clearCache();
+      });
+
+      // Simulate a cold start: the singleton still holds its default
+      // autoScaleLandscape = true when ScaleKitBuilder initializes.
+      ScaleManager.instance.setAutoScaleOrientation(
+        landscape: true,
+        portrait: false,
+      );
+      ScaleValueCache.instance.clearCache();
+
+      // Landscape tablet: both raw scales (1366 / 812, 1024 / 375) exceed
+      // maxScale, so the first frame must already be clamped to 1.5 with no
+      // landscape boost.
+      tester.view.physicalSize = const Size(1366, 1024);
+      tester.view.devicePixelRatio = 1.0;
+
+      final widths = <double>[];
+      final heights = <double>[];
+      final fontSizes = <double>[];
+      late BuildContext probeContext;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ScaleKitBuilder(
+            designWidth: 375,
+            designHeight: 812,
+            maxScale: 1.5,
+            autoScaleLandscape: false,
+            child: Builder(
+              builder: (context) {
+                probeContext = context;
+                widths.add(1.w);
+                heights.add(1.h);
+                fontSizes.add(1.sp);
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(widths.first, closeTo(1.5, 1e-9));
+      expect(heights.first, closeTo(1.5, 1e-9));
+
+      // The first-frame font scale must match a full recalculation.
+      ScaleManager.instance.updateFromContext(probeContext);
+      expect(
+        fontSizes.first,
+        closeTo(ScaleManager.instance.getFontSize(1), 1e-9),
+      );
+    },
+  );
 }
 
 class _StatefulProbe extends StatefulWidget {

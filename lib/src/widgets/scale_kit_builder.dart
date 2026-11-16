@@ -311,14 +311,9 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
 
   void _initializeScaleManager() {
     if (!_isInitialized) {
-      ScaleManager.instance.init(
-        context: context,
-        designWidth: widget.designWidth,
-        designHeight: widget.designHeight,
-        designType: widget.designType,
-        minScale: widget.minScale,
-        maxScale: widget.maxScale,
-      );
+      // Apply every setting before init(): init() precomputes the scale
+      // multipliers, and these setters only store values without
+      // recalculating.
       ScaleManager.instance.setDeviceOverride(widget.deviceTypeOverride);
       ScaleManager.instance.setAutoScale(widget.autoScale);
       ScaleManager.instance.setEnabled(widget.enabled);
@@ -349,7 +344,12 @@ class _ScaleKitBuilderState extends State<ScaleKitBuilder> {
         tabletPortraitSizeBoost: widget.tabletPortraitSizeBoost,
         desktopPortraitSizeBoost: widget.desktopPortraitSizeBoost,
       );
-      ScaleManager.instance.setScaleLimits(
+      // init() also applies minScale / maxScale.
+      ScaleManager.instance.init(
+        context: context,
+        designWidth: widget.designWidth,
+        designHeight: widget.designHeight,
+        designType: widget.designType,
         minScale: widget.minScale,
         maxScale: widget.maxScale,
       );
