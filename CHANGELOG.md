@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- **First frame ignored `ScaleKitBuilder` settings:** Since 1.6.0 (precomputed multipliers),
+  `ScaleKitBuilder` called `ScaleManager.init()` before applying its settings, so the first scale
+  calculation used the singleton defaults. In landscape, `autoScaleLandscape: false` was ignored
+  until the next resize or rotation (e.g. 375×812 design, `maxScale: 1.5`, 1366×1024 screen: first
+  frame `1.w` was 1.8 instead of 1.5). All settings are now applied before `init()`.
+
 ## [2.0.2] - 2026-08-31
 
 ### Fixed

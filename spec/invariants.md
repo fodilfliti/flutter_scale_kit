@@ -26,6 +26,13 @@ Tracking lives in `SKScaledValueTracker` as a **Map** keyed independently of the
 - Tracker and value caches **must** clear together on resize, orientation change, and enable/disable.
 - Constraint helpers (`.wMax`, `.spClamp`, …) are cached; they must invalidate with the same context key as base scalars.
 
+## Init order
+
+Scale multipliers are precomputed in `ScaleManager._calculateScaleFactors()` (D1). The `set*` config methods (`setAutoScaleOrientation`, `setBoosts`, `setDeviceOverride`, …) only store values and do **not** recalculate.
+
+- `ScaleKitBuilder` applies every setting **before** `ScaleManager.init()`, which runs the first calculation. Otherwise the first frame uses the singleton defaults (e.g. the landscape boost despite `autoScaleLandscape: false`).
+- Any setter called after init must be followed by `updateFromContext` (`didUpdateWidget` does this via `_onSizeOrOrientationChange`).
+
 ## Rebuild noise
 
 `ScaleKitBuilder` listens to `MediaQuery.sizeOf` and `MediaQuery.orientationOf` only. Do not subscribe to full `MediaQuery` (keyboard, padding, gesture insets would rebuild the whole app).
